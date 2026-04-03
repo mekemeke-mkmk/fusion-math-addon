@@ -13,4 +13,4 @@ This app does not collect, store, or share any personal data.
 The app runs locally and does not send any data externally.
 
 ## Contact
-your-email@example.com
+mitonane2@gmail.com
