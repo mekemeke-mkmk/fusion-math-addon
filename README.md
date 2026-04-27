@@ -14,3 +14,11 @@ The app runs locally and does not send any data externally.
 
 ## Contact
 mekemeke.lab@gmail.com
+
+
+# 開発ルール
+
+このリポジトリではすべての変更に対して
+IMPROVEMENTS.mdへ必ず記録すること。
+
+記録なしの変更は禁止。
