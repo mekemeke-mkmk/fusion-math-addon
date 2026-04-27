@@ -1,0 +1,12 @@
+{
+    "autodeskProduct": "Fusion360",
+    "type": "addin",
+    "id": "MATH CURVE lab2",
+    "author": "MEKE MEKE",
+    "description": {
+        "": "MATH CURVE lab2"
+    },
+    "version": "1.0.0",
+    "runOnStartup": false,
+    "supportedOS": "windows|mac"
+}
