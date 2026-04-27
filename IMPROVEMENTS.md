@@ -15,6 +15,7 @@
 ## 📌 フォーマット
 
 ### [YYYY-MM-DD HH:MM] 変更タイトル
+**AI:** Claude / Codex / LM Studio / Human
 
 **What（何を変更したか）**
 - 変更内容を簡潔に
@@ -31,10 +32,13 @@
 **Impact（影響）**
 - 副作用・注意点
 
+
 # Math Curve Sketch - コード改善レポート
 
-## 実施した改善
 
+## 実施した改善
+**改善日:** 2026年4月28日  
+**改善者:** AI Assistant
 ### 1. ✅ **パフォーマンス最適化: snap_to_existing_point()**
 
 **問題点:**
@@ -305,5 +309,3 @@ except:
 
 ---
 
-**改善日:** 2026年4月28日  
-**改善者:** AI Assistant
