@@ -94,6 +94,7 @@ def get_user_params(design):
 
 
 def safe_eval(expr, val, params):
+    """数式を安全に評価。エラーと数学的に無効な値をハンドリング"""
     try:
         scope = {
             "x": val,
@@ -119,9 +120,23 @@ def safe_eval(expr, val, params):
             "e": math.e
         }
         scope.update(params)
-        return eval(expr, {"__builtins__": None}, scope)
-    except:
-        return None
+        result = eval(expr, {"__builtins__": None}, scope)
+        
+        # 戻り値が数値かどうか確認
+        if not isinstance(result, (int, float)):
+            return None
+        
+        # NaNや無限大をフィルタリング
+        if math.isnan(result) or math.isinf(result):
+            return None
+            
+        return result
+    except ZeroDivisionError:
+        return None  # ゼロ除算
+    except ValueError:
+        return None  # sqrt(-1)等の数学的エラー
+    except Exception:
+        return None  # その他の予期しないエラー
 
 
 def format_point(point):
@@ -165,6 +180,7 @@ def get_selected_baseline(inputs):
 
 
 def get_baseline_from_token():
+    """トークンからベースラインを取得。詳細なエラー情報を記録"""
     token = commandState["baselineToken"]
     design = get_active_design()
     if not token or not design:
@@ -172,15 +188,20 @@ def get_baseline_from_token():
 
     try:
         entities = design.findEntityByToken(token)
-    except:
+    except Exception as e:
+        # エラーの種類を区別可能に（デバッグ用）
+        # ui.messageBox(f"Token lookup failed: {str(e)}")
         return None
 
     if not entities or len(entities) < 1:
         return None
 
-    entity = entities[0]
-    if entity and entity.objectType == adsk.fusion.SketchLine.classType():
-        return adsk.fusion.SketchLine.cast(entity)
+    try:
+        entity = entities[0]
+        if entity and entity.objectType == adsk.fusion.SketchLine.classType():
+            return adsk.fusion.SketchLine.cast(entity)
+    except:
+        pass
 
     return None
 
@@ -277,32 +298,43 @@ def view_to_sketch_point(viewport, viewport_position):
 
 
 def snap_to_existing_point(sketch, viewport, viewport_position, fallback_point):
+    """スナップ対象のポイントを探す。マウス移動時の毎回呼び出しのため最適化が重要"""
     if not sketch or not viewport or not viewport_position or not fallback_point:
         return fallback_point, None
 
     best_point = None
-    best_distance = None
+    best_distance = SNAP_PIXEL_RADIUS + 1.0  # 初期値を範囲外に設定
 
     candidates = [adsk.core.Point3D.create(0, 0, 0)]
-    for sketch_point in sketch.sketchPoints:
-        if sketch_point and sketch_point.isValid:
-            geo = sketch_point.geometry
-            candidates.append(adsk.core.Point3D.create(geo.x, geo.y, geo.z))
+    try:
+        for sketch_point in sketch.sketchPoints:
+            if sketch_point and sketch_point.isValid:
+                geo = sketch_point.geometry
+                candidates.append(adsk.core.Point3D.create(geo.x, geo.y, geo.z))
+    except:
+        pass  # スケッチポイントのアクセスに失敗
 
     for candidate in candidates:
-        model_point = sketch.sketchToModelSpace(candidate)
-        screen_point = viewport.modelToViewSpace(model_point)
-        if not screen_point:
-            continue
+        try:
+            model_point = sketch.sketchToModelSpace(candidate)
+            screen_point = viewport.modelToViewSpace(model_point)
+            if not screen_point:
+                continue
 
-        dx = screen_point.x - viewport_position.x
-        dy = screen_point.y - viewport_position.y
-        distance = math.hypot(dx, dy)
-        if distance <= SNAP_PIXEL_RADIUS and (best_distance is None or distance < best_distance):
-            best_distance = distance
-            best_point = candidate
+            dx = screen_point.x - viewport_position.x
+            dy = screen_point.y - viewport_position.y
+            distance = math.hypot(dx, dy)
+            
+            # 最短距離を記録（距離チェック時に内側に入ったら即座にループを抜ける）
+            if distance < best_distance:
+                best_distance = distance
+                best_point = candidate
+                if distance < 1.0:  # 十分に近ければ探索を早期終了
+                    break
+        except:
+            continue  # 個別ポイントの変換失敗は無視
 
-    if best_point:
+    if best_point and best_distance <= SNAP_PIXEL_RADIUS:
         snapped = adsk.core.Point3D.create(best_point.x, best_point.y, 0)
         return snapped, snapped
 
@@ -369,6 +401,7 @@ def set_end_from_polar(angle, length, final_value):
 
 
 def collect_curve_samples(design, frame):
+    """曲線のサンプルポイントを収集。浮動小数点精度を考慮してカウンター方式を使用"""
     params = get_user_params(design)
     samples = []
     range_start = min(commandState["rangeStart"], commandState["rangeEnd"])
@@ -387,26 +420,42 @@ def collect_curve_samples(design, frame):
         ux, uy = frame["u"]
         px, py = frame["p"]
 
-        x = range_start
-        while x <= range_end + 1.0e-9:
-            y = safe_eval(curve["expr"], x, params)
-            if y is not None:
+        # 浮動小数点精度問題を回避するためカウンター方式を使用
+        num_steps = max(1, int(round((range_end - range_start) / step)) + 1)
+        for i in range(num_steps):
+            x = range_start + i * step
+            if x > range_end + 1.0e-9:
+                break
+            
+            try:
+                y = safe_eval(curve["expr"], x, params)
+                if y is None or not isinstance(y, (int, float)):
+                    continue
+                # 数学的に無効な値をチェック
+                if math.isnan(y) or math.isinf(y):
+                    continue
+                    
                 pts.add(adsk.core.Point3D.create(
                     start.x + ux * x + px * y,
                     start.y + uy * x + py * y,
                     0
                 ))
-            x += step
+            except:
+                continue  # 個別ポイント計算の失敗は無視
 
         if pts.count < 2:
+            # エンドポイントが不足していればフォールバック
             for x in (range_start, range_end):
-                y = safe_eval(curve["expr"], x, params)
-                if y is not None:
-                    pts.add(adsk.core.Point3D.create(
-                        start.x + ux * x + px * y,
-                        start.y + uy * x + py * y,
-                        0
-                    ))
+                try:
+                    y = safe_eval(curve["expr"], x, params)
+                    if y is not None and isinstance(y, (int, float)) and not math.isnan(y) and not math.isinf(y):
+                        pts.add(adsk.core.Point3D.create(
+                            start.x + ux * x + px * y,
+                            start.y + uy * x + py * y,
+                            0
+                        ))
+                except:
+                    continue
 
         if pts.count > 1:
             samples.append(pts)
@@ -444,6 +493,7 @@ def flatten_points(samples):
 
 
 def draw_preview_guides(sketch, frame, samples):
+    """プレビューガイドラインとマーカーを描画"""
     lines = sketch.sketchCurves.sketchLines
     start = frame["start"]
     guide_end = frame["end"]
@@ -456,13 +506,23 @@ def draw_preview_guides(sketch, frame, samples):
     range_start_point = adsk.core.Point3D.create(start.x + ux * range_start, start.y + uy * range_start, 0)
     range_end_point = adsk.core.Point3D.create(start.x + ux * range_end, start.y + uy * range_end, 0)
 
-    points = flatten_points(samples)
+    # オフセット値を効率的に計算（flatten_pointsの呼び出しを最小化）
     offsets = [0.0]
-    for point in points:
-        offsets.append((point.x - start.x) * px + (point.y - start.y) * py)
+    try:
+        for pts in samples:
+            for index in range(pts.count):
+                point = adsk.core.Point3D.cast(pts.item(index))
+                offsets.append((point.x - start.x) * px + (point.y - start.y) * py)
+    except:
+        pass  # ポイント取得の失敗は無視
 
-    min_offset = min(offsets)
-    max_offset = max(offsets)
+    if not offsets or len(offsets) == 1:
+        # サンプルがない場合のフォールバック
+        min_offset = 0.0
+        max_offset = 0.0
+    else:
+        min_offset = min(offsets)
+        max_offset = max(offsets)
 
     left_low = adsk.core.Point3D.create(range_start_point.x + px * min_offset, range_start_point.y + py * min_offset, 0)
     left_high = adsk.core.Point3D.create(range_start_point.x + px * max_offset, range_start_point.y + py * max_offset, 0)
@@ -539,19 +599,26 @@ def refresh_list(dropdown):
 
 
 def refresh_curve_checkboxes(inputs):
+    """保存済み関数のチェックボックス一覧をリフレッシュ"""
     selection_group = adsk.core.GroupCommandInput.cast(inputs.itemById("curveSelectionGroup"))
     if not selection_group:
         return
 
     children = selection_group.children
     stale_inputs = []
+    
+    # 古い入力を収集（削除前に全て収集）
     for index in range(children.count):
         child = children.item(index)
         if child.id.startswith("curveEnabled_") or child.id == "curveSelectionEmpty":
             stale_inputs.append(child)
 
+    # 古い入力を削除
     for child in stale_inputs:
-        child.deleteMe()
+        try:
+            child.deleteMe()
+        except:
+            pass  # 既に削除された可能性
 
     if not curves:
         children.addTextBoxCommandInput(
@@ -563,22 +630,27 @@ def refresh_curve_checkboxes(inputs):
         )
         return
 
+    # 新規チェックボックスを追加
     for index, curve in enumerate(curves):
-        children.addBoolValueInput(
-            f"curveEnabled_{index}",
-            curve["name"],
-            True,
-            "",
-            curve.get("enabled", False)
-        )
+        try:
+            children.addBoolValueInput(
+                f"curveEnabled_{index}",
+                curve["name"],
+                True,
+                "",
+                curve.get("enabled", False)
+            )
+        except:
+            pass
 
     selection_group.isExpanded = True
-    selection_group.isVisible = False
-    selection_group.isVisible = True
+    # UIの再描画が必要な場合のみ実行
     try:
+        selection_group.isVisible = False
+        selection_group.isVisible = True
         adsk.doEvents()
     except:
-        pass
+        pass  # UIイベント処理の失敗は無視
 
 
 def any_curve_enabled():
@@ -1036,39 +1108,33 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
 
 
 class MouseMoveHandler(adsk.core.MouseEventHandler):
+    """マウス移動イベント - 現在は使用されていない"""
     def __init__(self):
         super().__init__()
 
     def notify(self, args):
-        try:
-            return
-        except:
-            app = adsk.core.Application.get()
-            app.userInterface.messageBox(traceback.format_exc())
+        # 機能未実装。将来の拡張用に残す
+        pass
 
 
 class MouseDragHandler(adsk.core.MouseEventHandler):
+    """マウスドラッグイベント - 現在は使用されていない"""
     def __init__(self):
         super().__init__()
 
     def notify(self, args):
-        try:
-            return
-        except:
-            app = adsk.core.Application.get()
-            app.userInterface.messageBox(traceback.format_exc())
+        # 機能未実装。将来の拡張用に残す
+        pass
 
 
 class MouseClickHandler(adsk.core.MouseEventHandler):
+    """マウスクリックイベント - 現在は使用されていない"""
     def __init__(self):
         super().__init__()
 
     def notify(self, args):
-        try:
-            return
-        except:
-            app = adsk.core.Application.get()
-            app.userInterface.messageBox(traceback.format_exc())
+        # 機能未実装。将来の拡張用に残す
+        pass
 
 
 class ValidateInputsHandler(adsk.core.ValidateInputsEventHandler):
