@@ -309,3 +309,45 @@ except:
 
 ---
 
+## [2026-04-28 15:32] 座標系オプションの追加と原点修正
+**AI:** Cascade
+
+**What（何を変更したか）**
+- x Startを関数の原点にするよう座標系ロジックを修正
+- Setupタブに3つの新しいチェックボックスを追加:
+  - Invert Origin: 選択した線分の反対側を原点とする
+  - Invert X Axis: x軸の向きを反転する
+  - Invert Y Axis: y軸の向きを反転する
+- commandStateに新しいオプション（invertOrigin, invertX, invertY）を追加
+- build_frame()で新しいオプションを反映
+- collect_curve_samples()でx座標からrangeStartを減算して原点を0にする
+- draw_preview_guides()でガイドラインの表示を新しい座標系に対応
+- InputChangedHandlerで新しいチェックボックスの変更を処理
+
+**Why（なぜ変更したか）**
+- ユーザーからの要望: x Startが関数の原点になるように（現在はx Startの分だけ切り取られた形状）
+- ユーザーからの要望: 選択した線分の反対側を原点とするオプション
+- ユーザーからの要望: x軸・y軸の向きを反転するオプション
+- より柔軟な座標系制御を提供するため
+
+**How（どう変更したか）**
+1. commandStateに3つの新しいフラグを追加
+2. build_frame()でinvertOriginがTrueの場合、startとendを入れ替え
+3. build_frame()でinvertX/invertYがTrueの場合、対応する方向ベクトルを反転
+4. collect_curve_samples()で座標計算を `ux * x` から `ux * (x - range_start)` に変更
+5. draw_preview_guides()でrange_start_pointを `ux * range_start` から `ux * 0` に変更
+6. SetupタブのUIに3つのBoolValueInputを追加
+7. InputChangedHandlerで3つの新しいチェックボックスの変更をcommandStateに反映
+
+**Purpose（目的）**
+- x Startを関数の原点として扱い、数式のx=0がx Startの位置に対応するようにする
+- 選択した線分のどちらの端を原点にするかを選択可能にする
+- x軸・y軸の向きを柔軟に反転可能にする
+
+**Impact（影響）**
+- 既存の挙動が変更される: x Startの値が原点オフセットではなく、実際の原点位置として扱われる
+- 新しいチェックボックスのデフォルト値はFalse（既存挙動を維持）
+- ユーザーはより直感的に座標系を制御可能になる
+
+---
+

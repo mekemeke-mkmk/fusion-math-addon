@@ -40,7 +40,10 @@ commandState = {
     "hasFinalEnd": False,
     "previewDirty": True,
     "rangeStart": 0.0,
-    "rangeEnd": 10.0
+    "rangeEnd": 10.0,
+    "invertOrigin": False,
+    "invertX": False,
+    "invertY": False
 }
 
 
@@ -358,6 +361,10 @@ def build_frame():
     if not start or not end:
         return None
 
+    # 反対側原点オプション
+    if commandState["invertOrigin"]:
+        start, end = end, start
+
     dx = end.x - start.x
     dy = end.y - start.y
     length = math.hypot(dx, dy)
@@ -368,6 +375,16 @@ def build_frame():
     uy = dy / length
     px = -uy
     py = ux
+
+    # x軸反転
+    if commandState["invertX"]:
+        ux = -ux
+        uy = -uy
+
+    # y軸反転
+    if commandState["invertY"]:
+        px = -px
+        py = -py
 
     return {
         "start": start,
@@ -435,9 +452,10 @@ def collect_curve_samples(design, frame):
                 if math.isnan(y) or math.isinf(y):
                     continue
                     
+                # x startを原点にするため、xからrange_startを減算
                 pts.add(adsk.core.Point3D.create(
-                    start.x + ux * x + px * y,
-                    start.y + uy * x + py * y,
+                    start.x + ux * (x - range_start) + px * y,
+                    start.y + uy * (x - range_start) + py * y,
                     0
                 ))
             except:
@@ -449,9 +467,10 @@ def collect_curve_samples(design, frame):
                 try:
                     y = safe_eval(curve["expr"], x, params)
                     if y is not None and isinstance(y, (int, float)) and not math.isnan(y) and not math.isinf(y):
+                        # x startを原点にするため、xからrange_startを減算
                         pts.add(adsk.core.Point3D.create(
-                            start.x + ux * x + px * y,
-                            start.y + uy * x + py * y,
+                            start.x + ux * (x - range_start) + px * y,
+                            start.y + uy * (x - range_start) + py * y,
                             0
                         ))
                 except:
@@ -503,8 +522,10 @@ def draw_preview_guides(sketch, frame, samples):
     range_start = min(commandState["rangeStart"], commandState["rangeEnd"])
     range_end = max(commandState["rangeStart"], commandState["rangeEnd"])
 
-    range_start_point = adsk.core.Point3D.create(start.x + ux * range_start, start.y + uy * range_start, 0)
-    range_end_point = adsk.core.Point3D.create(start.x + ux * range_end, start.y + uy * range_end, 0)
+    # x startを原点にするため、0から(range_end - range_start)の範囲を使用
+    range_length = range_end - range_start
+    range_start_point = adsk.core.Point3D.create(start.x + ux * 0, start.y + uy * 0, 0)
+    range_end_point = adsk.core.Point3D.create(start.x + ux * range_length, start.y + uy * range_length, 0)
 
     # オフセット値を効率的に計算（flatten_pointsの呼び出しを最小化）
     offsets = [0.0]
@@ -948,6 +969,9 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 "",
                 adsk.core.ValueInput.createByReal(10.0)
             )
+            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", False, "", False)
+            setup_children.addBoolValueInput("invertX", "Invert X Axis", False, "", False)
+            setup_children.addBoolValueInput("invertY", "Invert Y Axis", False, "", False)
             setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
@@ -1092,6 +1116,15 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             elif changed.id == "rangeStart" or changed.id == "rangeEnd":
                 commandState["rangeStart"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeStart")).value
                 commandState["rangeEnd"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeEnd")).value
+                commandState["previewDirty"] = True
+            elif changed.id == "invertOrigin":
+                commandState["invertOrigin"] = changed.value
+                commandState["previewDirty"] = True
+            elif changed.id == "invertX":
+                commandState["invertX"] = changed.value
+                commandState["previewDirty"] = True
+            elif changed.id == "invertY":
+                commandState["invertY"] = changed.value
                 commandState["previewDirty"] = True
             elif changed.id == "resetRange":
                 changed.value = False
