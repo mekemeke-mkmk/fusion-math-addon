@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CommandDefinitions>
+  <CommandDefinition id="ReloadMathCurve">
+    <ButtonText>Reload Math Curve</ButtonText>
+    <Icon>Icons/NewIcon.png</Icon>
+  </CommandDefinition>
+</CommandDefinitions>
