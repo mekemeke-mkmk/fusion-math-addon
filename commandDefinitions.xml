@@ -1,7 +1,13 @@
+</think>
+
 <?xml version="1.0" encoding="UTF-8"?>
 <CommandDefinitions>
-  <CommandDefinition id="ReloadMathCurve">
-    <ButtonText>Reload Math Curve</ButtonText>
-    <Icon>Icons/NewIcon.png</Icon>
-  </CommandDefinition>
+
+
+
+
+  <!-- リロード機能に関連するすべての <CommandDefinition> を削除 -->
+</CommandDefinitions>
+
+  <!-- リロード機能に関連するすべての <CommandDefinition> を削除 -->
 </CommandDefinitions>
