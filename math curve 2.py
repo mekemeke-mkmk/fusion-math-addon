@@ -1101,16 +1101,9 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             setup_children.addTextBoxCommandInput(
                 "setupHelp",
                 "Info",
-                "Enable Parametric Mode to input x(t), y(t). In implicit mode, use y=f(x).",
+                "Configure placement and drawing range for this run.",
                 2,
                 True
-            )
-            setup_children.addBoolValueInput(
-                "isParametricMode",
-                "Parametric Mode (x(t), y(t))",
-                True,
-                "",
-                commandState["isParametricMode"]
             )
             setup_children.addValueInput(
                 "rangeStart",
@@ -1123,26 +1116,6 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 "x End (or fallback t-end)",
                 "",
                 adsk.core.ValueInput.createByReal(commandState["rangeEnd"])
-            )
-            setup_children.addStringValueInput("xExpr", "x(t) =", "cos(t)")
-            setup_children.addStringValueInput("yExpr", "y(t) =", "sin(t)")
-            setup_children.addValueInput(
-                "tStart",
-                "t Start",
-                "",
-                adsk.core.ValueInput.createByReal(0.0)
-            )
-            setup_children.addValueInput(
-                "tEnd",
-                "t End",
-                "",
-                adsk.core.ValueInput.createByReal(math.pi * 2)
-            )
-            setup_children.addValueInput(
-                "tStep",
-                "t Step",
-                "",
-                adsk.core.ValueInput.createByReal(0.1)
             )
             setup_children.addBoolValueInput("invertOrigin", "Invert Origin", True, "", commandState["invertOrigin"])
             setup_children.addBoolValueInput("invertX", "Invert X Axis", True, "", commandState["invertX"])
@@ -1159,12 +1132,39 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             refresh_list(curve_list)
             library_children.addBoolValueInput("add", "Add Function", False, "", False)
             library_children.addBoolValueInput("del", "Delete Function", False, "", False)
+            library_children.addBoolValueInput(
+                "isParametricMode",
+                "Parametric Mode (x(t), y(t))",
+                True,
+                "",
+                commandState["isParametricMode"]
+            )
             library_children.addStringValueInput("expr", "y =", "sin(x)")
             library_children.addValueInput(
                 "step",
                 "Step",
                 "",
                 adsk.core.ValueInput.createByReal(0.2)
+            )
+            library_children.addStringValueInput("xExpr", "x(t) =", "cos(t)")
+            library_children.addStringValueInput("yExpr", "y(t) =", "sin(t)")
+            library_children.addValueInput(
+                "tStart",
+                "t Start",
+                "",
+                adsk.core.ValueInput.createByReal(0.0)
+            )
+            library_children.addValueInput(
+                "tEnd",
+                "t End",
+                "",
+                adsk.core.ValueInput.createByReal(math.pi * 2)
+            )
+            library_children.addValueInput(
+                "tStep",
+                "t Step",
+                "",
+                adsk.core.ValueInput.createByReal(0.1)
             )
             library_children.addTextBoxCommandInput(
                 "functionHelp",

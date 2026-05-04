@@ -6,6 +6,31 @@
 
 ---
 
+## [2026-05-04 23:55] Parametric編集UIをLibraryタブへ移設
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Parametric Mode` と `x(t), y(t), tStart/tEnd/tStep` 入力を `Setup` タブから `Library` タブへ移設
+- `Setup` タブは配置・範囲設定（`rangeStart/rangeEnd` と座標系反転）に限定
+- `setupHelp` 文言を用途に合わせて更新
+
+**Why（なぜ変更したか）**
+- 媒介変数関数の作成・編集は保存関数ライブラリ文脈で行うべきで、`Setup` に置くと責務が混在して分かりづらいため
+
+**How（どう変更したか）**
+1. `Setup` 側から parametric 編集入力を削除
+2. 同入力群を `Library` 側へ追加
+3. 既存の入力ID（`isParametricMode`, `xExpr`, `yExpr`, `tStart`, `tEnd`, `tStep`）は維持し、既存ロジックとの互換性を確保
+
+**Purpose（目的）**
+- タブごとの責務を自然に分離し、ユーザー操作の直感性を向上する
+
+**Impact（影響）**
+- パラメトリック関数編集の導線が `Library` に統一され、UI構成の一貫性が改善
+- 描画ロジックや保存ロジックのID依存は維持されるため、機能面の後方互換を保持
+
+---
+
 ## [2026-05-04 23:49] 媒介変数曲線機能の一気通貫修正（UI-評価-描画）
 **AI:** Codex
 
