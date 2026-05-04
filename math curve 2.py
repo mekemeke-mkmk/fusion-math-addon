@@ -55,7 +55,10 @@ def default_curve():
         "type": "implicit",  # Type: implicit (y=f(x)) or parametric (x(t), y(t))
         "expr": "sin(x)",
         "step": 0.2,
-        "enabled": False
+        "enabled": False,
+        "invert_origin": False,
+        "invert_x": False,
+        "invert_y": False
     }
 
 def default_parametric_curve():
@@ -67,7 +70,10 @@ def default_parametric_curve():
         "t_step": 0.1,
         "t_start": 0.0,
         "t_end": math.pi * 2,
-        "enabled": False
+        "enabled": False,
+        "invert_origin": False,
+        "invert_x": False,
+        "invert_y": False
     }
 
 
@@ -81,6 +87,9 @@ def reset_point_state():
     commandState["previewDirty"] = True
     commandState["rangeStart"] = 0.0
     commandState["rangeEnd"] = 10.0
+    commandState["invertOrigin"] = False
+    commandState["invertX"] = False
+    commandState["invertY"] = False
 
 
 def reset_curve_selection():
@@ -505,9 +514,22 @@ def collect_curve_samples(design, frame):
             continue
 
         pts = adsk.core.ObjectCollection.create()
-        start = frame["start"]
+        base_start = frame["start"]
+        base_end = frame["end"]
         ux, uy = frame["u"]
         px, py = frame["p"]
+        if curve.get("invert_origin", False):
+            base_start, base_end = base_end, base_start
+            ux = -ux
+            uy = -uy
+        if curve.get("invert_x", False):
+            ux = -ux
+            uy = -uy
+        if curve.get("invert_y", False):
+            px = -px
+            py = -py
+
+        start = base_start
         is_parametric_curve = curve.get("type") == "parametric"
         if is_parametric_curve:
             t_start = curve.get("t_start", range_start)
@@ -717,58 +739,71 @@ def refresh_list(dropdown):
 
 
 def refresh_curve_checkboxes(inputs):
-    """保存済み関数のチェックボックス一覧をリフレッシュ"""
-    selection_group = adsk.core.GroupCommandInput.cast(inputs.itemById("curveSelectionGroup"))
-    if not selection_group:
+    """Functions To Draw のテーブルを再構築"""
+    table = adsk.core.TableCommandInput.cast(get_command_input(inputs, "curveSelectionTable"))
+    if not table:
         return
 
-    children = selection_group.children
-    stale_inputs = []
-    
-    # 古い入力を収集（削除前に全て収集）
-    for index in range(children.count):
-        child = children.item(index)
-        if child.id.startswith("curveEnabled_") or child.id == "curveSelectionEmpty":
-            stale_inputs.append(child)
-
-    # 古い入力を削除
-    for child in stale_inputs:
+    while table.rowCount > 0:
         try:
-            child.deleteMe()
+            table.deleteRow(0)
         except:
-            pass  # 既に削除された可能性
+            break
 
     if not curves:
-        children.addTextBoxCommandInput(
-            "curveSelectionEmpty",
-            "Saved Functions",
-            "No saved functions yet. Create one in the Library tab.",
-            2,
-            True
+        empty_input = inputs.addStringValueInput(
+            "curveSelectionEmptyLabel",
+            "",
+            "No saved functions yet. Create one in the Library tab."
         )
+        empty_input.isReadOnly = True
+        table.addCommandInput(empty_input, 0, 0, 0, 3)
         return
 
-    # 新規チェックボックスを追加
     for index, curve in enumerate(curves):
         try:
-            children.addBoolValueInput(
+            draw_input = inputs.addBoolValueInput(
                 f"curveEnabled_{index}",
                 curve["name"],
                 True,
                 "",
                 curve.get("enabled", False)
             )
-        except:
-            pass
+            inv_o_input = inputs.addBoolValueInput(
+                f"curveInvertOrigin_{index}",
+                "InvO",
+                True,
+                "",
+                curve.get("invert_origin", False)
+            )
+            inv_x_input = inputs.addBoolValueInput(
+                f"curveInvertX_{index}",
+                "InvX",
+                True,
+                "",
+                curve.get("invert_x", False)
+            )
+            inv_y_input = inputs.addBoolValueInput(
+                f"curveInvertY_{index}",
+                "InvY",
+                True,
+                "",
+                curve.get("invert_y", False)
+            )
+            table.addCommandInput(draw_input, index, 0)
+            table.addCommandInput(inv_o_input, index, 1)
+            table.addCommandInput(inv_x_input, index, 2)
+            table.addCommandInput(inv_y_input, index, 3)
+        except Exception as ex:
+            app = adsk.core.Application.get()
+            if app and app.userInterface:
+                app.userInterface.messageBox(f"Failed to build function row: {curve.get('name', 'Unnamed')} ({str(ex)})")
+            return
 
-    selection_group.isExpanded = True
-    # UIの再描画が必要な場合のみ実行
     try:
-        selection_group.isVisible = False
-        selection_group.isVisible = True
         adsk.doEvents()
     except:
-        pass  # UIイベント処理の失敗は無視
+        pass
 
 
 def any_curve_enabled():
@@ -841,9 +876,18 @@ def save_curve_ui(inputs, is_parametric=False):
 
 def sync_curve_selection_from_inputs(inputs):
     for index, curve in enumerate(curves):
-        bool_input = adsk.core.BoolValueCommandInput.cast(inputs.itemById(f"curveEnabled_{index}"))
-        if bool_input:
-            curve["enabled"] = bool_input.value
+        enabled_input = adsk.core.BoolValueCommandInput.cast(get_command_input(inputs, f"curveEnabled_{index}"))
+        inv_o_input = adsk.core.BoolValueCommandInput.cast(get_command_input(inputs, f"curveInvertOrigin_{index}"))
+        inv_x_input = adsk.core.BoolValueCommandInput.cast(get_command_input(inputs, f"curveInvertX_{index}"))
+        inv_y_input = adsk.core.BoolValueCommandInput.cast(get_command_input(inputs, f"curveInvertY_{index}"))
+        if enabled_input:
+            curve["enabled"] = enabled_input.value
+        if inv_o_input:
+            curve["invert_origin"] = inv_o_input.value
+        if inv_x_input:
+            curve["invert_x"] = inv_x_input.value
+        if inv_y_input:
+            curve["invert_y"] = inv_y_input.value
 
 
 def update_placement_inputs(inputs):
@@ -1117,10 +1161,14 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 "",
                 adsk.core.ValueInput.createByReal(commandState["rangeEnd"])
             )
-            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", True, "", commandState["invertOrigin"])
-            setup_children.addBoolValueInput("invertX", "Invert X Axis", True, "", commandState["invertX"])
-            setup_children.addBoolValueInput("invertY", "Invert Y Axis", True, "", commandState["invertY"])
-            setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")
+            setup_children.addTextBoxCommandInput(
+                "curveSelectionHelp",
+                "Functions To Draw",
+                "Draw | InvO (origin) | InvX | InvY",
+                1,
+                True
+            )
+            setup_children.addTableCommandInput("curveSelectionTable", "", 4, "5:1:1:1")
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
             library_children = library_tab.children
@@ -1258,7 +1306,11 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             if changed.id == "list":
                 selectedIndex = changed.selectedItem.index
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
-            elif changed.id.startswith("curveEnabled_"):
+            elif changed.id == "setupTab":
+                refresh_curve_checkboxes(inputs)
+            elif changed.id == "libraryTab":
+                refresh_curve_checkboxes(inputs)
+            elif changed.id.startswith("curveEnabled_") or changed.id.startswith("curveInvert"):
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
             elif changed.id == "add":
@@ -1302,15 +1354,6 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             elif changed.id == "rangeStart" or changed.id == "rangeEnd":
                 commandState["rangeStart"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeStart")).value
                 commandState["rangeEnd"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeEnd")).value
-                commandState["previewDirty"] = True
-            elif changed.id == "invertOrigin":
-                commandState["invertOrigin"] = changed.value
-                commandState["previewDirty"] = True
-            elif changed.id == "invertX":
-                commandState["invertX"] = changed.value
-                commandState["previewDirty"] = True
-            elif changed.id == "invertY":
-                commandState["invertY"] = changed.value
                 commandState["previewDirty"] = True
             elif changed.id == "resetRange":
                 changed.value = False

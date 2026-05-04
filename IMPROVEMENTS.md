@@ -6,6 +6,64 @@
 
 ---
 
+## [2026-05-05 00:05] Functions To Draw の即時更新と曲線ごとInvert設定の実装
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Functions To Draw` をグループ表示からテーブル表示へ変更
+- 各関数行に `Draw` の右側として `InvO / InvX / InvY` チェックボックスを追加
+- invert設定をグローバルではなく曲線ごとの設定として描画計算に反映
+- 関数追加・削除・タブ切替時の一覧再構築を強化
+
+**Why（なぜ変更したか）**
+- 新規関数作成時に `Functions To Draw` 側へ反映が遅延または欠落する不安定さがあったため
+- invertオプションは曲線単位で独立して持つ方が、複数関数の同時運用時に自然であるため
+
+**How（どう変更したか）**
+1. Setup タブに `curveSelectionTable` を追加し、行ごとに `curveEnabled_*`, `curveInvertOrigin_*`, `curveInvertX_*`, `curveInvertY_*` を生成
+2. `refresh_curve_checkboxes()` をテーブル再構築方式へ変更（`deleteRow` で完全再生成）
+3. `sync_curve_selection_from_inputs()` を拡張し、enabled + invert 3種を曲線辞書へ同期
+4. `collect_curve_samples()` で各曲線の invert 設定を反映してローカル座標軸を生成
+5. `default_curve/default_parametric_curve` に invert 初期値を追加
+6. 旧グローバル invert のUI入力を Setup から除去し、隠れ状態防止のため `reset_point_state()` でフラグ初期化
+
+**Purpose（目的）**
+- 「新規作成した関数がすぐ描画対象に出る」ことを保証
+- 「関数ごとに向きを変える」運用を直感的に実現する
+
+**Impact（影響）**
+- `Functions To Draw` の更新信頼性が向上
+- Draw と Invert 設定が関数行単位で完結し、UIの見通しが改善
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
+## [2026-05-05 00:00] Functions To Draw 未表示不具合の修正
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Add Function` 後に `Setup > Functions To Draw` へ新規関数が反映されない問題を修正
+- チェックボックス再構築処理を堅牢化
+
+**Why（なぜ変更したか）**
+- 作成済み関数が描画対象一覧に出ず、実際に描画へ選択できない不具合が発生していたため
+
+**How（どう変更したか）**
+1. `refresh_curve_checkboxes()` で `curveSelectionGroup` 不在時に `setupTab` 配下へ再生成するフォールバックを追加
+2. 再構築時の失敗を握りつぶさず、失敗時に原因を表示するエラーハンドリングを追加
+3. `setupTab` / `libraryTab` へ切り替えたタイミングでも一覧を再同期する処理を追加
+4. 不要な可視トグル再描画をやめ、`adsk.doEvents()` に簡略化
+
+**Purpose（目的）**
+- 関数ライブラリ編集と描画対象選択の同期を確実にし、操作一貫性を回復する
+
+**Impact（影響）**
+- 新規関数追加後に `Functions To Draw` へ反映される安定性が向上
+- タブ切替後も選択一覧が最新化され、表示抜けが起きにくくなる
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
 ## [2026-05-04 23:55] Parametric編集UIをLibraryタブへ移設
 **AI:** Codex
 
