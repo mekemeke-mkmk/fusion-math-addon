@@ -939,11 +939,17 @@ def activate_functions_tab(inputs):
     return
 
 
-def update_preview(command=None):
-    baseline = get_baseline_from_token()
-    if baseline and baseline.isValid:
-        update_state_from_baseline(baseline)
-    commandState["previewDirty"] = True
+def update_preview(command=None, force=False):
+    if not force and not commandState["previewDirty"]:
+        return
+
+    if command:
+        try:
+            command.doExecutePreview()
+            return
+        except:
+            pass
+
     render_preview()
 
 
@@ -1302,6 +1308,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             inputs = args.inputs
             changed = args.input
             command = args.firingEvent.sender
+            should_update_preview = False
 
             if changed.id == "list":
                 selectedIndex = changed.selectedItem.index
@@ -1313,6 +1320,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             elif changed.id.startswith("curveEnabled_") or changed.id.startswith("curveInvert"):
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
+                should_update_preview = True
             elif changed.id == "add":
                 if is_parametric_mode_active():
                     curves.append(default_parametric_curve())
@@ -1333,15 +1341,18 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 refresh_curve_checkboxes(inputs)
                 sync_curve_selection_from_inputs(inputs)
+                commandState["previewDirty"] = True
+                should_update_preview = True
             elif changed.id == "expr" or changed.id == "step":
                 save_curve_ui(inputs, is_parametric=False)
+                should_update_preview = True
             elif changed.id in ("xExpr", "yExpr", "tStart", "tEnd", "tStep"):
                 save_curve_ui(inputs, is_parametric=True)
+                should_update_preview = True
             elif changed.id == "isParametricMode":
                 commandState["isParametricMode"] = changed.value
                 sync_parametric_inputs_enabled(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
-                commandState["previewDirty"] = True
             elif changed.id == "baselineLine":
                 baseline = get_selected_baseline(inputs)
                 if baseline:
@@ -1349,12 +1360,15 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                     selection_input = adsk.core.SelectionCommandInput.cast(inputs.itemById("baselineLine"))
                     if selection_input:
                         selection_input.hasFocus = False
+                    should_update_preview = True
                 else:
                     reset_point_state()
+                    should_update_preview = True
             elif changed.id == "rangeStart" or changed.id == "rangeEnd":
                 commandState["rangeStart"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeStart")).value
                 commandState["rangeEnd"] = adsk.core.ValueCommandInput.cast(inputs.itemById("rangeEnd")).value
                 commandState["previewDirty"] = True
+                should_update_preview = True
             elif changed.id == "resetRange":
                 changed.value = False
                 reset_point_state()
@@ -1362,8 +1376,10 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 if selection_input:
                     selection_input.clearSelection()
                     selection_input.hasFocus = True
+                should_update_preview = True
             update_placement_inputs(inputs)
-            update_preview(command)
+            if should_update_preview:
+                update_preview(command)
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())

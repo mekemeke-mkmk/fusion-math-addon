@@ -6,6 +6,32 @@
 
 ---
 
+## [2026-05-05 00:10] 直線選択・タブ移動時の重さ改善（不要プレビュー抑制）
+**AI:** Codex
+
+**What（何を変更したか）**
+- `inputChanged` で毎回走っていたプレビュー更新を、必要イベント時のみ実行するよう変更
+- `update_preview()` を `previewDirty` 判定付きにし、不要再描画を抑制
+- `command.doExecutePreview()` 優先でプレビュー実行し、失敗時のみフォールバック描画
+
+**Why（なぜ変更したか）**
+- 直線選択時に大量のイベントでプレビュー再計算が連鎖し、タブ移動時も重くなる問題が発生していたため
+
+**How（どう変更したか）**
+1. `InputChangedHandler` に `should_update_preview` フラグを導入
+2. `setupTab/libraryTab/list/isParametricMode` など、形状変更しないイベントではプレビュー更新を抑止
+3. `curveEnabled/curveInvert/rangeStart/rangeEnd/baselineLine/resetRange` など、形状に影響するイベントのみ更新
+4. `update_preview(command, force=False)` を実装し、`previewDirty` で早期return
+
+**Purpose（目的）**
+- 直線選択直後とタブ切替時の体感遅延を低減し、操作レスポンスを改善する
+
+**Impact（影響）**
+- 不要な再計算・再描画の回数が減少し、UI操作が軽くなる
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
 ## [2026-05-05 00:05] Functions To Draw の即時更新と曲線ごとInvert設定の実装
 **AI:** Codex
 
