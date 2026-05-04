@@ -157,6 +157,67 @@ def safe_eval(expr, val, params):
         return None  # その他の予期しないエラー
 
 
+def safe_eval_parametric(x_expr, y_expr, t_val, params):
+    try:
+        scope = {
+            "t": t_val,
+            "sin": math.sin,
+            "cos": math.cos,
+            "tan": math.tan,
+            "asin": math.asin,
+            "acos": math.acos,
+            "atan": math.atan,
+            "atan2": math.atan2,
+            "sinh": math.sinh,
+            "cosh": math.cosh,
+            "tanh": math.tanh,
+            "exp": math.exp,
+            "sqrt": math.sqrt,
+            "log": math.log,
+            "log10": math.log10,
+            "fabs": math.fabs,
+            "floor": math.floor,
+            "ceil": math.ceil,
+            "pow": math.pow,
+            "pi": math.pi,
+            "e": math.e
+        }
+        scope.update(params)
+        x_val = eval(x_expr, {"__builtins__": None}, scope)
+        y_val = eval(y_expr, {"__builtins__": None}, scope)
+        if not isinstance(x_val, (int, float)) or not isinstance(y_val, (int, float)):
+            return None
+        if math.isnan(x_val) or math.isinf(x_val) or math.isnan(y_val) or math.isinf(y_val):
+            return None
+        return (x_val, y_val)
+    except Exception:
+        return None
+
+
+def is_parametric_mode_active():
+    return bool(commandState.get("isParametricMode", False))
+
+
+def get_command_input(inputs, input_id):
+    try:
+        return inputs.itemById(input_id)
+    except:
+        return None
+
+
+def sync_parametric_inputs_enabled(inputs):
+    enabled = is_parametric_mode_active()
+    for input_id in ("xExpr", "yExpr", "tStart", "tEnd", "tStep"):
+        target = get_command_input(inputs, input_id)
+        if target:
+            target.isEnabled = enabled
+
+    for input_id in ("expr", "step"):
+        target = get_command_input(inputs, input_id)
+        if target:
+            target.isEnabled = not enabled
+
+
 def format_point(point):
     if not point:
         return "Not set"
@@ -444,52 +505,73 @@ def collect_curve_samples(design, frame):
             continue
 
         pts = adsk.core.ObjectCollection.create()
-        step = curve["step"]
-        if step is None or step <= 0:
-            continue
-
         start = frame["start"]
         ux, uy = frame["u"]
         px, py = frame["p"]
+        is_parametric_curve = curve.get("type") == "parametric"
+        if is_parametric_curve:
+            t_start = curve.get("t_start", range_start)
+            t_end = curve.get("t_end", range_end)
+            t_step = curve.get("t_step", 0.1)
+            if t_step is None or t_step <= 0:
+                continue
+            sample_start = min(t_start, t_end)
+            sample_end = max(t_start, t_end)
+            x_expr = curve.get("x_expr", "t")
+            y_expr = curve.get("y_expr", "0")
 
-        # 浮動小数点精度問題を回避するためカウンター方式を使用
-        num_steps = max(1, int(round((range_end - range_start) / step)) + 1)
-        for i in range(num_steps):
-            x = range_start + i * step
-            if x > range_end + 1.0e-9:
-                break
-            
-            try:
-                y = safe_eval(curve["expr"], x, params)
-                if y is None or not isinstance(y, (int, float)):
+            num_steps = max(1, int(round((sample_end - sample_start) / t_step)) + 1)
+            for i in range(num_steps):
+                t_val = sample_start + i * t_step
+                if t_val > sample_end + 1.0e-9:
+                    break
+                result = safe_eval_parametric(x_expr, y_expr, t_val, params)
+                if result is None:
                     continue
-                # 数学的に無効な値をチェック
-                if math.isnan(y) or math.isinf(y):
-                    continue
-                    
-                # x startを原点にするため、xからrange_startを減算
+                x_val, y_val = result
                 pts.add(adsk.core.Point3D.create(
-                    start.x + ux * (x - range_start) + px * y,
-                    start.y + uy * (x - range_start) + py * y,
+                    start.x + ux * (x_val - sample_start) + px * y_val,
+                    start.y + uy * (x_val - sample_start) + py * y_val,
                     0
                 ))
-            except:
-                continue  # 個別ポイント計算の失敗は無視
+        else:
+            step = curve["step"]
+            if step is None or step <= 0:
+                continue
 
-        if pts.count < 2:
-            # エンドポイントが不足していればフォールバック
-            for x in (range_start, range_end):
+            num_steps = max(1, int(round((range_end - range_start) / step)) + 1)
+            for i in range(num_steps):
+                x = range_start + i * step
+                if x > range_end + 1.0e-9:
+                    break
+
                 try:
                     y = safe_eval(curve["expr"], x, params)
-                    if y is not None and isinstance(y, (int, float)) and not math.isnan(y) and not math.isinf(y):
-                        # x startを原点にするため、xからrange_startを減算
-                        pts.add(adsk.core.Point3D.create(
-                            start.x + ux * (x - range_start) + px * y,
-                            start.y + uy * (x - range_start) + py * y,
-                            0
-                        ))
+                    if y is None or not isinstance(y, (int, float)):
+                        continue
+                    if math.isnan(y) or math.isinf(y):
+                        continue
+
+                    pts.add(adsk.core.Point3D.create(
+                        start.x + ux * (x - range_start) + px * y,
+                        start.y + uy * (x - range_start) + py * y,
+                        0
+                    ))
                 except:
                     continue
+
+            if pts.count < 2:
+                for x in (range_start, range_end):
+                    try:
+                        y = safe_eval(curve["expr"], x, params)
+                        if y is not None and isinstance(y, (int, float)) and not math.isnan(y) and not math.isinf(y):
+                            pts.add(adsk.core.Point3D.create(
+                                start.x + ux * (x - range_start) + px * y,
+                                start.y + uy * (x - range_start) + py * y,
+                                0
+                            ))
+                    except:
+                        continue
 
         if pts.count > 1:
             samples.append(pts)
@@ -699,16 +781,30 @@ def load_curve_ui(inputs, is_parametric=False):
         return
     # Implicit mode
     if not is_parametric and curve.get("type") != "parametric":
-        inputs.itemById("expr").value = curve["expr"]
-        inputs.itemById("step").value = curve["step"]
+        expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "expr"))
+        step_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "step"))
+        if expr_input:
+            expr_input.value = curve["expr"]
+        if step_input:
+            step_input.value = curve["step"]
     # Parametric mode (x_expr, y_expr, t_step)
     else:
         if curve.get("type") == "parametric":
-            inputs.itemById("xExpr").value = curve.get("x_expr", "cos(t)")
-            inputs.itemById("yExpr").value = curve.get("y_expr", "sin(t)")
-            inputs.itemById("tStart").value = curve.get("t_start", 0.0)
-            inputs.itemById("tEnd").value = curve.get("t_end", math.pi * 2)
-            inputs.itemById("tStep").value = curve.get("t_step", 0.1)
+            x_expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "xExpr"))
+            y_expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "yExpr"))
+            t_start_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tStart"))
+            t_end_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tEnd"))
+            t_step_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tStep"))
+            if x_expr_input:
+                x_expr_input.value = curve.get("x_expr", "cos(t)")
+            if y_expr_input:
+                y_expr_input.value = curve.get("y_expr", "sin(t)")
+            if t_start_input:
+                t_start_input.value = curve.get("t_start", 0.0)
+            if t_end_input:
+                t_end_input.value = curve.get("t_end", math.pi * 2)
+            if t_step_input:
+                t_step_input.value = curve.get("t_step", 0.1)
 
 
 def save_curve_ui(inputs, is_parametric=False):
@@ -717,15 +813,29 @@ def save_curve_ui(inputs, is_parametric=False):
         return
     # Save implicit mode values
     if not is_parametric or curve.get("type") != "parametric":
-        curve["expr"] = inputs.itemById("expr").value
-        curve["step"] = inputs.itemById("step").value
+        expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "expr"))
+        step_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "step"))
+        if expr_input:
+            curve["expr"] = expr_input.value
+        if step_input:
+            curve["step"] = step_input.value
     # Save parametric mode values (x_expr, y_expr, t_step)
     elif curve.get("type") == "parametric":
-        curve["x_expr"] = inputs.itemById("xExpr").value
-        curve["y_expr"] = inputs.itemById("yExpr").value
-        curve["t_start"] = inputs.itemById("tStart").value
-        curve["t_end"] = inputs.itemById("tEnd").value
-        curve["t_step"] = inputs.itemById("tStep").value
+        x_expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "xExpr"))
+        y_expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "yExpr"))
+        t_start_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tStart"))
+        t_end_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tEnd"))
+        t_step_input = adsk.core.ValueCommandInput.cast(get_command_input(inputs, "tStep"))
+        if x_expr_input:
+            curve["x_expr"] = x_expr_input.value
+        if y_expr_input:
+            curve["y_expr"] = y_expr_input.value
+        if t_start_input:
+            curve["t_start"] = t_start_input.value
+        if t_end_input:
+            curve["t_end"] = t_end_input.value
+        if t_step_input:
+            curve["t_step"] = t_step_input.value
     commandState["previewDirty"] = True
 
 
@@ -986,7 +1096,58 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             )
             placement_children.addBoolValueInput("resetRange", "Reset Placement", False, "", False)
 
-            '            setup_tab = inputs.addTabCommandInput("setupTab", "Setup")\n            setup_children = setup_tab.children\n            setup_children.addTextBoxCommandInput(\n                "setupHelp", \n                "Info",\n                "Choose which saved functions to use for this run. Saved functions persist, but start unchecked each time.\n\n[Parametric Mode] Enable x(t), y(t) parametric curve support (x_expr, y_expr, t_start, t_end, t_step inputs)",\n                2,\n                True\n            )\n            setup_children.addBoolValueInput(\n                "isParametricMode", \n                "Parametric Mode (x(t), y(t))", \n                commandState["isParametricMode"], \n                "", \n                False\n            )\n            setup_children.addValueInput(\n                "rangeStart",\n                "x Start",\n                "",\n                adsk.core.ValueInput.createByReal(0.0)\n            )\n            setup_children.addValueInput(\n                "rangeEnd",\n                "x End (or t_end in parametric mode)",\n                "",\n                adsk.core.ValueInput.createByReal(10.0)\n            )\n            # Parametric-specific inputs (initially disabled until parametric mode is enabled)\n            setup_children.addTextBoxCommandInput(\n                "xExpr", \n                "x(t) Expression", \n                "cos(t)", \n                2,\n                False\n            )\n            setup_children.addTextBoxCommandInput(\n                "yExpr", \n                "y(t) Expression", \n                "sin(t)", \n                2,\n                False\n            )\n            setup_children.addValueInput(\n                "tStart",\n                "t Start",\n                "",\n                adsk.core.ValueInput.createByReal(0.0)\n            )\n            setup_children.addValueInput(\n                "tEnd",\n                "t End",\n                "",\n                adsk.core.ValueInput.createByReal(math.pi * 2)\n            )\n            setup_children.addValueInput(\n                "tStep",\n                "t Step",\n                "",\n                adsk.core.ValueInput.createByReal(0.1)\n            )\n            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", False, "", False)\n            setup_children.addBoolValueInput("invertX", "Invert X Axis", False, "", False)\n            setup_children.addBoolValueInput("invertY", "Invert Y Axis", False, "", False)\n            setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")'
+            setup_tab = inputs.addTabCommandInput("setupTab", "Setup")
+            setup_children = setup_tab.children
+            setup_children.addTextBoxCommandInput(
+                "setupHelp",
+                "Info",
+                "Enable Parametric Mode to input x(t), y(t). In implicit mode, use y=f(x).",
+                2,
+                True
+            )
+            setup_children.addBoolValueInput(
+                "isParametricMode",
+                "Parametric Mode (x(t), y(t))",
+                True,
+                "",
+                commandState["isParametricMode"]
+            )
+            setup_children.addValueInput(
+                "rangeStart",
+                "x Start",
+                "",
+                adsk.core.ValueInput.createByReal(commandState["rangeStart"])
+            )
+            setup_children.addValueInput(
+                "rangeEnd",
+                "x End (or fallback t-end)",
+                "",
+                adsk.core.ValueInput.createByReal(commandState["rangeEnd"])
+            )
+            setup_children.addStringValueInput("xExpr", "x(t) =", "cos(t)")
+            setup_children.addStringValueInput("yExpr", "y(t) =", "sin(t)")
+            setup_children.addValueInput(
+                "tStart",
+                "t Start",
+                "",
+                adsk.core.ValueInput.createByReal(0.0)
+            )
+            setup_children.addValueInput(
+                "tEnd",
+                "t End",
+                "",
+                adsk.core.ValueInput.createByReal(math.pi * 2)
+            )
+            setup_children.addValueInput(
+                "tStep",
+                "t Step",
+                "",
+                adsk.core.ValueInput.createByReal(0.1)
+            )
+            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", True, "", commandState["invertOrigin"])
+            setup_children.addBoolValueInput("invertX", "Invert X Axis", True, "", commandState["invertX"])
+            setup_children.addBoolValueInput("invertY", "Invert Y Axis", True, "", commandState["invertY"])
+            setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
             library_children = library_tab.children
@@ -1045,7 +1206,8 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             command.destroy.add(on_destroy)
             handlers.append(on_destroy)
 
-            load_curve_ui(inputs)
+            load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
+            sync_parametric_inputs_enabled(inputs)
             refresh_curve_checkboxes(inputs)
             update_placement_inputs(inputs)
             update_preview(command)
@@ -1095,16 +1257,19 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
 
             if changed.id == "list":
                 selectedIndex = changed.selectedItem.index
-                load_curve_ui(inputs)
+                load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
             elif changed.id.startswith("curveEnabled_"):
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
             elif changed.id == "add":
-                curves.append(default_curve())
+                if is_parametric_mode_active():
+                    curves.append(default_parametric_curve())
+                else:
+                    curves.append(default_curve())
                 changed.value = False
                 selectedIndex = len(curves) - 1
                 refresh_list(inputs.itemById("list"))
-                load_curve_ui(inputs)
+                load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 refresh_curve_checkboxes(inputs)
                 sync_curve_selection_from_inputs(inputs)
             elif changed.id == "del":
@@ -1113,11 +1278,18 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 changed.value = False
                 selectedIndex = min(selectedIndex, len(curves) - 1)
                 refresh_list(inputs.itemById("list"))
-                load_curve_ui(inputs)
+                load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 refresh_curve_checkboxes(inputs)
                 sync_curve_selection_from_inputs(inputs)
             elif changed.id == "expr" or changed.id == "step":
-                save_curve_ui(inputs)
+                save_curve_ui(inputs, is_parametric=False)
+            elif changed.id in ("xExpr", "yExpr", "tStart", "tEnd", "tStep"):
+                save_curve_ui(inputs, is_parametric=True)
+            elif changed.id == "isParametricMode":
+                commandState["isParametricMode"] = changed.value
+                sync_parametric_inputs_enabled(inputs)
+                load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
+                commandState["previewDirty"] = True
             elif changed.id == "baselineLine":
                 baseline = get_selected_baseline(inputs)
                 if baseline:

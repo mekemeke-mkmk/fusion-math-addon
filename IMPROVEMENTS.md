@@ -6,6 +6,71 @@
 
 ---
 
+## [2026-05-04 23:49] 媒介変数曲線機能の一気通貫修正（UI-評価-描画）
+**AI:** Codex
+
+**What（何を変更したか）**
+- `math curve 2.py` の媒介変数機能を、入力UIから描画まで実働するよう修正
+- 文字列化で無効化されていた Setup タブ定義を実コードとして復旧
+- `commands/functionSets/functions.py` の構文崩れを解消し、カテゴリ管理を安定化
+
+**Why（なぜ変更したか）**
+- `x(t), y(t)` の新機能が断片実装のまま不安定で、実際には使えない経路が存在していたため
+- UI入力ID未生成と参照処理の齟齬で、操作時の失敗リスクが高かったため
+
+**How（どう変更したか）**
+1. Setup タブに `isParametricMode`, `rangeStart/rangeEnd`, `xExpr/yExpr`, `tStart/tEnd/tStep`, 座標反転オプションを復元
+2. `safe_eval_parametric(...)` を追加し、媒介変数式の安全評価を本体に実装
+3. `collect_curve_samples(...)` に `type == parametric` 分岐を追加し、`x_expr/y_expr` でサンプリングしてスプライン生成
+4. `load_curve_ui/save_curve_ui` を安全参照化し、UI未存在時の失敗を回避
+5. モード切替時の入力有効化制御と、Add Function 時の型切替（implicit/parametric）を実装
+6. `commands/functionSets/functions.py` を再構成し、保存先解決・カテゴリ列挙ロジックを正常化
+
+**Purpose（目的）**
+- 媒介変数機能を「見た目だけある状態」から「実際に使える状態」へ引き上げる
+- 今後の機能追加時に壊れにくい基礎構造へ整理する
+
+**Impact（影響）**
+- Parametric Mode を有効化すると `x(t), y(t)` 入力で曲線描画が可能
+- implicit と parametric を同一ライブラリ内で併用可能
+- `functions.py` のロード失敗リスクが低減
+- 構文チェック実施: `python -m py_compile "math curve 2.py" "commands/functionSets/functions.py" "commands/functionSets/parametric_support.py"` 成功
+
+---
+
+## [2026-05-04 23:46] 媒介変数曲線機能の不安定要素・未完了項目の調査集成
+**AI:** Codex
+
+**What（何を変更したか）**
+- `x(t), y(t)` 媒介変数曲線機能の実装状態を横断調査し、不安定・未完了項目を集成
+- `math curve 2.py` と `commands/functionSets/*` の整合性を確認
+- 調査結果を本ログに記録
+
+**Why（なぜ変更したか）**
+- 最新機能として追加された媒介変数曲線描画の挙動に不安定さがあり、原因の切り分けが必要だったため
+- 実運用で「実装済み表示」と「実際に使える状態」のギャップを明確化する必要があったため
+
+**How（どう変更したか）**
+1. 媒介変数関連キーワード（`isParametricMode`, `x_expr`, `y_expr`, `t_step` など）でコードベースを横断検索
+2. `math curve 2.py` の UI 定義・保存処理・描画処理を突合し、機能配線の欠落を確認
+3. `commands/functionSets/functions.py`, `parametric_support.py`, `entry_ui.py` の実装完成度を静的レビュー
+
+**Purpose（目的）**
+- どこが「不安定（壊れやすい）」で、どこが「未完了（機能不成立）」かを分離して可視化する
+- 次の修正フェーズで優先順位を付けられる状態にする
+
+**Impact（影響）**
+- 以下の主要リスクを特定:
+- 1) `math curve 2.py` の Setup タブ生成コードが文字列化されており実行されないため、媒介変数用 UI（`xExpr`, `yExpr`, `tStart`, `tEnd`, `tStep`, `isParametricMode`）が作成されない
+- 2) その状態で `load_curve_ui/save_curve_ui` は媒介変数入力IDを参照するため、実行経路次第で参照失敗や機能無効化が起こり得る
+- 3) 実描画系（`collect_curve_samples`）が暗黙関数 `y=f(x)` 前提で、`type=parametric` の `x_expr/y_expr` を使う計算分岐が未接続
+- 4) `commands/functionSets/entry_ui.py` が 0 byte で、UI 連携層が未実装
+- 5) `commands/functionSets/functions.py` はクラスdocstring/メソッドインデントが崩れており、現状はモジュールとして不安定（ロード失敗リスク）
+- 6) `commands/functionSets/parametric_support.py` は `safe_eval_parametric()` が `t_range_end` を使わず、単一点評価のみでサンプリング描画に未接続
+- 総合判定: 「媒介変数機能は部分実装の断片はあるが、UI入力→評価→サンプリング→描画の一連パスが未完成」
+
+---
+
 ## 📝 ルール
 - すべての変更は1エントリとして記録する
 - 必ず「いつ・何を・なぜ・どうしたか」を書く
