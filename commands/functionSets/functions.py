@@ -15,9 +15,20 @@ try:
 except ImportError:
     pass
 
+# Import parametric support module for x(t), y(t) curves
+try:
+    from .parametric_support import (
+        safe_eval_parametric,
+        default_parametric_curve,
+        create_parametric_curve_from_implicit,
+        log_improvement_plan
+    )
+except ImportError:
+    pass  # Parametric support is optional
+
 
 class FunctionSetsManager:
-    """
+"""
     Manages function sets for mathematical curve generation.
     
     Features:
@@ -37,10 +48,11 @@ class FunctionSetsManager:
         if not os.path.exists(self.function_sets_folder):
             os.makedirs(self.function_sets_folder)
     
-    def get_available_folders(self) -> Dict[str, str]:
+        def get_available_folders(self) -> Dict[str, str]:
         """Returns available folder paths."""
         return {
             'default': self.function_sets_folder,
+            'parametric': os.path.join(self.function_sets_folder, 'parametric'),  # New parametric curves support
             'engineering': os.path.join(self.function_sets_folder, 'engineering'),
             'architecture': os.path.join(self.function_sets_folder, 'architecture'),
             'art': os.path.join(self.function_sets_folder, 'art')

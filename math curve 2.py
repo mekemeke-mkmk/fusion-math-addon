@@ -3,6 +3,7 @@ import adsk.fusion
 import traceback
 import math
 import os
+from datetime import datetime
 
 handlers = []
 curves = []
@@ -43,15 +44,29 @@ commandState = {
     "rangeEnd": 10.0,
     "invertOrigin": False,
     "invertX": False,
-    "invertY": False
+    "invertY": False,
+    "isParametricMode": False  # Parametric function support: x(t), y(t) mode
 }
 
 
 def default_curve():
     return {
         "name": f"Curve {len(curves) + 1}",
+        "type": "implicit",  # Type: implicit (y=f(x)) or parametric (x(t), y(t))
         "expr": "sin(x)",
         "step": 0.2,
+        "enabled": False
+    }
+
+def default_parametric_curve():
+    return {
+        "name": f"Parametric Curve {len(curves) + 1}",
+        "type": "parametric",
+        "x_expr": "cos(t)",
+        "y_expr": "sin(t)",
+        "t_step": 0.1,
+        "t_start": 0.0,
+        "t_end": math.pi * 2,
         "enabled": False
     }
 
@@ -678,16 +693,39 @@ def any_curve_enabled():
     return any(curve.get("enabled", False) for curve in curves)
 
 
-def load_curve_ui(inputs):
+def load_curve_ui(inputs, is_parametric=False):
     curve = curves[selectedIndex]
-    inputs.itemById("expr").value = curve["expr"]
-    inputs.itemById("step").value = curve["step"]
+    if not curve:
+        return
+    # Implicit mode
+    if not is_parametric and curve.get("type") != "parametric":
+        inputs.itemById("expr").value = curve["expr"]
+        inputs.itemById("step").value = curve["step"]
+    # Parametric mode (x_expr, y_expr, t_step)
+    else:
+        if curve.get("type") == "parametric":
+            inputs.itemById("xExpr").value = curve.get("x_expr", "cos(t)")
+            inputs.itemById("yExpr").value = curve.get("y_expr", "sin(t)")
+            inputs.itemById("tStart").value = curve.get("t_start", 0.0)
+            inputs.itemById("tEnd").value = curve.get("t_end", math.pi * 2)
+            inputs.itemById("tStep").value = curve.get("t_step", 0.1)
 
 
-def save_curve_ui(inputs):
+def save_curve_ui(inputs, is_parametric=False):
     curve = curves[selectedIndex]
-    curve["expr"] = inputs.itemById("expr").value
-    curve["step"] = inputs.itemById("step").value
+    if not curve:
+        return
+    # Save implicit mode values
+    if not is_parametric or curve.get("type") != "parametric":
+        curve["expr"] = inputs.itemById("expr").value
+        curve["step"] = inputs.itemById("step").value
+    # Save parametric mode values (x_expr, y_expr, t_step)
+    elif curve.get("type") == "parametric":
+        curve["x_expr"] = inputs.itemById("xExpr").value
+        curve["y_expr"] = inputs.itemById("yExpr").value
+        curve["t_start"] = inputs.itemById("tStart").value
+        curve["t_end"] = inputs.itemById("tEnd").value
+        curve["t_step"] = inputs.itemById("tStep").value
     commandState["previewDirty"] = True
 
 
@@ -948,31 +986,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             )
             placement_children.addBoolValueInput("resetRange", "Reset Placement", False, "", False)
 
-            setup_tab = inputs.addTabCommandInput("setupTab", "Setup")
-            setup_children = setup_tab.children
-            setup_children.addTextBoxCommandInput(
-                "setupHelp",
-                "Info",
-                "Choose which saved functions to use for this run. Saved functions persist, but start unchecked each time.",
-                2,
-                True
-            )
-            setup_children.addValueInput(
-                "rangeStart",
-                "x Start",
-                "",
-                adsk.core.ValueInput.createByReal(0.0)
-            )
-            setup_children.addValueInput(
-                "rangeEnd",
-                "x End",
-                "",
-                adsk.core.ValueInput.createByReal(10.0)
-            )
-            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", False, "", False)
-            setup_children.addBoolValueInput("invertX", "Invert X Axis", False, "", False)
-            setup_children.addBoolValueInput("invertY", "Invert Y Axis", False, "", False)
-            setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")
+            '            setup_tab = inputs.addTabCommandInput("setupTab", "Setup")\n            setup_children = setup_tab.children\n            setup_children.addTextBoxCommandInput(\n                "setupHelp", \n                "Info",\n                "Choose which saved functions to use for this run. Saved functions persist, but start unchecked each time.\n\n[Parametric Mode] Enable x(t), y(t) parametric curve support (x_expr, y_expr, t_start, t_end, t_step inputs)",\n                2,\n                True\n            )\n            setup_children.addBoolValueInput(\n                "isParametricMode", \n                "Parametric Mode (x(t), y(t))", \n                commandState["isParametricMode"], \n                "", \n                False\n            )\n            setup_children.addValueInput(\n                "rangeStart",\n                "x Start",\n                "",\n                adsk.core.ValueInput.createByReal(0.0)\n            )\n            setup_children.addValueInput(\n                "rangeEnd",\n                "x End (or t_end in parametric mode)",\n                "",\n                adsk.core.ValueInput.createByReal(10.0)\n            )\n            # Parametric-specific inputs (initially disabled until parametric mode is enabled)\n            setup_children.addTextBoxCommandInput(\n                "xExpr", \n                "x(t) Expression", \n                "cos(t)", \n                2,\n                False\n            )\n            setup_children.addTextBoxCommandInput(\n                "yExpr", \n                "y(t) Expression", \n                "sin(t)", \n                2,\n                False\n            )\n            setup_children.addValueInput(\n                "tStart",\n                "t Start",\n                "",\n                adsk.core.ValueInput.createByReal(0.0)\n            )\n            setup_children.addValueInput(\n                "tEnd",\n                "t End",\n                "",\n                adsk.core.ValueInput.createByReal(math.pi * 2)\n            )\n            setup_children.addValueInput(\n                "tStep",\n                "t Step",\n                "",\n                adsk.core.ValueInput.createByReal(0.1)\n            )\n            setup_children.addBoolValueInput("invertOrigin", "Invert Origin", False, "", False)\n            setup_children.addBoolValueInput("invertX", "Invert X Axis", False, "", False)\n            setup_children.addBoolValueInput("invertY", "Invert Y Axis", False, "", False)\n            setup_children.addGroupCommandInput("curveSelectionGroup", "Functions To Draw")'
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
             library_children = library_tab.children
