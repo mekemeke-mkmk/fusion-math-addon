@@ -6,6 +6,90 @@
 
 ---
 
+## [2026-05-06 19:49] Libraryタブの編集モデル自然化とタブ遷移同期強化
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Library` を「選択中関数を編集するUI」に再設計
+- `Name` 入力と `Save Changes` ボタンを追加
+- `Setup/Library` タブ移動時に関数リストと Functions To Draw の再同期を強化
+
+**Why（なぜ変更したか）**
+- Saved Functions で選択中の関数内容と下段編集欄が一致しない不自然さがあり、編集意図が伝わりづらかったため
+- 新規作成直後の関数が Setup 側で即使用できない同期漏れが残っていたため
+
+**How（どう変更したか）**
+1. `load_curve_ui()` で選択中関数の `name/type/式/step` を編集欄へ必ず反映
+2. `save_curve_ui()` を選択中関数の型（implicit/parametric）基準で保存するよう変更
+3. `curveNameEdit` を追加し、名前変更を即座に `Saved Functions` と `Functions To Draw` へ反映
+4. `isParametricMode` 切替時に選択中関数の `type` を明示更新し、必要キーの初期値を補完
+5. `saveCurve` ボタン追加（上書き保存を明示）
+6. `setupTab/libraryTab` へ移動時に `refresh_list + load_curve_ui + refresh_curve_checkboxes` を実行
+
+**Purpose（目的）**
+- ユーザーが「上で選んだ関数を下で編集して保存する」という直感的な操作をできるようにする
+- タブ移動後も描画対象一覧と関数データの整合性を保つ
+
+**Impact（影響）**
+- 選択中関数編集の一貫性が向上
+- 新規関数や編集内容が Setup 側へ反映されやすくなり、運用上の混乱を低減
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
+## [2026-05-06 19:38] Drawチェック未反映とCreate Curves無効化の修正
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Functions To Draw` 再構築時の入力ID衝突を解消
+- `ValidateInputs` 時に最新のチェック状態を同期する処理を追加
+
+**Why（なぜ変更したか）**
+- Drawをチェックしても `enabled` が更新されず、`Create Curves` が灰色のままになる不具合が発生していたため
+
+**How（どう変更したか）**
+1. `refresh_curve_checkboxes()` の先頭で `curveName_* / curveEnabled_* / curveInvert* / curveSelectionEmptyLabel` の旧入力を `deleteMe()` で先に削除
+2. その後にテーブル行を再生成してID重複を防止
+3. `ValidateInputsHandler` で `sync_curve_selection_from_inputs(args.inputs)` を実行し、ボタン有効判定前に最新UI状態を反映
+
+**Purpose（目的）**
+- Drawチェックと有効判定の整合性を回復し、描画フローを正常化する
+
+**Impact（影響）**
+- Drawチェックが確実に `enabled` へ反映
+- `Create Curves` が条件成立時に有効化される
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
+## [2026-05-06 19:21] Functions To Draw の関数名復旧とDraw反映安定化
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Functions To Draw` テーブルに関数名列を追加し、各チェックボックスの対象関数を明示
+- 描画ON/OFF用チェックボックスを `Draw` として独立表示
+- テーブル配下チェックイベントの検出条件を強化
+
+**Why（なぜ変更したか）**
+- 先頭チェックがどの関数に対応するか判別できず、操作性が低下していたため
+- チェックしても描画されないケースがあり、イベント拾い漏れの可能性があったため
+
+**How（どう変更したか）**
+1. テーブル列を `Function | Draw | InvO | InvX | InvY` の5列構成へ変更
+2. 各行先頭に read-only の関数名入力を追加
+3. `changed.id` 判定を `startswith` 依存から部分一致へ変更し、テーブル文脈でも検知しやすく改善
+4. 空テーブル時のプレースホルダ入力IDの再作成衝突を回避
+
+**Purpose（目的）**
+- UIの可読性と操作の確実性を回復し、描画ON/OFFを直感的にする
+
+**Impact（影響）**
+- 関数名が常時見えるため、どの行を操作しているか判別可能
+- Drawチェックの反映安定性が向上
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
 ## [2026-05-05 00:10] 直線選択・タブ移動時の重さ改善（不要プレビュー抑制）
 **AI:** Codex
 
