@@ -6,6 +6,32 @@
 
 ---
 
+## [2026-05-06 19:56] Setup反映遅延対策: Refreshボタン追加とテーブル強制再構築
+**AI:** Codex
+
+**What（何を変更したか）**
+- Setup タブに `Refresh Functions` ボタンを追加
+- `Functions To Draw` 更新時にテーブルを削除して再作成する強制再構築方式へ変更
+
+**Why（なぜ変更したか）**
+- Library で追加した関数が Setup 側に即時表示されず、コマンド再起動まで反映されないケースが残っていたため
+- テーブル更新の視覚反映タイミングが不安定なため、完全再構築で状態不整合を回避するため
+
+**How（どう変更したか）**
+1. Setup UI に `refreshSetupFunctions` を追加
+2. `refresh_curve_checkboxes()` で既存 `curveSelectionTable` を `deleteMe()` してから新規作成
+3. `setupTab` 遷移時と `Refresh Functions` 押下時に `refresh_list + refresh_curve_checkboxes + sync_curve_selection_from_inputs` を実行
+
+**Purpose（目的）**
+- 「今ある関数一覧」を Setup へ確実に反映させ、再起動依存をなくす
+
+**Impact（影響）**
+- Setup 側で手動再同期できる導線を確保
+- 関数追加直後でもテーブル再構築で最新状態を表示しやすくなる
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
 ## [2026-05-06 19:49] Libraryタブの編集モデル自然化とタブ遷移同期強化
 **AI:** Codex
 

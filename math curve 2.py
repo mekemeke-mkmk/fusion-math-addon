@@ -746,8 +746,16 @@ def refresh_list(dropdown):
 
 def refresh_curve_checkboxes(inputs):
     """Functions To Draw のテーブルを再構築"""
+    setup_tab = adsk.core.TabCommandInput.cast(get_command_input(inputs, "setupTab"))
     table = adsk.core.TableCommandInput.cast(get_command_input(inputs, "curveSelectionTable"))
-    if not table:
+    if setup_tab:
+        if table:
+            try:
+                table.deleteMe()
+            except:
+                pass
+        table = setup_tab.children.addTableCommandInput("curveSelectionTable", "", 5, "4:1:1:1:1")
+    elif not table:
         return
 
     stale_inputs = []
@@ -1230,6 +1238,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 1,
                 True
             )
+            setup_children.addBoolValueInput("refreshSetupFunctions", "Refresh Functions", False, "", False)
             setup_children.addTableCommandInput("curveSelectionTable", "", 5, "4:1:1:1:1")
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
@@ -1380,6 +1389,11 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
+            elif changed.id == "refreshSetupFunctions":
+                changed.value = False
+                refresh_list(inputs.itemById("list"))
+                refresh_curve_checkboxes(inputs)
+                sync_curve_selection_from_inputs(inputs)
             elif ("curveEnabled_" in changed.id) or ("curveInvert" in changed.id):
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
