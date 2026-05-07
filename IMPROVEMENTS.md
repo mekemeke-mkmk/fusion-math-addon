@@ -6,6 +6,31 @@
 
 ---
 
+## [2026-05-06 21:04] Refresh Functions 実行時の `list` None エラー修正
+**AI:** Codex
+
+**What（何を変更したか）**
+- `Refresh Functions` 実行時に発生した `AttributeError: 'NoneType' object has no attribute 'listItems'` を修正
+- Libraryリスト更新処理を安全ラッパー化
+
+**Why（なぜ変更したか）**
+- Setup タブ側イベントで `inputs.itemById("list")` が取得できないケースがあり、`refresh_list()` が `None` を受けてクラッシュしていたため
+
+**How（どう変更したか）**
+1. `refresh_list(dropdown)` に `None` ガードを追加
+2. `refresh_library_list_input(inputs)` を新設し、`list` 取得→型キャスト→安全更新を一元化
+3. `InputChangedHandler` 内の `refresh_list(inputs.itemById("list"))` 呼び出しをすべて安全ラッパーへ置換
+
+**Purpose（目的）**
+- タブ状態やUI再構築タイミングに依存せず、関数リスト更新を安全に実行できるようにする
+
+**Impact（影響）**
+- `Refresh Functions` 押下時の例外が解消
+- Setup/Library 間同期処理の耐障害性が向上
+- 構文チェック: `python -m py_compile "math curve 2.py"` 成功
+
+---
+
 ## [2026-05-06 19:56] Setup反映遅延対策: Refreshボタン追加とテーブル強制再構築
 **AI:** Codex
 

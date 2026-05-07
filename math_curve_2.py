@@ -733,6 +733,8 @@ def create_final_curves(sketch, design):
 
 
 def refresh_list(dropdown):
+    if not dropdown:
+        return
     global selectedIndex
     if not curves:
         selectedIndex = 0
@@ -742,6 +744,11 @@ def refresh_list(dropdown):
     dropdown.listItems.clear()
     for index, curve in enumerate(curves):
         dropdown.listItems.add(curve["name"], index == selectedIndex)
+
+
+def refresh_library_list_input(inputs):
+    dropdown = adsk.core.DropDownCommandInput.cast(get_command_input(inputs, "list"))
+    refresh_list(dropdown)
 
 
 def refresh_curve_checkboxes(inputs):
@@ -1382,16 +1389,16 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
             elif changed.id == "setupTab":
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
             elif changed.id == "libraryTab":
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
             elif changed.id == "refreshSetupFunctions":
                 changed.value = False
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 sync_curve_selection_from_inputs(inputs)
             elif ("curveEnabled_" in changed.id) or ("curveInvert" in changed.id):
@@ -1405,7 +1412,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                     curves.append(default_curve())
                 changed.value = False
                 selectedIndex = len(curves) - 1
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
@@ -1415,7 +1422,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                     curves.pop(selectedIndex)
                 changed.value = False
                 selectedIndex = min(selectedIndex, len(curves) - 1)
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
@@ -1424,12 +1431,12 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 should_update_preview = True
             elif changed.id == "expr" or changed.id == "step":
                 save_curve_ui(inputs)
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 should_update_preview = True
             elif changed.id in ("xExpr", "yExpr", "tStart", "tEnd", "tStep"):
                 save_curve_ui(inputs)
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 should_update_preview = True
             elif changed.id == "isParametricMode":
@@ -1448,16 +1455,16 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                     curve.setdefault("step", 0.2)
                 sync_parametric_inputs_enabled(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
             elif changed.id == "curveNameEdit":
                 save_curve_ui(inputs)
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
             elif changed.id == "saveCurve":
                 changed.value = False
                 save_curve_ui(inputs)
-                refresh_list(inputs.itemById("list"))
+                refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
