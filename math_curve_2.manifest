@@ -7,6 +7,6 @@
         "": "MATH CURVE lab2"
     },
     "version": "1.0.0",
-    "runOnStartup": false,
+    "runOnStartup": true,
     "supportedOS": "windows|mac"
 }

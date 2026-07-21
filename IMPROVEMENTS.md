@@ -1,3 +1,56 @@
+---
+
+## [2026-05-31 15:40] 起動時自動登録とスケッチ未編集中警告の起動時抑制
+**AI:** Codex
+
+**What（何を変更したか）**
+- `runOnStartup` を有効化して、Fusion 起動時にアドインを自動登録するよう変更
+- 起動時の `run()` からスケッチ環境チェックによる即時警告を削除
+- スケッチが開かれていない状態でコマンドを実行した時だけ警告するよう調整
+
+**Why（なぜ変更したか）**
+- 起動するたびに「スケッチを起動している時しか起動できません」という警告が出てしまい、毎回手動で再実行する必要があったため
+- 最初にスケッチを開いた時点から、アドインのボタンが既に有効になっている状態にしたかったため
+
+**How（どう変更したか）**
+1. `math_curve_2.manifest` の `runOnStartup` を `true` に変更
+2. `run()` を「コマンド定義とボタンの登録のみ」に変更
+3. `is_sketch_environment_ready()` を静かな判定に変更し、警告はコマンド実行時のみ出すよう整理
+
+**Purpose（目的）**
+- Fusion 起動直後にアドインを常駐登録し、最初にスケッチを開いた時点で再実行不要にする
+
+**Impact（影響）**
+- 起動時の警告が消える
+- スケッチを開いた時点で `Math Curve Sketch` が利用可能になる
+- スケッチ未編集中に実行した場合のみ警告が出る
+- 構文チェック: `python -m py_compile math_curve_2.py` 成功
+
+---
+
+## [2026-05-31 15:35] Reload Math Curve 機能の完全削除
+**AI:** Codex
+
+**What（何を変更したか）**
+- アドイン内の Reload Math Curve ボタンと再起動ハンドラを削除
+- 起動時に再生成していた reload 用コマンド定義を除去
+- 使われなくなった commands/reloadCommand/resources の画像ファイルを削除
+
+**Why（なぜ変更したか）**
+- メインの Math Curve Sketch 以外に Reload math curve ボタンが表示されてしまい、不要な再起動導線が残っていたため
+- 機能ごと削除して、ユーザーに見える UI を単一化するため
+
+**How（どう変更したか）**
+1. math_curve_2.py から RELOAD_CMD_ID、reload アイコンフォルダ参照、reload 用ハンドラを削除
+2. `run()` と `remove_ui()` を main command のみを扱う形に簡素化
+3. commands/reloadCommand/resources の PNG を削除して、未使用資産を掃除
+**Purpose（目的）**
+- アドインを起動したときに Math Curve Sketch だけが表示される状態に戻す
+
+**Impact（影響）**
+- Reload math curve ボタンは表示されなくなる
+- 再起動ボタン経由の再構築処理は利用不可になるが、通常の Math Curve Sketch 起動は維持
+- 構文チェックはこの後に確認する
 # IMPROVEMENTS LOG
 
 このファイルには「なぜ変更したか」を必ず記録する。
@@ -434,4 +487,5 @@
 - 数式評価のエラーが消失
 
 ---
+
 
