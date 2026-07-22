@@ -1,5 +1,30 @@
 ---
 
+## [2026-07-22 09:00] README に使用手順と trial/license 状況を追加
+**AI:** Codex
+
+**What（何を変更したか）**
+- `README.md` に step-by-step の使用手順を追加
+- trial / license / Autodesk Entitlement API の現状を明記
+- Marketplace 向けの注意事項として Fusion 対象であることを追記
+
+**Why（なぜ変更したか）**
+- レビューで「使い方が step-by-step で書かれていない」「trial / license / Entitlement API の説明・実装がない」と指摘されたため
+- 実装の現状を README 上で誤解なく説明する必要があったため
+
+**How（どう変更したか）**
+1. `How to Use` セクションを追加
+2. `Trial and License` セクションで未実装である点を明記
+3. `Marketplace Notes` セクションで Fusion 向け add-in であることを整理
+
+**Purpose（目的）**
+- レビュー対応用の説明を README に集約し、審査担当者が最初に確認する情報を明確化する
+
+**Impact（影響）**
+- 使用手順とライセンス状況が README だけで把握しやすくなる
+
+---
+
 ## [2026-05-31 15:40] 起動時自動登録とスケッチ未編集中警告の起動時抑制
 **AI:** Codex
 
@@ -487,5 +512,4 @@
 - 数式評価のエラーが消失
 
 ---
-
 
