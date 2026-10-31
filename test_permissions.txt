@@ -1,2 +1,0 @@
-# This file was created to test write permissions
-Created successfully!

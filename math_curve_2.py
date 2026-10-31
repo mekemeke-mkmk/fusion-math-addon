@@ -3,13 +3,17 @@ import adsk.fusion
 import traceback
 import math
 import os
+import re
 from datetime import datetime
+
+from .license_manager import check_license
 
 handlers = []
 curves = []
 selectedIndex = 0
 
 MAIN_CMD_ID = "MathCurveSketch"
+RELOAD_CMD_ID = "MathCurveSketchReload"
 PANEL_ID = "SketchCreatePanel"
 ICON_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -18,11 +22,25 @@ ICON_FOLDER = os.path.join(
     "resources",
     ""
 )
+RELOAD_ICON_FOLDER = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "commands",
+    "reloadCommand",
+    "resources",
+    ""
+)
 
 previewCurves = []
 previewGuides = []
 
 SNAP_PIXEL_RADIUS = 14.0
+
+licenseState = {
+    "checked": False,
+    "allowed": False,
+    "mode": "unknown",
+    "message": ""
+}
 
 commandState = {
     "start": None,
@@ -174,7 +192,7 @@ def parse_variables_text(text):
         name, raw_value = part.split("=", 1)
         name = name.strip()
         raw_value = raw_value.strip()
-        if not name:
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
             continue
         try:
             value = float(raw_value)
@@ -577,8 +595,8 @@ def collect_curve_samples(design, frame):
                     continue
                 x_val, y_val = result
                 pts.add(adsk.core.Point3D.create(
-                    start.x + ux * (x_val - sample_start) + px * y_val,
-                    start.y + uy * (x_val - sample_start) + py * y_val,
+                    start.x + ux * x_val + px * y_val,
+                    start.y + uy * x_val + py * y_val,
                     0
                 ))
         else:
@@ -931,7 +949,7 @@ def refresh_setup_variables_table(inputs):
         for var_name, default_value in variables.items():
             override_key = f"{curve.get('name', '')}::{var_name}"
             current_value = commandState.get("setupVarOverrides", {}).get(override_key, default_value)
-            var_key = var_name.replace(" ", "_")
+            var_key = var_name
 
             curve_name_input = inputs.addStringValueInput(
                 f"curveVarCurve_{curve_index}_{row}",
@@ -1141,7 +1159,10 @@ def update_preview(command=None, force=False):
 
 
 def is_sketch_environment_ready(ui):
-    return bool(get_active_sketch())
+    if get_active_sketch():
+        return True
+    ui.messageBox("Open or edit a sketch before running Math Curve Sketch.")
+    return False
 
 
 def delete_control_if_exists(panel, control_id):
@@ -1156,14 +1177,27 @@ def delete_definition_if_exists(ui, command_id):
         cmd_def.deleteMe()
 
 
-def remove_ui():
+def get_reload_icon_folder():
+    required_files = ("16x16.png", "32x32.png", "64x64.png")
+    if os.path.isdir(RELOAD_ICON_FOLDER) and all(
+        os.path.isfile(os.path.join(RELOAD_ICON_FOLDER, name)) for name in required_files
+    ):
+        return RELOAD_ICON_FOLDER
+    return ICON_FOLDER
+
+
+def remove_ui(remove_reload_definition=True, remove_reload_control=True):
     app = adsk.core.Application.get()
     ui = app.userInterface
     panel = ui.allToolbarPanels.itemById(PANEL_ID)
     if panel:
         delete_control_if_exists(panel, MAIN_CMD_ID)
+        if remove_reload_control:
+            delete_control_if_exists(panel, RELOAD_CMD_ID)
 
     delete_definition_if_exists(ui, MAIN_CMD_ID)
+    if remove_reload_definition:
+        delete_definition_if_exists(ui, RELOAD_CMD_ID)
 
 
 def create_or_replace_button(panel, cmd_def):
@@ -1171,6 +1205,36 @@ def create_or_replace_button(panel, cmd_def):
     control = panel.controls.addCommand(cmd_def)
     control.isPromoted = True
     return control
+
+
+def restart_main_ui():
+    global handlers
+    clear_preview()
+    handlers = []
+    remove_ui(remove_reload_definition=False, remove_reload_control=False)
+
+    app = adsk.core.Application.get()
+    ui = app.userInterface
+    panel = ui.allToolbarPanels.itemById(PANEL_ID)
+
+    cmd_def = ui.commandDefinitions.addButtonDefinition(
+        MAIN_CMD_ID,
+        "Math Curve Sketch",
+        "Create sketch curves from mathematical functions.",
+        ICON_FOLDER
+    )
+
+    on_created = CommandCreatedHandler()
+    cmd_def.commandCreated.add(on_created)
+    handlers.append(on_created)
+
+    create_or_replace_button(panel, cmd_def)
+
+    try:
+        cmd_def.execute()
+        ui.messageBox("Math Curve was reloaded and reopened.")
+    except:
+        ui.messageBox("Math Curve buttons were rebuilt. If the command did not reopen, run Math Curve Sketch again.")
 
 
 def run(context):
@@ -1183,7 +1247,15 @@ def run(context):
 
         panel = ui.allToolbarPanels.itemById(PANEL_ID)
         delete_control_if_exists(panel, MAIN_CMD_ID)
+        delete_control_if_exists(panel, RELOAD_CMD_ID)
         delete_definition_if_exists(ui, MAIN_CMD_ID)
+
+        reload_def = ui.commandDefinitions.itemById(RELOAD_CMD_ID)
+        if reload_def:
+            try:
+                reload_def.deleteMe()
+            except:
+                reload_def = ui.commandDefinitions.itemById(RELOAD_CMD_ID)
 
         cmd_def = ui.commandDefinitions.addButtonDefinition(
             MAIN_CMD_ID,
@@ -1196,7 +1268,20 @@ def run(context):
         cmd_def.commandCreated.add(on_created)
         handlers.append(on_created)
 
+        if not reload_def:
+            reload_def = ui.commandDefinitions.addButtonDefinition(
+                RELOAD_CMD_ID,
+                "Reload Math Curve",
+                "Recovery button for Math Curve. Rebuild the tool buttons and reopen the command.",
+                get_reload_icon_folder()
+            )
+
+        on_reload = ReloadCommandCreatedHandler()
+        reload_def.commandCreated.add(on_reload)
+        handlers.append(on_reload)
+
         create_or_replace_button(panel, cmd_def)
+        create_or_replace_button(panel, reload_def)
     except:
         ui.messageBox(traceback.format_exc())
 
@@ -1221,13 +1306,6 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 command.isPositionDependent = True
             except:
                 pass
-
-            ui = adsk.core.Application.get().userInterface
-            if not is_sketch_environment_ready(ui):
-                ui.messageBox(
-                    "Open or edit a sketch before running Math Curve Sketch."
-                )
-                return
 
             reset_point_state()
             reset_curve_selection()
@@ -1258,13 +1336,13 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             placement_children.addTextBoxCommandInput("snapInfo", "Snap", "Snap target: Not set", 1, True)
             placement_children.addValueInput(
                 "angle",
-                "Angle",
+                "Baseline Angle",
                 "rad",
                 adsk.core.ValueInput.createByReal(0.0)
             )
             placement_children.addValueInput(
                 "length",
-                "Length",
+                "Baseline Length",
                 "",
                 adsk.core.ValueInput.createByReal(10.0)
             )
@@ -1359,7 +1437,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             library_children.addTextBoxCommandInput(
                 "functionHelp",
                 "Info",
-                "Select a function above, edit fields below, then click Save Changes. Variables format: a=1,b=2",
+                "Select a function above, edit fields below, then click Save Changes. Variables must use letters, digits, and underscores (for example: a=1,b_2=2).",
                 2,
                 True
             )
@@ -1402,6 +1480,33 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             refresh_setup_variables_table(inputs)
             update_placement_inputs(inputs)
             update_preview(command)
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class ReloadExecuteHandler(adsk.core.CommandEventHandler):
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            restart_main_ui()
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class ReloadCommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            command = args.command
+            on_execute = ReloadExecuteHandler()
+            command.execute.add(on_execute)
+            handlers.append(on_execute)
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())
@@ -1629,13 +1734,28 @@ class ExecuteHandler(adsk.core.CommandEventHandler):
 
     def notify(self, args):
         try:
+            app = adsk.core.Application.get()
             sketch = get_active_sketch()
             design = get_active_design()
             if not sketch or not range_is_final():
+                if not sketch:
+                    app.userInterface.messageBox("Open or edit a sketch before running Math Curve Sketch.")
+                return
+            license_status = check_license(app)
+            licenseState["checked"] = True
+            licenseState["allowed"] = license_status.allowed
+            licenseState["mode"] = license_status.mode
+            licenseState["message"] = license_status.message
+            if not license_status.allowed:
+                app.userInterface.messageBox(license_status.message, "Math Curve License")
                 return
 
             clear_preview()
-            create_final_curves(sketch, design)
+            if not create_final_curves(sketch, design):
+                app.userInterface.messageBox(
+                    "No curve could be created. Check the selected functions, variable values, and sampling range.",
+                    "Math Curve",
+                )
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())

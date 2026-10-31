@@ -1,0 +1,13 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Local virtual environments
+.venv/
+venv/
+
+# OS-generated files
+Thumbs.db
+desktop.ini
+.DS_Store
