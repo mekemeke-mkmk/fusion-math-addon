@@ -3,7 +3,10 @@ import adsk.fusion
 import traceback
 import math
 import os
+import re
 from datetime import datetime
+
+from .license_manager import check_license
 
 handlers = []
 curves = []
@@ -32,6 +35,13 @@ previewGuides = []
 
 SNAP_PIXEL_RADIUS = 14.0
 
+licenseState = {
+    "checked": False,
+    "allowed": False,
+    "mode": "unknown",
+    "message": ""
+}
+
 commandState = {
     "start": None,
     "end": None,
@@ -45,7 +55,8 @@ commandState = {
     "invertOrigin": False,
     "invertX": False,
     "invertY": False,
-    "isParametricMode": False  # Parametric function support: x(t), y(t) mode
+    "isParametricMode": False,  # Parametric function support: x(t), y(t) mode
+    "setupVarOverrides": {}
 }
 
 
@@ -54,6 +65,8 @@ def default_curve():
         "name": f"Curve {len(curves) + 1}",
         "type": "implicit",  # Type: implicit (y=f(x)) or parametric (x(t), y(t))
         "expr": "sin(x)",
+        "variables_text": "",
+        "variables": {},
         "step": 0.2,
         "enabled": False,
         "invert_origin": False,
@@ -67,6 +80,8 @@ def default_parametric_curve():
         "type": "parametric",
         "x_expr": "cos(t)",
         "y_expr": "sin(t)",
+        "variables_text": "",
+        "variables": {},
         "t_step": 0.1,
         "t_start": 0.0,
         "t_end": math.pi * 2,
@@ -164,6 +179,27 @@ def safe_eval(expr, val, params):
         return None  # sqrt(-1)等の数学的エラー
     except Exception:
         return None  # その他の予期しないエラー
+
+
+def parse_variables_text(text):
+    variables = {}
+    if not text:
+        return variables
+    parts = [p.strip() for p in text.split(",")]
+    for part in parts:
+        if not part or "=" not in part:
+            continue
+        name, raw_value = part.split("=", 1)
+        name = name.strip()
+        raw_value = raw_value.strip()
+        if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name):
+            continue
+        try:
+            value = float(raw_value)
+        except:
+            continue
+        variables[name] = value
+    return variables
 
 
 def safe_eval_parametric(x_expr, y_expr, t_val, params):
@@ -530,6 +566,13 @@ def collect_curve_samples(design, frame):
             py = -py
 
         start = base_start
+        curve_params = dict(params)
+        curve_params.update(curve.get("variables", {}))
+        override_values = commandState.get("setupVarOverrides", {})
+        for var_name in curve.get("variables", {}).keys():
+            override_key = f"{curve.get('name', '')}::{var_name}"
+            if override_key in override_values:
+                curve_params[var_name] = override_values[override_key]
         is_parametric_curve = curve.get("type") == "parametric"
         if is_parametric_curve:
             t_start = curve.get("t_start", range_start)
@@ -547,13 +590,13 @@ def collect_curve_samples(design, frame):
                 t_val = sample_start + i * t_step
                 if t_val > sample_end + 1.0e-9:
                     break
-                result = safe_eval_parametric(x_expr, y_expr, t_val, params)
+                result = safe_eval_parametric(x_expr, y_expr, t_val, curve_params)
                 if result is None:
                     continue
                 x_val, y_val = result
                 pts.add(adsk.core.Point3D.create(
-                    start.x + ux * (x_val - sample_start) + px * y_val,
-                    start.y + uy * (x_val - sample_start) + py * y_val,
+                    start.x + ux * x_val + px * y_val,
+                    start.y + uy * x_val + py * y_val,
                     0
                 ))
         else:
@@ -568,7 +611,7 @@ def collect_curve_samples(design, frame):
                     break
 
                 try:
-                    y = safe_eval(curve["expr"], x, params)
+                    y = safe_eval(curve["expr"], x, curve_params)
                     if y is None or not isinstance(y, (int, float)):
                         continue
                     if math.isnan(y) or math.isinf(y):
@@ -585,7 +628,7 @@ def collect_curve_samples(design, frame):
             if pts.count < 2:
                 for x in (range_start, range_end):
                     try:
-                        y = safe_eval(curve["expr"], x, params)
+                        y = safe_eval(curve["expr"], x, curve_params)
                         if y is not None and isinstance(y, (int, float)) and not math.isnan(y) and not math.isinf(y):
                             pts.add(adsk.core.Point3D.create(
                                 start.x + ux * (x - range_start) + px * y,
@@ -862,6 +905,90 @@ def refresh_curve_checkboxes(inputs):
         pass
 
 
+def refresh_setup_variables_table(inputs):
+    setup_tab = adsk.core.TabCommandInput.cast(get_command_input(inputs, "setupTab"))
+    table = adsk.core.TableCommandInput.cast(get_command_input(inputs, "curveVariablesTable"))
+    if setup_tab:
+        if table:
+            try:
+                table.deleteMe()
+            except:
+                pass
+        table = setup_tab.children.addTableCommandInput("curveVariablesTable", "", 3, "3:2:2")
+    elif not table:
+        return
+
+    stale_inputs = []
+    for i in range(inputs.count):
+        item = inputs.item(i)
+        if not item:
+            continue
+        item_id = item.id
+        if (
+            item_id == "curveVariablesEmptyLabel"
+            or item_id.startswith("curveVarCurve_")
+            or item_id.startswith("curveVarName_")
+            or item_id.startswith("curveVarValue_")
+        ):
+            stale_inputs.append(item)
+    for stale in stale_inputs:
+        try:
+            stale.deleteMe()
+        except:
+            pass
+
+    while table.rowCount > 0:
+        try:
+            table.deleteRow(0)
+        except:
+            break
+
+    row = 0
+    for curve_index, curve in enumerate(curves):
+        variables = curve.get("variables", {})
+        for var_name, default_value in variables.items():
+            override_key = f"{curve.get('name', '')}::{var_name}"
+            current_value = commandState.get("setupVarOverrides", {}).get(override_key, default_value)
+            var_key = var_name
+
+            curve_name_input = inputs.addStringValueInput(
+                f"curveVarCurve_{curve_index}_{row}",
+                "",
+                curve.get("name", f"Curve {curve_index + 1}")
+            )
+            curve_name_input.isReadOnly = True
+            var_name_input = inputs.addStringValueInput(
+                f"curveVarName_{curve_index}_{row}",
+                "",
+                var_name
+            )
+            var_name_input.isReadOnly = True
+            var_value_input = inputs.addValueInput(
+                f"curveVarValue_{curve_index}_{var_key}",
+                "",
+                "",
+                adsk.core.ValueInput.createByReal(current_value)
+            )
+            table.addCommandInput(curve_name_input, row, 0)
+            table.addCommandInput(var_name_input, row, 1)
+            table.addCommandInput(var_value_input, row, 2)
+            row += 1
+
+    if row == 0:
+        empty_input = inputs.addStringValueInput(
+            "curveVariablesEmptyLabel",
+            "",
+            "No variables defined. Set variables in Library using format: a=1,b=2"
+        )
+        empty_input.isReadOnly = True
+        table.addCommandInput(empty_input, 0, 0, 0, 2)
+
+    try:
+        adsk.doEvents()
+    except:
+        pass
+
+
 def any_curve_enabled():
     return any(curve.get("enabled", False) for curve in curves)
 
@@ -880,6 +1007,9 @@ def load_curve_ui(inputs, is_parametric=False):
             mode_input.value = target_mode
         commandState["isParametricMode"] = target_mode
         is_parametric = target_mode
+    vars_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "variablesText"))
+    if vars_input:
+        vars_input.value = curve.get("variables_text", "")
     # Implicit mode
     if not is_parametric and curve.get("type") != "parametric":
         expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "expr"))
@@ -917,6 +1047,10 @@ def save_curve_ui(inputs, is_parametric=False):
         new_name = name_input.value.strip()
         if new_name:
             curve["name"] = new_name
+    vars_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "variablesText"))
+    if vars_input:
+        curve["variables_text"] = vars_input.value
+        curve["variables"] = parse_variables_text(vars_input.value)
     # Save implicit mode values
     if curve.get("type") != "parametric":
         expr_input = adsk.core.StringValueCommandInput.cast(get_command_input(inputs, "expr"))
@@ -1108,9 +1242,6 @@ def run(context):
     ui = app.userInterface
 
     try:
-        if not is_sketch_environment_ready(ui):
-            return
-
         if not curves:
             curves.append(default_curve())
 
@@ -1205,13 +1336,13 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             placement_children.addTextBoxCommandInput("snapInfo", "Snap", "Snap target: Not set", 1, True)
             placement_children.addValueInput(
                 "angle",
-                "Angle",
+                "Baseline Angle",
                 "rad",
                 adsk.core.ValueInput.createByReal(0.0)
             )
             placement_children.addValueInput(
                 "length",
-                "Length",
+                "Baseline Length",
                 "",
                 adsk.core.ValueInput.createByReal(10.0)
             )
@@ -1247,6 +1378,14 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             )
             setup_children.addBoolValueInput("refreshSetupFunctions", "Refresh Functions", False, "", False)
             setup_children.addTableCommandInput("curveSelectionTable", "", 5, "4:1:1:1:1")
+            setup_children.addTextBoxCommandInput(
+                "curveVariablesHelp",
+                "Variables",
+                "Function Variables (editable): Function | Variable | Value",
+                1,
+                True
+            )
+            setup_children.addTableCommandInput("curveVariablesTable", "", 3, "3:2:2")
 
             library_tab = inputs.addTabCommandInput("libraryTab", "Library")
             library_children = library_tab.children
@@ -1267,6 +1406,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 commandState["isParametricMode"]
             )
             library_children.addStringValueInput("expr", "y =", "sin(x)")
+            library_children.addStringValueInput("variablesText", "Variables", "")
             library_children.addValueInput(
                 "step",
                 "Step",
@@ -1297,7 +1437,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             library_children.addTextBoxCommandInput(
                 "functionHelp",
                 "Info",
-                "Select a function above, edit fields below, then click Save Changes.",
+                "Select a function above, edit fields below, then click Save Changes. Variables must use letters, digits, and underscores (for example: a=1,b_2=2).",
                 2,
                 True
             )
@@ -1337,6 +1477,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
             sync_parametric_inputs_enabled(inputs)
             refresh_curve_checkboxes(inputs)
+            refresh_setup_variables_table(inputs)
             update_placement_inputs(inputs)
             update_preview(command)
         except:
@@ -1391,15 +1532,18 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
             elif changed.id == "setupTab":
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
             elif changed.id == "libraryTab":
                 refresh_library_list_input(inputs)
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
             elif changed.id == "refreshSetupFunctions":
                 changed.value = False
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
                 sync_curve_selection_from_inputs(inputs)
             elif ("curveEnabled_" in changed.id) or ("curveInvert" in changed.id):
                 sync_curve_selection_from_inputs(inputs)
@@ -1416,6 +1560,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
                 sync_curve_selection_from_inputs(inputs)
             elif changed.id == "del":
                 if len(curves) > 1:
@@ -1426,13 +1571,15 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 sync_parametric_inputs_enabled(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
                 should_update_preview = True
-            elif changed.id == "expr" or changed.id == "step":
+            elif changed.id == "expr" or changed.id == "step" or changed.id == "variablesText":
                 save_curve_ui(inputs)
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
                 should_update_preview = True
             elif changed.id in ("xExpr", "yExpr", "tStart", "tEnd", "tStep"):
                 save_curve_ui(inputs)
@@ -1457,18 +1604,34 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 load_curve_ui(inputs, is_parametric=is_parametric_mode_active())
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
             elif changed.id == "curveNameEdit":
                 save_curve_ui(inputs)
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
             elif changed.id == "saveCurve":
                 changed.value = False
                 save_curve_ui(inputs)
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
+                refresh_setup_variables_table(inputs)
                 sync_curve_selection_from_inputs(inputs)
                 commandState["previewDirty"] = True
                 should_update_preview = True
+            elif changed.id.startswith("curveVarValue_"):
+                parts = changed.id.split("_")
+                if len(parts) >= 3:
+                    curve_index = int(parts[1])
+                    var_name = "_".join(parts[2:])
+                    curve = curves[curve_index] if 0 <= curve_index < len(curves) else None
+                    if curve:
+                        var_input = adsk.core.ValueCommandInput.cast(changed)
+                        if var_input and var_name in curve.get("variables", {}):
+                            key = f"{curve.get('name', '')}::{var_name}"
+                            commandState["setupVarOverrides"][key] = var_input.value
+                            commandState["previewDirty"] = True
+                            should_update_preview = True
             elif changed.id == "baselineLine":
                 baseline = get_selected_baseline(inputs)
                 if baseline:
@@ -1571,13 +1734,28 @@ class ExecuteHandler(adsk.core.CommandEventHandler):
 
     def notify(self, args):
         try:
+            app = adsk.core.Application.get()
             sketch = get_active_sketch()
             design = get_active_design()
             if not sketch or not range_is_final():
+                if not sketch:
+                    app.userInterface.messageBox("Open or edit a sketch before running Math Curve Sketch.")
+                return
+            license_status = check_license(app)
+            licenseState["checked"] = True
+            licenseState["allowed"] = license_status.allowed
+            licenseState["mode"] = license_status.mode
+            licenseState["message"] = license_status.message
+            if not license_status.allowed:
+                app.userInterface.messageBox(license_status.message, "Math Curve License")
                 return
 
             clear_preview()
-            create_final_curves(sketch, design)
+            if not create_final_curves(sketch, design):
+                app.userInterface.messageBox(
+                    "No curve could be created. Check the selected functions, variable values, and sampling range.",
+                    "Math Curve",
+                )
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())
