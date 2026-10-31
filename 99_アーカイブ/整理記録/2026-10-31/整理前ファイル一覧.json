@@ -1,0 +1,1802 @@
+[
+  {
+    "path": "Math_Curve_2_1.0.1_Windows_20260812000106.zip",
+    "bytes": 181856,
+    "sha256": "1b94eb3ae39121ec1d5993c0477d7491b545e06027944a9edf0b21a14ac7d6ef"
+  },
+  {
+    "path": "Math_Curve_2_1.0.1_Windows_FINAL_20260812000125.zip",
+    "bytes": 177216,
+    "sha256": "168263b0d4e72fc0917dbeb2e3d8a676c2c7a2672bad29be7ed74b69a7e2a1a5"
+  },
+  {
+    "path": "Math_Curve_2_1.0.1_Windows.zip",
+    "bytes": 177216,
+    "sha256": "168263b0d4e72fc0917dbeb2e3d8a676c2c7a2672bad29be7ed74b69a7e2a1a5"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_macOS_hotfix1.zip",
+    "bytes": 176309,
+    "sha256": "1684bf7b13421c5bbc7ca0fafb79f57648fc0236b6a4e062408f18019af57f83"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_macOS_reviewfix_clean.zip",
+    "bytes": 176305,
+    "sha256": "bef42588eb037afb6e7d0acb1d98979725318656b6490f704429a6d84b06be2a"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_macOS_reviewfix.zip",
+    "bytes": 191825,
+    "sha256": "42b421413a16a081ab9cbb58f9b4c696812048b85f49d1ba87043d028406ab86"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_macOS.zip",
+    "bytes": 177253,
+    "sha256": "93ddab42554eff053930ed385f2584a73950ff992950d2e42e91d4bc92d0c7f1"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_20260812001227.zip",
+    "bytes": 177219,
+    "sha256": "650d7a121dcb744b9260cb502b33b59264ee04f7e69d0d7b1b974666da1f72b6"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1.zip",
+    "bytes": 176328,
+    "sha256": "f1e4a5ded5b28acc2f27aa64a16157ce2e1b9bd22718d5d35a132f3b08f5216c"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/__init__.py",
+    "bytes": 43,
+    "sha256": "13587977b1b5a7435d546b2d776254303b7232385780d8d69841848e28a7145f"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/__pycache__/license_manager.cpython-314.pyc",
+    "bytes": 5257,
+    "sha256": "4719715cdffea5a87195b867366337881f7dbfeb1dd8acb505bbd0138e50dfc6"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/.vscode/launch.json",
+    "bytes": 382,
+    "sha256": "b7d5c7d3c87e4f55c1ae7af6598aeefd85b54e73cc478260145c3acb8f247099"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/AddInIcon.svg",
+    "bytes": 95410,
+    "sha256": "fa20889092101eaa6fd06d94ef86d396a7d30ea3f0e89e6f4dd94f8f145fa615"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/__init__.py",
+    "bytes": 1090,
+    "sha256": "f5422f878039e158c397ad9ee30e73305dd76803ea201c838f7ddb49805be665"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/entry.py",
+    "bytes": 6714,
+    "sha256": "fef3adcaf8822701504ec050b006ce488addeb75a815b14668fb7b429799a706"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/resources/16x16.png",
+    "bytes": 952,
+    "sha256": "2854f3b8bec73bd36886fedec1787fc549a2f8602680765eded56dca31be90fd"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/resources/32x32.png",
+    "bytes": 2415,
+    "sha256": "23fb19705ca4aa631c92d2dedc8939ac9a04d3d98d14f0250ac3c7b7417c5b83"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/resources/64x64.png",
+    "bytes": 4870,
+    "sha256": "473ff5ebb1e82db686a5e3aaed84663add6e7051fb3a0ed875fceb7288a09659"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/resources/画像2.png",
+    "bytes": 80483,
+    "sha256": "435ce2837d4215bc424349f42d557feb707e6bff90f5367fbe001a332b2b71e2"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/commandDialog/resources/画像5.png",
+    "bytes": 81474,
+    "sha256": "860f87d9935aa09ba556c0ed1fb7468e8a33c49c7ce128c55e6416e97f03ca27"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/functionSets/__init__.py",
+    "bytes": 93,
+    "sha256": "058a5726fbba6c77348a289904d4ae8e873384d886a13e444ffa6b38bed68500"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/functionSets/entry_ui.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/functionSets/entry.py",
+    "bytes": 3558,
+    "sha256": "4f345d03791a3729a221e0b8b2b86b34faa45a5088d631616f562fe0343db0d9"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/functionSets/functions.py",
+    "bytes": 3052,
+    "sha256": "7d29d88196df818aaaeb8206009537d3339d13c82a56c581e1f8a7f164a03be0"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/functionSets/parametric_support.py",
+    "bytes": 4967,
+    "sha256": "94d8e6dc6ec97d1f3d325d2144c7b28254f6483b7eba6341b900160a432fbd36"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteSend/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteSend/entry.py",
+    "bytes": 6520,
+    "sha256": "7a780354c41e69b29c81c8d11cc6ef1f92c2e931253273c18c99c5cd6b2d842b"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteSend/resources/16x16.png",
+    "bytes": 474,
+    "sha256": "954ee61594ef211cac16bd56acde2846466d7e43072bb31dd8c630a7e975f5ec"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteSend/resources/32x32.png",
+    "bytes": 1067,
+    "sha256": "f49287f5b249fa2da6ca180ef513b7a9aa8aa012b20f3e8ce7a666830c40a2f7"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteSend/resources/64x64.png",
+    "bytes": 1972,
+    "sha256": "6aa5e13a4a481092b7e8a4a70900c54840a4f3f30a160200843c6e542ca96a9c"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/entry.py",
+    "bytes": 7557,
+    "sha256": "f150da748761548791ad3ed205cecce129c8e6312387ed5c3a17959835381952"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/resources/16x16.png",
+    "bytes": 340,
+    "sha256": "9605ddcf64826740265b54e0ae9bff73333dd0c1f13054795b4b334edcc8edc8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/resources/32x32.png",
+    "bytes": 587,
+    "sha256": "26a690882b990719c169bd0d8f2536705ac3a32ca99a67c6111652e69c978757"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/resources/64x64.png",
+    "bytes": 1165,
+    "sha256": "ce57e1338f6811dcd35d870ad80a297c2b76fe1ec49439f840eab4bc3629912d"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/resources/html/index.html",
+    "bytes": 1155,
+    "sha256": "ac647a0ee122713a862b1d15c5699c337a95990831a5587a5e10ee309cb78cb8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/commands/paletteShow/resources/html/static/palette.js",
+    "bytes": 1670,
+    "sha256": "c6907a566e60f8c0b11e2c05ff75755c6e7b300e9589f33fae8d023134f34e00"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/config.py",
+    "bytes": 873,
+    "sha256": "10c1a62ec70bd31c51e0eef2ba456a8821a1ca5f1e13fa1cf6964f6e5d6743b8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/lib/fusionAddInUtils/__init__.py",
+    "bytes": 58,
+    "sha256": "cb1c30393875cb2ed308d71686b20b1248689b71ad1abcf1a510d9ad6cc94164"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/lib/fusionAddInUtils/event_utils.py",
+    "bytes": 3151,
+    "sha256": "2e6f08259bee7929cedb76c9b7b9a9d0321e019fcd6c508d2c056899a8c183ef"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/lib/fusionAddInUtils/general_utils.py",
+    "bytes": 2502,
+    "sha256": "488c58ba867661b97c272fa517d4eda58896a38bed923663baa8c5e2c1e96692"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/license_manager.py",
+    "bytes": 3115,
+    "sha256": "1395861f0caa5ddfc0f0c65d4ae4c3596553fa9efad8bd6b3066fbeb12165aff"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/main.py",
+    "bytes": 202,
+    "sha256": "9a7ae488cea6c8c83b4486e87f202b98cd3f70175143a4d8d3ede6564a5bb55d"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/math_curve_2.manifest",
+    "bytes": 265,
+    "sha256": "c4412843a33bbcd7a9186e6c95db3e1171f429025140183b6c7168dcc8d239ed"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/math_curve_2.py",
+    "bytes": 63602,
+    "sha256": "04b451da1952190d21a2221de50bf1cd64438ab79e955c35ba07dd1fe7cb1d9a"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/Math_Curve_2/README.md",
+    "bytes": 1982,
+    "sha256": "f0c46d0735706ecad889b3ae52a36f30c08f60f53f8dc0c0a7e11db3bc5e3a88"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_hotfix1/スプールケース.3mf",
+    "bytes": 114119,
+    "sha256": "1e81322828450586bba416a1de77bfc7f8915531fe2384073094194423853227"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean.zip",
+    "bytes": 176324,
+    "sha256": "347b481c16959333921d244292f8644bc465a62e6c5a1bdc931673f09501614c"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/__init__.py",
+    "bytes": 43,
+    "sha256": "13587977b1b5a7435d546b2d776254303b7232385780d8d69841848e28a7145f"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/__pycache__/license_manager.cpython-314.pyc",
+    "bytes": 5265,
+    "sha256": "be4c53e451b8032513862cb617abe23411e75374f787acf45b187af536a9b104"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/.vscode/launch.json",
+    "bytes": 382,
+    "sha256": "b7d5c7d3c87e4f55c1ae7af6598aeefd85b54e73cc478260145c3acb8f247099"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/AddInIcon.svg",
+    "bytes": 95410,
+    "sha256": "fa20889092101eaa6fd06d94ef86d396a7d30ea3f0e89e6f4dd94f8f145fa615"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/__init__.py",
+    "bytes": 1090,
+    "sha256": "f5422f878039e158c397ad9ee30e73305dd76803ea201c838f7ddb49805be665"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/entry.py",
+    "bytes": 6714,
+    "sha256": "fef3adcaf8822701504ec050b006ce488addeb75a815b14668fb7b429799a706"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/resources/16x16.png",
+    "bytes": 952,
+    "sha256": "2854f3b8bec73bd36886fedec1787fc549a2f8602680765eded56dca31be90fd"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/resources/32x32.png",
+    "bytes": 2415,
+    "sha256": "23fb19705ca4aa631c92d2dedc8939ac9a04d3d98d14f0250ac3c7b7417c5b83"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/resources/64x64.png",
+    "bytes": 4870,
+    "sha256": "473ff5ebb1e82db686a5e3aaed84663add6e7051fb3a0ed875fceb7288a09659"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/resources/画像2.png",
+    "bytes": 80483,
+    "sha256": "435ce2837d4215bc424349f42d557feb707e6bff90f5367fbe001a332b2b71e2"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/commandDialog/resources/画像5.png",
+    "bytes": 81474,
+    "sha256": "860f87d9935aa09ba556c0ed1fb7468e8a33c49c7ce128c55e6416e97f03ca27"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/functionSets/__init__.py",
+    "bytes": 93,
+    "sha256": "058a5726fbba6c77348a289904d4ae8e873384d886a13e444ffa6b38bed68500"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/functionSets/entry_ui.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/functionSets/entry.py",
+    "bytes": 3558,
+    "sha256": "4f345d03791a3729a221e0b8b2b86b34faa45a5088d631616f562fe0343db0d9"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/functionSets/functions.py",
+    "bytes": 3052,
+    "sha256": "7d29d88196df818aaaeb8206009537d3339d13c82a56c581e1f8a7f164a03be0"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/functionSets/parametric_support.py",
+    "bytes": 4967,
+    "sha256": "94d8e6dc6ec97d1f3d325d2144c7b28254f6483b7eba6341b900160a432fbd36"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteSend/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteSend/entry.py",
+    "bytes": 6520,
+    "sha256": "7a780354c41e69b29c81c8d11cc6ef1f92c2e931253273c18c99c5cd6b2d842b"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteSend/resources/16x16.png",
+    "bytes": 474,
+    "sha256": "954ee61594ef211cac16bd56acde2846466d7e43072bb31dd8c630a7e975f5ec"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteSend/resources/32x32.png",
+    "bytes": 1067,
+    "sha256": "f49287f5b249fa2da6ca180ef513b7a9aa8aa012b20f3e8ce7a666830c40a2f7"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteSend/resources/64x64.png",
+    "bytes": 1972,
+    "sha256": "6aa5e13a4a481092b7e8a4a70900c54840a4f3f30a160200843c6e542ca96a9c"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/entry.py",
+    "bytes": 7557,
+    "sha256": "f150da748761548791ad3ed205cecce129c8e6312387ed5c3a17959835381952"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/resources/16x16.png",
+    "bytes": 340,
+    "sha256": "9605ddcf64826740265b54e0ae9bff73333dd0c1f13054795b4b334edcc8edc8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/resources/32x32.png",
+    "bytes": 587,
+    "sha256": "26a690882b990719c169bd0d8f2536705ac3a32ca99a67c6111652e69c978757"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/resources/64x64.png",
+    "bytes": 1165,
+    "sha256": "ce57e1338f6811dcd35d870ad80a297c2b76fe1ec49439f840eab4bc3629912d"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/resources/html/index.html",
+    "bytes": 1155,
+    "sha256": "ac647a0ee122713a862b1d15c5699c337a95990831a5587a5e10ee309cb78cb8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/commands/paletteShow/resources/html/static/palette.js",
+    "bytes": 1670,
+    "sha256": "c6907a566e60f8c0b11e2c05ff75755c6e7b300e9589f33fae8d023134f34e00"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/config.py",
+    "bytes": 873,
+    "sha256": "10c1a62ec70bd31c51e0eef2ba456a8821a1ca5f1e13fa1cf6964f6e5d6743b8"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/lib/fusionAddInUtils/__init__.py",
+    "bytes": 58,
+    "sha256": "cb1c30393875cb2ed308d71686b20b1248689b71ad1abcf1a510d9ad6cc94164"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/lib/fusionAddInUtils/event_utils.py",
+    "bytes": 3151,
+    "sha256": "2e6f08259bee7929cedb76c9b7b9a9d0321e019fcd6c508d2c056899a8c183ef"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/lib/fusionAddInUtils/general_utils.py",
+    "bytes": 2502,
+    "sha256": "488c58ba867661b97c272fa517d4eda58896a38bed923663baa8c5e2c1e96692"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/license_manager.py",
+    "bytes": 3115,
+    "sha256": "1395861f0caa5ddfc0f0c65d4ae4c3596553fa9efad8bd6b3066fbeb12165aff"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/main.py",
+    "bytes": 202,
+    "sha256": "9a7ae488cea6c8c83b4486e87f202b98cd3f70175143a4d8d3ede6564a5bb55d"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/math_curve_2.manifest",
+    "bytes": 265,
+    "sha256": "c4412843a33bbcd7a9186e6c95db3e1171f429025140183b6c7168dcc8d239ed"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/math_curve_2.py",
+    "bytes": 63664,
+    "sha256": "a864cdaa8069e1adcb6365f4e64e5ecf93cc08d96e68265de0757da6fd055320"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix_clean/Math_Curve_2/README.md",
+    "bytes": 1982,
+    "sha256": "f0c46d0735706ecad889b3ae52a36f30c08f60f53f8dc0c0a7e11db3bc5e3a88"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows_reviewfix.zip",
+    "bytes": 191844,
+    "sha256": "ac076ed87e2bf0c173fb52b51893c1efaaa6282f1f5798aae541f6536532ed9e"
+  },
+  {
+    "path": "Math_Curve_2_26.2.0_Windows.zip",
+    "bytes": 177219,
+    "sha256": "650d7a121dcb744b9260cb502b33b59264ee04f7e69d0d7b1b974666da1f72b6"
+  },
+  {
+    "path": "math_curve_2.zip",
+    "bytes": 844532,
+    "sha256": "12c12aa5c3602e3b63ff3525f8735fb8fa976c5f8104f27b71a2143cf4b3d004"
+  },
+  {
+    "path": "math_curve_2/__init__.py",
+    "bytes": 43,
+    "sha256": "13587977b1b5a7435d546b2d776254303b7232385780d8d69841848e28a7145f"
+  },
+  {
+    "path": "math_curve_2/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 244,
+    "sha256": "ca7bd1da939cd75c8d683c8c32c209d614cb0a916f30a7da3ff19c5dedb7e5e5"
+  },
+  {
+    "path": "math_curve_2/__pycache__/__init__.cpython-314.pyc",
+    "bytes": 253,
+    "sha256": "6ec3b562439477d0263bef8f4fb98f38f05a66e03ad161dd66a60a0c9e349753"
+  },
+  {
+    "path": "math_curve_2/__pycache__/config.cpython-310.pyc",
+    "bytes": 291,
+    "sha256": "55619011838bd40c88c933227647e5a8645630c803cb76ecd0fc5744b6ff7b52"
+  },
+  {
+    "path": "math_curve_2/__pycache__/config.cpython-310.pyc.2254815013984",
+    "bytes": 234,
+    "sha256": "6dc4b1a70edbb434e9d665572c485ecbc2c653dbe412f124228c98453987de34"
+  },
+  {
+    "path": "math_curve_2/__pycache__/config.cpython-314.pyc",
+    "bytes": 335,
+    "sha256": "136ceae02be089754507cdb800b0747f5c6ee1bfcc047b50d5e6308ccb456a01"
+  },
+  {
+    "path": "math_curve_2/__pycache__/license_manager.cpython-310.pyc",
+    "bytes": 3272,
+    "sha256": "eb0069116a83af3e6ec15fdeca65698572b46f59a6f2a2654328d358f4bc086f"
+  },
+  {
+    "path": "math_curve_2/__pycache__/main.cpython-310.pyc",
+    "bytes": 334,
+    "sha256": "f904f3dc56160c25633ab6036bea32b4fc588822b64ec22c4841b421652afe57"
+  },
+  {
+    "path": "math_curve_2/__pycache__/math curve 2.cpython-310.pyc",
+    "bytes": 35389,
+    "sha256": "891422d446d1d0f6ecde26343e26fa60d14024485c8175f2b0f41a44ce8a17c4"
+  },
+  {
+    "path": "math_curve_2/__pycache__/math_curve_2.cpython-310.pyc",
+    "bytes": 39067,
+    "sha256": "3f86a3fcae1a20e9012eb13bb10096db64bae155f09db31e83b3e61def433d41"
+  },
+  {
+    "path": "math_curve_2/.continue/agents/new-config.yaml",
+    "bytes": 283,
+    "sha256": "98896b7528a316c446ee52541efe99724885602b8876f336275fc97dc971e7ec"
+  },
+  {
+    "path": "math_curve_2/.continue/rules/new-rule.md",
+    "bytes": 66,
+    "sha256": "9e1066340fa38bae87dee3be42a473029afccd9eb47ff115f747ea73d0075fb4"
+  },
+  {
+    "path": "math_curve_2/.git/COMMIT_EDITMSG",
+    "bytes": 378,
+    "sha256": "f3724bf269e9b8160b3aeb7b87f625f934a6a8d5d14b150b266224345a149dbf"
+  },
+  {
+    "path": "math_curve_2/.git/config",
+    "bytes": 346,
+    "sha256": "7608dc4e9a0ff15708467176075883da36403514e1e863087b7ef963dfae75ea"
+  },
+  {
+    "path": "math_curve_2/.git/description",
+    "bytes": 73,
+    "sha256": "85ab6c163d43a17ea9cf7788308bca1466f1b0a8d1cc92e26e9bf63da4062aee"
+  },
+  {
+    "path": "math_curve_2/.git/FETCH_HEAD",
+    "bytes": 110,
+    "sha256": "5f55070e8cbbb9454e7dbbd52472b35d43ad5e952e89a8a9b68392cbb7aaf7cb"
+  },
+  {
+    "path": "math_curve_2/.git/HEAD",
+    "bytes": 21,
+    "sha256": "28d25bf82af4c0e2b72f50959b2beb859e3e60b9630a5e8c603dad4ddb2b6e80"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/applypatch-msg.sample",
+    "bytes": 478,
+    "sha256": "0223497a0b8b033aa58a3a521b8629869386cf7ab0e2f101963d328aa62193f7"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/commit-msg.sample",
+    "bytes": 1972,
+    "sha256": "efc1401b0e99d1ff51494d154d98b46c1e99059bcd8bf9f73cecde19fd3eb23b"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/fsmonitor-watchman.sample",
+    "bytes": 4611,
+    "sha256": "9159720099ad5595b8e66645cbfd47763c1e920f46e0b50ae75e642bbec57ef0"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/post-update.sample",
+    "bytes": 189,
+    "sha256": "81765af2daef323061dcbc5e61fc16481cb74b3bac9ad8a174b186523586f6c5"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-applypatch.sample",
+    "bytes": 424,
+    "sha256": "e15c5b469ea3e0a695bea6f2c82bcf8e62821074939ddd85b77e0007ff165475"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-commit.sample",
+    "bytes": 1649,
+    "sha256": "57185b7b9f05239d7ab52db045f5b89eb31348d7b2177eab214f5eb872e1971b"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-merge-commit.sample",
+    "bytes": 416,
+    "sha256": "d3825a70337940ebbd0a5c072984e13245920cdf8898bd225c8d27a6dfc9cb53"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-push.sample",
+    "bytes": 1374,
+    "sha256": "ecce9c7e04d3f5dd9d8ada81753dd1d549a9634b26770042b58dda00217d086a"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-rebase.sample",
+    "bytes": 4898,
+    "sha256": "4febce867790052338076f4e66cc47efb14879d18097d1d61c8261859eaaa7b3"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/pre-receive.sample",
+    "bytes": 544,
+    "sha256": "a4c3d2b9c7bb3fd8d1441c31bd4ee71a595d66b44fcf49ddb310252320169989"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/prepare-commit-msg.sample",
+    "bytes": 1492,
+    "sha256": "e9ddcaa4189fddd25ed97fc8c789eca7b6ca16390b2392ae3276f0c8e1aa4619"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/push-to-checkout.sample",
+    "bytes": 2783,
+    "sha256": "a53d0741798b287c6dd7afa64aee473f305e65d3f49463bb9d7408ec3b12bf5f"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/sendemail-validate.sample",
+    "bytes": 2308,
+    "sha256": "44ebfc923dc5466bc009602f0ecf067b9c65459abfe8868ddc49b78e6ced7a92"
+  },
+  {
+    "path": "math_curve_2/.git/hooks/update.sample",
+    "bytes": 3650,
+    "sha256": "8d5f2fa83e103cf08b57eaa67521df9194f45cbdbcb37da52ad586097a14d106"
+  },
+  {
+    "path": "math_curve_2/.git/index",
+    "bytes": 5113,
+    "sha256": "cba1c4a5fdc70f3f9d08f52ddbc0abba2f4aa9ccbb9118a67bf80d12c6885a70"
+  },
+  {
+    "path": "math_curve_2/.git/info/exclude",
+    "bytes": 240,
+    "sha256": "6671fe83b7a07c8932ee89164d1f2793b2318058eb8b98dc5c06ee0a5a3b0ec1"
+  },
+  {
+    "path": "math_curve_2/.git/logs/HEAD",
+    "bytes": 3120,
+    "sha256": "ca7bb8bab955697a4f871e083c0ce7c295a0dc8816c41b1b68c1d7ba6f3a92df"
+  },
+  {
+    "path": "math_curve_2/.git/logs/refs/heads/main",
+    "bytes": 2937,
+    "sha256": "fba2bf4462d77474d1dcf5ea11afc500617e13457214c04d06a7b8dbe8d1331d"
+  },
+  {
+    "path": "math_curve_2/.git/logs/refs/remotes/origin/HEAD",
+    "bytes": 136,
+    "sha256": "6d338b270897e8fcbe41c07400575f99893f4c058f764cec6b023fade64916a8"
+  },
+  {
+    "path": "math_curve_2/.git/logs/refs/remotes/origin/main",
+    "bytes": 2374,
+    "sha256": "01c3b5b3a03b7933b265fe3072b4d85f3ded26cd4e71d55365e35e8745005106"
+  },
+  {
+    "path": "math_curve_2/.git/objects/03/25f3a95db998fb2fc8533ba9653cefe81c946c",
+    "bytes": 153,
+    "sha256": "8f88c8c37b883424a1fcc5e03f16c43d195159d321a66a48de9e083f73c6a506"
+  },
+  {
+    "path": "math_curve_2/.git/objects/04/6bb15f25bda77096e0e0dd6864b87b1e15eb93",
+    "bytes": 402,
+    "sha256": "46d4e425297cf02316196b18fa5b8aa47fc96dcee9292c7127010adc0ce2e790"
+  },
+  {
+    "path": "math_curve_2/.git/objects/04/7b882367ca07c9b048184efc0925a81f52bbd6",
+    "bytes": 12467,
+    "sha256": "23cde22b33ffa21e3196ce583dcfb7f2683ceef32879718687914c5ec7056f5e"
+  },
+  {
+    "path": "math_curve_2/.git/objects/04/9930122a84346b8dca78dcc82e86f09f5af7e6",
+    "bytes": 465,
+    "sha256": "2bec99335ebf2355a4480fd47e67c7825eb074bbc7a668b6891e9ad37381382e"
+  },
+  {
+    "path": "math_curve_2/.git/objects/05/3f97851977646e0a4b8a89088f7d94c323a8a2",
+    "bytes": 55,
+    "sha256": "697be60270a59a2d4d814bd2711a47828ed13ce22213b8d879e823fb5175dd9d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/05/6eea701b38b3dd7a67e82186e09c613b3d266c",
+    "bytes": 16384,
+    "sha256": "93c1448f607c8d627c7567ccd4cbcbe95b01930329e0b9ff93b396d529e39270"
+  },
+  {
+    "path": "math_curve_2/.git/objects/06/50853f0012dff85b52e4d6666abe93533a7f15",
+    "bytes": 51,
+    "sha256": "1f297e8b6d1c85c7fcb635cdcdd177b241594f35adf0e3e2cabd5333edadd4d2"
+  },
+  {
+    "path": "math_curve_2/.git/objects/07/76f47765948f3053b72226b100939f4f4713db",
+    "bytes": 829,
+    "sha256": "3234076046f943abd0e37becf91b82e5406e8f1a39a16ef1f32257693fcf9ab4"
+  },
+  {
+    "path": "math_curve_2/.git/objects/09/bee57920b4b7e04863e9355c95a9d95bb2f0e3",
+    "bytes": 12250,
+    "sha256": "50e9e7f2b3421f39e3aa45d5c61b2c29422847eb20e570c906794bd932b9fad1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/09/f47ed84da405fda207b0e5e3466e239a679829",
+    "bytes": 267,
+    "sha256": "ec484e05ad43cb344aaee2e72e6132c4c41ea9a06e9dfc15fea0873ce0f84b5d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/0f/034cde29f5be596feecddbbbad935ffb6f3c29",
+    "bytes": 785,
+    "sha256": "2df9a47bc2b8d90e4b086caf46319202b447a302d2c81f896729fb3020e960d3"
+  },
+  {
+    "path": "math_curve_2/.git/objects/11/d9992fcf36ebfd79a9c60dcc1aa0e69e0c4d53",
+    "bytes": 432,
+    "sha256": "fa436b5959daf925ec3e98592e0c3b43c537893862583d61d8cfbd11c8a7d04c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/11/e928307835e82fbe33abc191ef188801d2db72",
+    "bytes": 359,
+    "sha256": "75e6619c30bbcbf630731428e14498d44ad38f20a09a8e82dfea08c130d66612"
+  },
+  {
+    "path": "math_curve_2/.git/objects/12/542620d1daad13d858b8cc652edf0306521164",
+    "bytes": 228,
+    "sha256": "3cf65a852e57c2591737427f52a6e5b44ca122fed98d2157a0d395b4fbd7ad1f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/15/f7d18d7b73b5ba05cc2932fef9ea5a42c01671",
+    "bytes": 3991,
+    "sha256": "0d76a69bbf8dc46a42a4d46dcc92b6f24d9a32223434fe6ff3d7c2249a09220d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/16/13b9eef4a14cb0460732cd4e0709b92a63333f",
+    "bytes": 358,
+    "sha256": "1b6ff0fde0590761e951fdae22edcd0ee5710a4183886b30baf8394957ba4bb8"
+  },
+  {
+    "path": "math_curve_2/.git/objects/19/a01e6be5559cb334b68298a25a4b37b144bfde",
+    "bytes": 59,
+    "sha256": "5d5aaa9247b6ed56ccbfeac7044c086891857b5287ff1a892722b4773800ef62"
+  },
+  {
+    "path": "math_curve_2/.git/objects/19/bca2b95f02f95bc30dd85bb78e39d4dc3f08df",
+    "bytes": 2140,
+    "sha256": "e9135e11650f2a1bb9e6b8816c1a4ceca2a0223fab40f7d50fd506e6c2540874"
+  },
+  {
+    "path": "math_curve_2/.git/objects/19/be36352f85830da570b6d967aa324dd703e450",
+    "bytes": 15881,
+    "sha256": "e0eda5e6d3b2a4a6a9472ec24b095344017fc727dd5c891b002165206c7195b8"
+  },
+  {
+    "path": "math_curve_2/.git/objects/1c/69300f81acea5862b6eb225840d92126c3afbd",
+    "bytes": 212,
+    "sha256": "eadb4501ccb57c07087674095fb8edd3c9aa273f525f9bdba9a4c126147ed053"
+  },
+  {
+    "path": "math_curve_2/.git/objects/1d/97aa34e5e8393f46ce14d728e58039b24dd6e6",
+    "bytes": 54200,
+    "sha256": "daf32bddf98a655b13cd3d336d6de93ad88edf13f5068cc62e3da2471cfe0dc2"
+  },
+  {
+    "path": "math_curve_2/.git/objects/1f/60b37cc834ac26dc868c335c7db1d708b986c7",
+    "bytes": 152,
+    "sha256": "5e4b5f5e99b981b281642cc8040789d992337e47a690208f841ef3177790a8b4"
+  },
+  {
+    "path": "math_curve_2/.git/objects/20/d7f66d9457bdb6807d70c65aa56370783090b5",
+    "bytes": 17190,
+    "sha256": "1078da1598781385b489f9fced78d3372e3292dd383aef797f2ae009e74fdeaa"
+  },
+  {
+    "path": "math_curve_2/.git/objects/22/1ab0f7c39b96359fc2e0d86f3dae627020d81a",
+    "bytes": 514,
+    "sha256": "31daa48c4f3995d359e1037008db8e9e92ea8fa1d6fc5b5c07d5676cdf7715a7"
+  },
+  {
+    "path": "math_curve_2/.git/objects/22/b6a448ac04f42e13926607819b1d1844c56b8c",
+    "bytes": 359,
+    "sha256": "1cb3c55ae45ddfab228f8cce2ea294f049eb6152cf8835c6607eab44190d1c13"
+  },
+  {
+    "path": "math_curve_2/.git/objects/23/eb2170e7a857ed6d2dd4b260059a864c12d8f5",
+    "bytes": 17073,
+    "sha256": "d5869d71df230ced6db572fb1880e89caf2daad906a373d60ec89ec5f32b7967"
+  },
+  {
+    "path": "math_curve_2/.git/objects/24/ae29cd4b549db072a8b92a6c4bb92d33abee80",
+    "bytes": 4891,
+    "sha256": "b074c4f6d00f52fadec08799043e00969f2df848735bc0580c746ffdbc4e9940"
+  },
+  {
+    "path": "math_curve_2/.git/objects/24/b82aafb54b39e5a6c6a10c4743ad4d7ee809d2",
+    "bytes": 150,
+    "sha256": "89f4f0f1b80676f8b5fa82a87ee90427c7f7509bb1d1c2fae2c27af4b8bace62"
+  },
+  {
+    "path": "math_curve_2/.git/objects/25/d47fe17d5f34d66e19b4939365b274828335ad",
+    "bytes": 407,
+    "sha256": "6841f4b307e7f250332516bf3dc2f967906aab1cec3bff2f466fad3b34f92345"
+  },
+  {
+    "path": "math_curve_2/.git/objects/2b/3cea1c3b4e2b461c6d5cbb0128ec04c6fcda94",
+    "bytes": 54,
+    "sha256": "db068ea43a44592f0e1f301eb8c465c2656c5605a4622070cb879e0738ffb801"
+  },
+  {
+    "path": "math_curve_2/.git/objects/2d/4683e706005824e6a98fee4e1b0eabfa0e1d36",
+    "bytes": 81,
+    "sha256": "cbe76954b9ccb486c8c4ab15263e18e16bd117c5193a5b78d1536e91bb4a8b3c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/2e/3175e8a880c7ec51f90939eb9bf03ebfefb40c",
+    "bytes": 514,
+    "sha256": "7af0c378ef82c2b65b814b70d9f7a1c9dc73499adeba55206543333b997a8f24"
+  },
+  {
+    "path": "math_curve_2/.git/objects/2f/b1fa967b8b935e8064559b1b37527c59887a08",
+    "bytes": 8757,
+    "sha256": "402ccb8ccca4fe297fb1be86051fcddda49a183b0983a92a9adf2d2c886a9d02"
+  },
+  {
+    "path": "math_curve_2/.git/objects/30/21c8c1036f9254976b45bb3fa30754b00857b6",
+    "bytes": 403,
+    "sha256": "7b8b6af94b26506f6f02567112b838b5563f80e4416107e0051ab5d25129edbc"
+  },
+  {
+    "path": "math_curve_2/.git/objects/33/765891cd01ec1c99dfdef560f2689a3f539c66",
+    "bytes": 173,
+    "sha256": "4d8b8a24a082fdcfec4624dc538380ebdb88f21faf864477caba7e63cd7a1a69"
+  },
+  {
+    "path": "math_curve_2/.git/objects/3c/5a786b8ace21ea857d2f77304a4250f6557dd3",
+    "bytes": 96,
+    "sha256": "7b8c9011990256b43785060790c0351641b4b19d51df10a3380a64f98487f002"
+  },
+  {
+    "path": "math_curve_2/.git/objects/3c/adc969c4d7fd6fe8bfcf1db4ec2be8bef6c256",
+    "bytes": 153,
+    "sha256": "60e1c24d9e3c77f25edb606963c84cdca96335fce5e201f9e0b96e561371bc76"
+  },
+  {
+    "path": "math_curve_2/.git/objects/3c/bfe1ea750f179e837172c5323798505e6e2957",
+    "bytes": 2309,
+    "sha256": "0b37489cba6ae073db22247ef2a047537a340d4d86aae10d8c3bcfc104df22a3"
+  },
+  {
+    "path": "math_curve_2/.git/objects/3e/43e1c0456910cf590669dcdb6089b9d5c0a64f",
+    "bytes": 155,
+    "sha256": "ccae18be825e5ee5719ed31dc5612dff7092d5e24c77f460c38d470b03e12777"
+  },
+  {
+    "path": "math_curve_2/.git/objects/3e/e6e182060c355284fb43be16ca63506a175ef8",
+    "bytes": 126,
+    "sha256": "6c4e09e6547389518441c55453fa013554a716b5955ec88cfcbcce75bdd47770"
+  },
+  {
+    "path": "math_curve_2/.git/objects/45/8d3397c5cff4a29ceee713b439841beb79f28e",
+    "bytes": 402,
+    "sha256": "6bc1c7f9371160c08067923f4a8896e2b5ef183873f4d54a8217d2331a2c63bf"
+  },
+  {
+    "path": "math_curve_2/.git/objects/45/af2df9a24f3559cbe812949b2ef595544e4b98",
+    "bytes": 123,
+    "sha256": "9de0d294d127b2f6acdb2b9be6a795ebdc86674e57dbc4d9f299efd30fbe10fb"
+  },
+  {
+    "path": "math_curve_2/.git/objects/46/9fa32a249a0a3a8eafcc5f4975e15c7e695957",
+    "bytes": 60,
+    "sha256": "6ba19c6e4afea3102dab3c809edc70e2085277d09e3875e1cfc7ab542d523a0d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/47/a8418f031138112cf3daf1c61d571a1b069877",
+    "bytes": 173,
+    "sha256": "f1ebacfaee1bf487d988725d2d8487e27a9725f87ce4330be16fb068511b2704"
+  },
+  {
+    "path": "math_curve_2/.git/objects/49/5a8ce7bdb8872a9e287ab8881a6d75451c49b7",
+    "bytes": 13069,
+    "sha256": "b408aae46f87321060d98b6bfa0c422606c81957baec22f9bada044e55b69d38"
+  },
+  {
+    "path": "math_curve_2/.git/objects/4c/4799b921db2297f6131df07274072e81ef1ac6",
+    "bytes": 160,
+    "sha256": "0faf34ec99930b928106f6a152c6cac753048cb75534674360bf4d3f598e894e"
+  },
+  {
+    "path": "math_curve_2/.git/objects/4d/d5dfcb2d51b5651ff4fcc8a4f757af32a172a5",
+    "bytes": 1186,
+    "sha256": "9ddde11da92811242ed717e956befedb6804542b4a044a00e81b83d6b09d667b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/52/a1ad3e380a0686efceaa2925df0eab220adff5",
+    "bytes": 228,
+    "sha256": "9d39c87ca9fc59e86392d43c1e52de557ecfb45ac23f5a800b4884a0d417bd7b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/53/979eef002b6c1fd79ac3bd5669c1004f7b3c3b",
+    "bytes": 73,
+    "sha256": "870baa3d5d076be096687a05be4760f0bdd845dd0cd8a1b2d4b7b4a2457a5b36"
+  },
+  {
+    "path": "math_curve_2/.git/objects/53/9dd51f4287a1039bd3395d0a136436facaaa21",
+    "bytes": 402,
+    "sha256": "b271369f4da407cb0996763f725f940db1f93e53879e5658d9110c2b4180652b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/54/4ff186af6309ce6a2c8e8bc97591922d03c497",
+    "bytes": 5982,
+    "sha256": "ae7063dc80e508005b270f624a7e3d33e0a74bf7b72aa1ed74fbd8719d054af1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/56/e95d55398b3247f4bbc4d9e62256deb54dca9e",
+    "bytes": 54,
+    "sha256": "6c98c89946d37ecb0d8c1b427f7867cd911e4d7a17834f1df509997d8c6cb6ef"
+  },
+  {
+    "path": "math_curve_2/.git/objects/58/c06070f2dbc32fa66a76ed9b9e8be85ae9bcbe",
+    "bytes": 401,
+    "sha256": "172e7705337b8976ed28554895a0deae93d2797eda940e7584db73f3e1be2066"
+  },
+  {
+    "path": "math_curve_2/.git/objects/5a/4c514137ebb2e7da18ccc9be128344dfb4d52c",
+    "bytes": 2372,
+    "sha256": "99b8335f069d06ca1e5fda32841f734f93bf82aa3d5814593eb74222bb724fc8"
+  },
+  {
+    "path": "math_curve_2/.git/objects/5a/7c972f3e4dc94636936ef6165962675b35ad45",
+    "bytes": 402,
+    "sha256": "7530c62f4ff226319c5f183db61a6323c1ca6a2ccd9d9f9eda310ddcf0c04b8c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/5b/661d1349da671b67b4c38216abb9a551384d93",
+    "bytes": 52,
+    "sha256": "2b45f9d421bf86ee850c3c078a9045f916fcf8a4075dd8fb74f1c6a9825a5860"
+  },
+  {
+    "path": "math_curve_2/.git/objects/5b/c9edd075b6083a17da4c292a2a0106f0e67b00",
+    "bytes": 421,
+    "sha256": "14db51d13b7cdf4e5325d35c3086c47860ffbce4dbc925dc867cae2fb340e986"
+  },
+  {
+    "path": "math_curve_2/.git/objects/5e/4007835ba8df8e7febe9762eb19a07bfeecf3f",
+    "bytes": 58,
+    "sha256": "f2c9476659970b35838f759d005a5d8378fb7b6e995247450ad9833c5d49714d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/60/b36c098cdbf50b88c4a2a6df4ed85cb027df43",
+    "bytes": 358,
+    "sha256": "276d4b84170c268cf37e9d3c9458726025f31cbfc8d382fa16d390a055e88e54"
+  },
+  {
+    "path": "math_curve_2/.git/objects/61/51f47dc116b1a4e1c5b8b9e7fe9465e4b6e748",
+    "bytes": 1006,
+    "sha256": "46708993c404085fbdacb2d193082d76af062fe6cb5e820fe054808a93d812dd"
+  },
+  {
+    "path": "math_curve_2/.git/objects/62/23b5d704108938e69dfa1ce4033d0d5e7e6f0a",
+    "bytes": 48,
+    "sha256": "010f85d43a2c8ded528260d98923b558dbbc61e35f2f9a1e5ce709d98e2f7054"
+  },
+  {
+    "path": "math_curve_2/.git/objects/62/3abc0c0f39cc066a7eb34f68042f6b25e0f9f1",
+    "bytes": 822,
+    "sha256": "63697a0a7f79849d4b91f7facd61bba2670c970dc659a2b1f7fe36d8b25fe762"
+  },
+  {
+    "path": "math_curve_2/.git/objects/62/83b70a3657c38b5a3536fb82e4d137e1cd587a",
+    "bytes": 56,
+    "sha256": "afbea0e61a7ef43dec9c4980b19925ea59dee18cd7b782284a715141c4ad31eb"
+  },
+  {
+    "path": "math_curve_2/.git/objects/65/9423b15356d57d4e07ca1984b21fb8ee3de8e2",
+    "bytes": 2436,
+    "sha256": "8229a4bc529bae4a0ae3efabfaca604a040dd5f35b9e60618a7d4fc7b4e6115b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6a/65be32b52e3ee5b329375b9159277547337e8b",
+    "bytes": 1993,
+    "sha256": "a8ac60fc69165956b513992251cf6e41242b19fc1ff562643a8eb2ec25dca71f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6a/f5cca7b697d27c0da1d56c61631e74bd95c2b9",
+    "bytes": 17249,
+    "sha256": "47bc76f79176b328998254c5973d348182df2a8a35127b7048c9bc36275f1ba1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6b/0142a227268a18fd1e09813a3d6b5349e99b4c",
+    "bytes": 73,
+    "sha256": "6b0d3a8c283d19669d28b43f96d715a11d16933db9543c1c01304e8bf5b295d9"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6c/db7620d232c89593db23b227db45bcacd3c4b6",
+    "bytes": 54,
+    "sha256": "d8927ca57d6693a787f88fe8118e9ce5d28f7b4853ec604b211b0b9c701038cb"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6d/08f7c0629c513fab162fb74bab527870259422",
+    "bytes": 56,
+    "sha256": "e3fea5802f2b86944c168dbbf0a442ef49af37458ae1d933397094b3cb4b0994"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6d/90f1902647b3fe3c7cc887ad8caca1727d2cbb",
+    "bytes": 234,
+    "sha256": "603acc82bd3ae1c2ce86cbf3e6e745d16863ee4da246b7df2b4200dccde5c021"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6d/f76087b6e1f701a769577ed5e5a6678d3f8713",
+    "bytes": 402,
+    "sha256": "ebbde20c7bff1dad20f56638760990114579f77d2c095235356700ea62da673b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/6e/00ff8cd0558be08a771d6ab1566bb0f421a811",
+    "bytes": 2138,
+    "sha256": "4ca5222cf9e09a838895d9ca146c56dd2c46bec0bbf06648a25412377bdcec01"
+  },
+  {
+    "path": "math_curve_2/.git/objects/72/9a50a7f7d0b27f906b36e3f9e9846ee3e7105b",
+    "bytes": 117,
+    "sha256": "82884828f99b3454ffed9dbd9daf0bba0911ac18e07ceb1196f5b81e50522302"
+  },
+  {
+    "path": "math_curve_2/.git/objects/72/f8f191efcef280dc12d7be87d21948028e6643",
+    "bytes": 47,
+    "sha256": "eba33db41de7908a1a40cd4a124241220f0c776b507d040d456a6fce0b97d663"
+  },
+  {
+    "path": "math_curve_2/.git/objects/73/1dd758b31b510a893ff89f9b2909f9beabaf6d",
+    "bytes": 60,
+    "sha256": "08ff2d2ec0ec24404f4d11c9d73ec9d96d461ed0da53f77a5c4bdc09f3a35b41"
+  },
+  {
+    "path": "math_curve_2/.git/objects/73/2a5c76ef8632ec742cdeec75a0f51843a0f8ec",
+    "bytes": 3949,
+    "sha256": "128b8fe63db0e601a292fc59aa82918bb651121059aaf15228a0a7f5c33e7e4e"
+  },
+  {
+    "path": "math_curve_2/.git/objects/74/48506a0711961d56ec7717733387ad70b2ff65",
+    "bytes": 270,
+    "sha256": "0b47f504df2b720797768ed159d885a2fde350571d0bc9e40fefc609de45b32a"
+  },
+  {
+    "path": "math_curve_2/.git/objects/77/4f6871b7d4b59f48baf8b5fc90c633de5d79c8",
+    "bytes": 514,
+    "sha256": "edf28fcfdf8fc8287b6aead5df153631b069f37d248c2559de071291e49fee38"
+  },
+  {
+    "path": "math_curve_2/.git/objects/77/c2333c873171e4adb9c228313f5192f7580bb7",
+    "bytes": 858,
+    "sha256": "736c33c3e66fe23bd47b74f38766910624cb719155c671f854f2ad7a6724ffbb"
+  },
+  {
+    "path": "math_curve_2/.git/objects/78/2c712424bbe33e160df1046c26ba8838166872",
+    "bytes": 823,
+    "sha256": "6b4b4a300682da970972883404a6d941206ee694f3cb1a55180f1dfaf01c8513"
+  },
+  {
+    "path": "math_curve_2/.git/objects/79/a0149986d99195547c8ca8b3e0a8b2a28e4886",
+    "bytes": 72,
+    "sha256": "ac99e01c004494f74afa07f8d0cbcdf29480c724325e95ca7d7f916d39f710fe"
+  },
+  {
+    "path": "math_curve_2/.git/objects/7a/b054e558e36bf18ae5306d157c38b6111e6e1d",
+    "bytes": 24,
+    "sha256": "0b91e02952cd787bef48023dd984d8d8cd3f6546d927968f2af4226657d09473"
+  },
+  {
+    "path": "math_curve_2/.git/objects/7a/cce18b3626b78a64ccc7c9184d26a44674a917",
+    "bytes": 162,
+    "sha256": "70e5a1a49f527a14e1e4386b4e7cfbd0f4e24cb4978198b1afc406df2a5980b1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/7b/016a0dcaaa194559b740c8da2c36fccb0cfece",
+    "bytes": 73,
+    "sha256": "9da23cdb863078a35c077691ee87eab9b7b67c6b53feda4d1c69b5c3ad5f7c40"
+  },
+  {
+    "path": "math_curve_2/.git/objects/7f/70ecdc1d1c9e2550420093f11cb1652932795e",
+    "bytes": 169,
+    "sha256": "0025a9dc6238ea14d38b986f4ace83d5641ded5230196cf8cab8909b9f5e0fb3"
+  },
+  {
+    "path": "math_curve_2/.git/objects/7f/d6cfa2bc0ee4c00c7215dc5bcc02d7494a2b17",
+    "bytes": 73,
+    "sha256": "a0a02f82bc9cb141407ac441aebb9e96a62eeca5c9bc5c52392eb9fc98b2b370"
+  },
+  {
+    "path": "math_curve_2/.git/objects/81/9b466e3aa7aaf7044c108a10cbff0a0a5cdb4a",
+    "bytes": 12243,
+    "sha256": "6d443a946d22d6beaf3fe72f71867d06c22b17f1369a2d1b4d24cd5f45a63452"
+  },
+  {
+    "path": "math_curve_2/.git/objects/86/8763d873089fbc6df9fe2fc3ee222b3fd527e4",
+    "bytes": 153,
+    "sha256": "b963c1bfb7cf3d47d6d6544b894387ad967cf5eb186c7adb5cf0e66d04ee4fee"
+  },
+  {
+    "path": "math_curve_2/.git/objects/86/cba34382bc6549bdf149069be2f77b122e3474",
+    "bytes": 8316,
+    "sha256": "c04f44638d1a38c849adcf1bed8070342e27bc69b0b0403a01cb8488995f2501"
+  },
+  {
+    "path": "math_curve_2/.git/objects/86/e94a2ad18d9ff239e144b5dc26e91d630caaed",
+    "bytes": 73,
+    "sha256": "cf20f48176e1c998e0b96bd471541e31b65a849cc105e53d7251ebe651400830"
+  },
+  {
+    "path": "math_curve_2/.git/objects/88/544fed45be918ac176c72eacfc1b174e876863",
+    "bytes": 2785,
+    "sha256": "0311a0c17b890943c8dd2e283623b029f71a02df184c64146088e6bcda31cb1d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/8a/4aa23fbee5c8d840a6c8e2e8c6b219ec3276de",
+    "bytes": 359,
+    "sha256": "e1f853fddaf4ac569c024a41e74fa322bb1e7d25990d7bc8425641f59953f84e"
+  },
+  {
+    "path": "math_curve_2/.git/objects/8a/858362643b5adb47596e24c56d26dfe87f7b48",
+    "bytes": 12910,
+    "sha256": "1a3446040866d8b59366ead0fd0dbaa0cac2a20fd51eb07a6d718892c7936178"
+  },
+  {
+    "path": "math_curve_2/.git/objects/8b/e7dbecbdd97f8da97dd32d3da67fa5f9ce4b01",
+    "bytes": 192,
+    "sha256": "b934aff259a26bdd486681c0096679a44575f3eeae71ff4fdc8f5aa5b94fa468"
+  },
+  {
+    "path": "math_curve_2/.git/objects/8e/d771adbfb4c12af9cd8df9484bfc07064e6cfc",
+    "bytes": 12385,
+    "sha256": "b3efac80c9f97e2c36dbe3001845018d9a5213d4b0ce501fbe6e9009d045c0d7"
+  },
+  {
+    "path": "math_curve_2/.git/objects/8f/97967a28bc39295f0050cee5183fed3f7cea65",
+    "bytes": 10559,
+    "sha256": "873788ebc7d56d62c33cc8826b6006c661c72aac90ef7fb2ee6d06cde127c9af"
+  },
+  {
+    "path": "math_curve_2/.git/objects/94/31bef79dd41a9480178579e6fbf64877ed3f39",
+    "bytes": 154,
+    "sha256": "a5eb2e0ba1d1877f5f7107c17a21b49ce106e00dedf66c81673eda61a45a6fac"
+  },
+  {
+    "path": "math_curve_2/.git/objects/94/f86733a688eb6edc93f9ccebcde938f56c9818",
+    "bytes": 56,
+    "sha256": "e0063035247f9ac2a40f30a73495ea1ac3e6dfddad66e420b1dfc0d9b757a50c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/95/a5cb8c0ad7b6fee69f9fd555d4674f81cd59ee",
+    "bytes": 270,
+    "sha256": "8d561d47e3993d0e5fa3438cea7b4b9d6c64f1e921ea686d5e4bf55c7b58ced1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/97/a09b0a2f5915cbc9fdd3b9a466db8ce92b1bd9",
+    "bytes": 1347,
+    "sha256": "8cb787cda3929ad6316e52555e7fdce409c676a23f419e6b6149ac5f7755612a"
+  },
+  {
+    "path": "math_curve_2/.git/objects/97/dfa7bcf7a7c68b1e440d3eba266bd7a8ea0815",
+    "bytes": 166,
+    "sha256": "7dc5ff80df29c1d0d32f5d0dc50bae4ade6368c17deda6da06bd1be34d93fbc0"
+  },
+  {
+    "path": "math_curve_2/.git/objects/9a/f8d680b175b922f2d88b9d844132bf0fc0c21b",
+    "bytes": 116,
+    "sha256": "713c804a094760387530ae171becca2c8dfaa5b713ece01e9de3884c06da9728"
+  },
+  {
+    "path": "math_curve_2/.git/objects/9f/8e1f8eb1aad16e8655f4aaca0b376f37be9af6",
+    "bytes": 150,
+    "sha256": "54f03a093d5988994a727938af974d9b14b5903fc297a62c265fb3d59991980d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a0/d5147e2370dfe0dd8d80d456ed3e8941858fe1",
+    "bytes": 193,
+    "sha256": "e1438f02c70593447942438e8f83f593770e7b3624dc72e8d441bfbd87b5fcaa"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a3/093044694485bc165ae5f4fa258853c6835483",
+    "bytes": 53,
+    "sha256": "b8fce2c50eb2b1711fcd4fd30c3abd8bcbcfc3f4a817cc1d537494b2a4d1aa53"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a4/831d113af9853abf47fca1b3e6dacf0c1fa103",
+    "bytes": 146,
+    "sha256": "d41eb17c2b0891aee294c3d0c4642cb903505a6509e2407570ddf4e49b2a3f69"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a5/791d9e6c95bea46a4c2a82c4a968332999cbf7",
+    "bytes": 1153,
+    "sha256": "9ec0602ef2beda4fa9dec224482f18d4351627958873cce52cf1b6b23b544708"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a6/1a47e4710bdc2aedde29ee1f9f4f0b25d8c82a",
+    "bytes": 607,
+    "sha256": "331e156f9a985eebc4b227efa47777307d6067f620d9a2868234e0bbe7ca2117"
+  },
+  {
+    "path": "math_curve_2/.git/objects/a8/a0e60ecc4db69f82b26107e59042df8118b163",
+    "bytes": 2434,
+    "sha256": "de024d84dd072bf7aa768ff74d8e05f605a43fb37cc415e560a5baaae6d44d8d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/aa/5f9fea24619d0d1b0626b0bbe57aee381de7de",
+    "bytes": 55307,
+    "sha256": "161dfedae82907fd7b90aecd49569f3258ff8a1ab36a100b621d922ab3e363ec"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ab/d6ebb7ab6d213d4bac66af99b4a41464622b39",
+    "bytes": 359,
+    "sha256": "0c060cfe6d9d379833be0a1ebdf8d2f7c5409506742edea88dd9fb2bf6f08155"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ae/d0ff200704c4ff76bba517c30f9dfcd66c47c5",
+    "bytes": 209,
+    "sha256": "56afe48f6185a8222afa4074fd048283d5d5c13327e8652511711b712b4c9650"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ba/116a1227e457a287f3146f9574c6275d5244a5",
+    "bytes": 206,
+    "sha256": "f7a68657a0dad47ab70699891f56b6b670f3fc8cdf9fb54e57f06f5037408260"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ba/9652e550d102ccb6820ffac397f9b8f17e2bca",
+    "bytes": 458,
+    "sha256": "da5e6ba8df625f251419f85f54ac1ac7732ff2916d8eb7ad520ff9325a33379c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/bb/34493d53af926bec15e6d8d8575da186d89f90",
+    "bytes": 6508,
+    "sha256": "236c91f014cc9afe35fb028dbb277ffcf42f34a56f02e6780f6f22c7917e8c3f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/bc/53eb9150ddd59cfb686761684033557681a465",
+    "bytes": 358,
+    "sha256": "d1d5d43c5ccd266a703c18badf0cc218d24fd108ba9861f02505c3a98522d171"
+  },
+  {
+    "path": "math_curve_2/.git/objects/bc/d2a01b62e94ac1a8723028fd0aa77dc530e4ff",
+    "bytes": 13208,
+    "sha256": "074deb5a8dd19db5c42559285bcbabdc614556050b041299353664d4a1d921b4"
+  },
+  {
+    "path": "math_curve_2/.git/objects/bd/9f112ea089be6bc7ca34f9f189e69e9f99ad81",
+    "bytes": 123,
+    "sha256": "33b9c2182f2bcef4bf345b5b93e8326616e6661fcdde6cf86e6fba341eb7cf90"
+  },
+  {
+    "path": "math_curve_2/.git/objects/bd/c4ca3161e3edbd807a6cbea78c0e8879199f60",
+    "bytes": 972,
+    "sha256": "fd4da0972669c0674c0e48c4edbf6da5fe0b3bce4a4d77e5b95e091986b5f5aa"
+  },
+  {
+    "path": "math_curve_2/.git/objects/c1/8250a935fb739d5651b499e03ede8a65f0e9b4",
+    "bytes": 494,
+    "sha256": "fd6fabb1d52affafb7e05a178e972bd458d53e77d670a311b8b14760d0536211"
+  },
+  {
+    "path": "math_curve_2/.git/objects/c1/aace20d7d68f7b5bd4e40f6acd9e8ee89e4811",
+    "bytes": 72,
+    "sha256": "5c8187d6bef4cd8e36c8182612976dc8bc7efca3382a464348704c375ebb6012"
+  },
+  {
+    "path": "math_curve_2/.git/objects/c6/8d339dd673dc54e4649a627f2584ef67ec7615",
+    "bytes": 78,
+    "sha256": "e69bdfe7988786404c5fc7ace14d7fbabdcc07e5d1a301dc354769fd2f3a5a27"
+  },
+  {
+    "path": "math_curve_2/.git/objects/cd/8bd6a8bedf8d2afdef6d3f3d6579f75cd7d71e",
+    "bytes": 7925,
+    "sha256": "dd90674f22f5e427944231716d1655494662f4eb1b93825bcb2e6c047b8e0ec2"
+  },
+  {
+    "path": "math_curve_2/.git/objects/cd/ab0ce83a932bbf8fd263f7bb75d0fdaec05dbe",
+    "bytes": 154,
+    "sha256": "5c01a2b93f058fb6b9a6da71011c58cfc9e65199bad4f2613e8fb87185da1d80"
+  },
+  {
+    "path": "math_curve_2/.git/objects/cd/c7a0ad700f0c4921d11a4259aea9f867648825",
+    "bytes": 3608,
+    "sha256": "98e8131929ea2145fdc25b2a8b40bef2551f3c2fe48057ef99506e4d45a59ce9"
+  },
+  {
+    "path": "math_curve_2/.git/objects/cd/f777cba335716aa8a2609f691d4231714d0b8f",
+    "bytes": 10843,
+    "sha256": "e0e5c1d85630bf61e076d006a6e39f4feabe89e068c3b22f8a81bc10c6b84127"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d0/21ce24f8824adb26250e31af8d1703f72ebbe7",
+    "bytes": 289,
+    "sha256": "4e61b75dcc1664e4260866c0f70a6fa121b7e36ba93adb31f821bc219a483bac"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d0/36b14990d00678fab823b415acdbbecb46fbea",
+    "bytes": 155,
+    "sha256": "ebbfad1400b5f26ac0346ff164f6b4b1c183459a3ff44d128d876fab37dcb30c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d1/3d9f23814bebe30b683646b0278d71e658359a",
+    "bytes": 120,
+    "sha256": "3d6eea370db85bbf9a256dcd2b96aca93b17643d3c111a5292b36282371dd27b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d3/8763517abf3f72873c8fbe5a0d6411cf815777",
+    "bytes": 153,
+    "sha256": "bd173967deb58277cdb83383adc8f71560f0420e504659ff21b370aa44064c76"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d5/5cdcfd477b354b52e56b4c48722650f74302f2",
+    "bytes": 383,
+    "sha256": "3504aeefa00a88f8edf8ec4e5841265f96addbdd94ce2ea8127ad79c20223920"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d5/8f0893a04a774f0a2e871dec0cb3126febebc2",
+    "bytes": 151,
+    "sha256": "a512a60f043a46037e9087a6c5a25767424d569c80d009acbc74822dcc618bd1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d5/e5bbb6b9279e24e0cf59ede5c43cda3d935ee8",
+    "bytes": 605,
+    "sha256": "04bd86ab035412b0c6cbecaaa6bd94ac261b8c1f7ce6afe410f610c5ae40ad49"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d8/0d9652370fda66e314a960b1c6749844bbf336",
+    "bytes": 8665,
+    "sha256": "0ca9dec9275ff01f1ccd279f291f3df1d91e0b83cf835b5137410db1be864308"
+  },
+  {
+    "path": "math_curve_2/.git/objects/d8/e57a0ff9ffacb8fddea58f04753bfc90123db1",
+    "bytes": 73,
+    "sha256": "e76f407d80807b340eb740c67d391dc78ecfd3ff3a31c34c817271e400372d96"
+  },
+  {
+    "path": "math_curve_2/.git/objects/da/29090d5cf2d7f162fb1e49bb0d57b1fb2ed11e",
+    "bytes": 88,
+    "sha256": "dd79331e5940457206971044e94f9909c4e25bb703fefbae7f83401622a93d03"
+  },
+  {
+    "path": "math_curve_2/.git/objects/da/6394eacec0b94cd611ff7ad35f89e95e6e0d6f",
+    "bytes": 183,
+    "sha256": "d25ac8d040b5ccc064fd1f637a0454119d7d93ee590f9f7a65ad2688b3cb7bf6"
+  },
+  {
+    "path": "math_curve_2/.git/objects/da/cdafc05da429b818503ddfd456595e28114f5e",
+    "bytes": 710,
+    "sha256": "23cc702fec8ee5d5b3c3110213e95098251ec300cd0546d477ed76f7f6250535"
+  },
+  {
+    "path": "math_curve_2/.git/objects/dc/4b0f043e6a48002a6be04fd36fad6291abd6a3",
+    "bytes": 93,
+    "sha256": "ed2f49e4d5e3aaa8d7c3b3834582798df2992f371718af2b18329b970ed85dfa"
+  },
+  {
+    "path": "math_curve_2/.git/objects/dc/82408c726abd55854fea6c80b9aa480e361a0e",
+    "bytes": 20235,
+    "sha256": "7dc4e547c4cd216c1f3586fe57c90619a886f6de308b61d1e008b54f9648c49c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/dc/b8ceb01ff6b4f5ad1750b8bc2efa45e5128976",
+    "bytes": 11608,
+    "sha256": "fe1abb454d25e9ef0285386e4a423777c8dd8926dbdd313a28f720ae0f2411fc"
+  },
+  {
+    "path": "math_curve_2/.git/objects/df/dc9d5028cb74a6c06a24cc2193bdaf0d7438d4",
+    "bytes": 2385,
+    "sha256": "95d8d1e127aaa1360e5ca080da4b87fedc11ebe4a0032f66c6cc98551da4c468"
+  },
+  {
+    "path": "math_curve_2/.git/objects/e2/28e52c8a1d7f910fb2c6079f3687456921d888",
+    "bytes": 4901,
+    "sha256": "93c69583d8538eea8f8290170cb61547a6bbbb61ae1f0eccdcb8fd8754978808"
+  },
+  {
+    "path": "math_curve_2/.git/objects/e3/29a8c7efaceb8c43bd89e2d17e8816a15bcd0d",
+    "bytes": 15886,
+    "sha256": "e452954cb306e416baaa39ce5be396b2c4ac33a66c4f4a97656ed44bdb1ce6eb"
+  },
+  {
+    "path": "math_curve_2/.git/objects/e4/d7a0145bc20ba10ad1d2b4d68addb2795b95d4",
+    "bytes": 403,
+    "sha256": "5c5943b4769bcb85caf123d6947c84858792324d675f1a861d66730970057840"
+  },
+  {
+    "path": "math_curve_2/.git/objects/e5/5a9d91d4eaa5356f072e17e0764c2b67fb0f2d",
+    "bytes": 459,
+    "sha256": "a450c1c0d2875af351b74634582ccfc444a69acbed59455dab21dc9621edff59"
+  },
+  {
+    "path": "math_curve_2/.git/objects/e6/9de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+    "bytes": 15,
+    "sha256": "164c5fa8067facf1a43f09ce3d0e35ebf53a7f5723ecbf15a8667cfc53c26f6c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ea/23a29f9ac469c226bea57b7d31df433d514ff0",
+    "bytes": 359,
+    "sha256": "7d81f21dcf1ab2da040a305b622649ba32d22d1d745270f92d9ba9c7cefd2fc1"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ec/00e86ff3357434e3eb2c7d1e0fa4c430ededdb",
+    "bytes": 55,
+    "sha256": "2a1d3b0d8a360fcf9e6188b63f9b28c1a67e5d51c6fbf9436d95317c27ad33f9"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ed/1828d8379cdd13e9e2516fbcdcb6cf50f23298",
+    "bytes": 16338,
+    "sha256": "f7a6f73384e2475d7614bd77d441bb978cfb233a003de03b97d482b249b036e4"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ed/1ae276ca4eb5a06999f3e340cabec2f571653a",
+    "bytes": 1993,
+    "sha256": "ded98c4f3341b1a3ade972643ff872d0963df0de1d33d751df5f34636580bee7"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ed/dd5744efac6757cae53694c238b0c3f43974f2",
+    "bytes": 13242,
+    "sha256": "3f4a56d4ac487a61d5e906932077fffb1c43be7afcebde984a6008712be4054f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/ee/318af99ec9ae9276c681c12b56280fc51698a0",
+    "bytes": 1149,
+    "sha256": "e1f4a0704fb20924f53616b241e91445e649e3b9854a5c812c8d9beea2f9dd8b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f1/36afdd71a0aa71306077e7d438b49fe4f67c82",
+    "bytes": 322,
+    "sha256": "74834a2c02a1296d2226752398b7f176500e287fb892364035a8789850029541"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f1/b8e5705f6c5544667a8ea92580d82360687e34",
+    "bytes": 360,
+    "sha256": "b275803694caeee5cbc9f93427b29d331c27338e3bc2f708e9e4a645982e2fea"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f3/831063c65e60bafef943db4b9d846e1234d66c",
+    "bytes": 229,
+    "sha256": "4c3da3ccef93bbf789781d3b449200d49d23458c5a592be0393226d594b0f37b"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f3/a79f9d2cc083060846606505ea5f0d5cb85b95",
+    "bytes": 123,
+    "sha256": "97e6bdd6f3100825bfe91bd5f00d8bd84d16dc63c65cc72cd25d9d52c4485b7d"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f4/80977242237e6ad83c46971d3faa689517ad31",
+    "bytes": 78,
+    "sha256": "d467c444c17480f79307544b8ed33c537b39c8ccae567f105f61170f3c31c351"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f5/2fa1c987202d75a2ea01cf9640b1814837b7cf",
+    "bytes": 847,
+    "sha256": "b3104ad3ff55dfc62edac84176967ae7ebab1625c3523f6db0fafd9ef80fa66c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f6/b4c187364add7a55e106f1a5d7bd20ff77f7b0",
+    "bytes": 1088,
+    "sha256": "00f03b0c09b821a12ff3aaa34748bab7a15a3879f665397c260216ba910af818"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f7/076031b719448bf2f21d5e951e5fb24919a85e",
+    "bytes": 4818,
+    "sha256": "0b591cfe4b271b2869c6d10e2d618d02ef4b32304d85bfcc2d96f46db870620c"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f7/b0b6e48065674c2482dd125ee9653eb70dda05",
+    "bytes": 119,
+    "sha256": "e533c38adc3719d9df106a12c468492ad429608b9387e34cd396e2d9869ea486"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f8/0412e20ceb449850dd101ccce95f2d9073fb11",
+    "bytes": 155,
+    "sha256": "cfaa5c69d678a64792c4ccd9e3227b67571066edadc47b999a519cc2f04476d0"
+  },
+  {
+    "path": "math_curve_2/.git/objects/f9/554c7f0979bccad5ed428ca3a6294f4f224604",
+    "bytes": 64,
+    "sha256": "bc30ff435f34e8ff82feb030493f68aa313f2e6e7052293a6115b42b249b446f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/fb/1fc89d97809511b9fa726ffe7ad77341440af2",
+    "bytes": 4366,
+    "sha256": "27ee6d735d12459c36669a84d577e987e35fd973f0e88de05f434ea8d126944f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/fb/74cb4c3506f2336b114ca02fa42903e821d4bf",
+    "bytes": 192,
+    "sha256": "7ebe98087e9ef889f035409651daecd1242e0d3e42045f384ee02bcc21fe8c4f"
+  },
+  {
+    "path": "math_curve_2/.git/objects/fc/f2667846e24760f74799f997d807bc6c7a3c94",
+    "bytes": 1156,
+    "sha256": "f49e5ee12899ed109a9a5b0cc771b068d5f13364273d0ea40f551c699ab6c133"
+  },
+  {
+    "path": "math_curve_2/.git/objects/fe/2dcfd929c7e0656fb5db60715b4940ed32e49e",
+    "bytes": 182,
+    "sha256": "43a40e0b01ce6803e754922e85ce71e51773771df7c456bbb79acf16201c249d"
+  },
+  {
+    "path": "math_curve_2/.git/ORIG_HEAD",
+    "bytes": 41,
+    "sha256": "eee5d04c289e65398286004025beda043c7a24f9cc9c738b22fa5ece814e7e5c"
+  },
+  {
+    "path": "math_curve_2/.git/refs/heads/main",
+    "bytes": 41,
+    "sha256": "f1c2a8363eacf05046b5c6759e8557047139eb5dddef2a6d848c781d13054d60"
+  },
+  {
+    "path": "math_curve_2/.git/refs/remotes/origin/HEAD",
+    "bytes": 30,
+    "sha256": "2bb6a24aa0fc6c484100f5d51a29bbad841cd2c755f5d93faa204e5dbb4eb2b4"
+  },
+  {
+    "path": "math_curve_2/.git/refs/remotes/origin/main",
+    "bytes": 41,
+    "sha256": "f1c2a8363eacf05046b5c6759e8557047139eb5dddef2a6d848c781d13054d60"
+  },
+  {
+    "path": "math_curve_2/.vscode/launch.json",
+    "bytes": 382,
+    "sha256": "b7d5c7d3c87e4f55c1ae7af6598aeefd85b54e73cc478260145c3acb8f247099"
+  },
+  {
+    "path": "math_curve_2/AddInIcon.svg",
+    "bytes": 95410,
+    "sha256": "fa20889092101eaa6fd06d94ef86d396a7d30ea3f0e89e6f4dd94f8f145fa615"
+  },
+  {
+    "path": "math_curve_2/commands/__init__.py",
+    "bytes": 1090,
+    "sha256": "f5422f878039e158c397ad9ee30e73305dd76803ea201c838f7ddb49805be665"
+  },
+  {
+    "path": "math_curve_2/commands/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 488,
+    "sha256": "5793984732e22145640070ec4855396e995f8c5ddb75858a84d168fa34c3aff2"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 140,
+    "sha256": "c60f2f68529e00ba1464a833cb65befc5f525dc25a640fca854edecff69af70f"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/__pycache__/entry.cpython-310.pyc",
+    "bytes": 3619,
+    "sha256": "1a638d507071ca2f1ac87f1ca423a8400a041fead5f2d5153f1769423f0a7c44"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/entry.py",
+    "bytes": 6714,
+    "sha256": "fef3adcaf8822701504ec050b006ce488addeb75a815b14668fb7b429799a706"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/resources/16x16.png",
+    "bytes": 952,
+    "sha256": "2854f3b8bec73bd36886fedec1787fc549a2f8602680765eded56dca31be90fd"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/resources/32x32.png",
+    "bytes": 2415,
+    "sha256": "23fb19705ca4aa631c92d2dedc8939ac9a04d3d98d14f0250ac3c7b7417c5b83"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/resources/64x64.png",
+    "bytes": 4870,
+    "sha256": "473ff5ebb1e82db686a5e3aaed84663add6e7051fb3a0ed875fceb7288a09659"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/resources/画像2.png",
+    "bytes": 80483,
+    "sha256": "435ce2837d4215bc424349f42d557feb707e6bff90f5367fbe001a332b2b71e2"
+  },
+  {
+    "path": "math_curve_2/commands/commandDialog/resources/画像5.png",
+    "bytes": 81474,
+    "sha256": "860f87d9935aa09ba556c0ed1fb7468e8a33c49c7ce128c55e6416e97f03ca27"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__init__.py",
+    "bytes": 93,
+    "sha256": "058a5726fbba6c77348a289904d4ae8e873384d886a13e444ffa6b38bed68500"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 198,
+    "sha256": "01e095b17d11c3331b1f28dffce0eb4343ae8aebe1bab9b8cffe850517a6489f"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__pycache__/entry_ui.cpython-310.pyc",
+    "bytes": 139,
+    "sha256": "334b1912122975f713b80766e1bc50931bd6dbb2f8c715c944061c85417bad49"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__pycache__/entry.cpython-310.pyc",
+    "bytes": 3130,
+    "sha256": "8b697c937a659a997751301646c5ce6b96756bbe23efa3e9a484a67ea6084894"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__pycache__/functions.cpython-310.pyc",
+    "bytes": 2953,
+    "sha256": "597d2153df98cfcbd3ffdae184c32bad5cc6d4e3c1e50c58b4eef9464e3735a0"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/__pycache__/parametric_support.cpython-310.pyc",
+    "bytes": 2950,
+    "sha256": "43fc5ac32535dde5b35efa727827a79858655c1a471ed4d612ab4013ceaa6a2d"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/entry_ui.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/entry.py",
+    "bytes": 3558,
+    "sha256": "4f345d03791a3729a221e0b8b2b86b34faa45a5088d631616f562fe0343db0d9"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/functions.py",
+    "bytes": 3052,
+    "sha256": "7d29d88196df818aaaeb8206009537d3339d13c82a56c581e1f8a7f164a03be0"
+  },
+  {
+    "path": "math_curve_2/commands/functionSets/parametric_support.py",
+    "bytes": 4967,
+    "sha256": "94d8e6dc6ec97d1f3d325d2144c7b28254f6483b7eba6341b900160a432fbd36"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 138,
+    "sha256": "9bc493e6a1492c54afab21e9390717b782f0216f28d2a152f544c198d102f88b"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/__pycache__/entry.cpython-310.pyc",
+    "bytes": 3475,
+    "sha256": "32a5a1cf70637cebcaed6d4ca315a1a78a2f4802599231645c2a692d3bd41303"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/entry.py",
+    "bytes": 6520,
+    "sha256": "7a780354c41e69b29c81c8d11cc6ef1f92c2e931253273c18c99c5cd6b2d842b"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/resources/16x16.png",
+    "bytes": 474,
+    "sha256": "954ee61594ef211cac16bd56acde2846466d7e43072bb31dd8c630a7e975f5ec"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/resources/32x32.png",
+    "bytes": 1067,
+    "sha256": "f49287f5b249fa2da6ca180ef513b7a9aa8aa012b20f3e8ce7a666830c40a2f7"
+  },
+  {
+    "path": "math_curve_2/commands/paletteSend/resources/64x64.png",
+    "bytes": 1972,
+    "sha256": "6aa5e13a4a481092b7e8a4a70900c54840a4f3f30a160200843c6e542ca96a9c"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/__init__.py",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 138,
+    "sha256": "274b6585f8f036e9220d8a810494b505d8ee8ff8ca2af9f3ddbc637e3f20979b"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/__pycache__/entry.cpython-310.pyc",
+    "bytes": 4514,
+    "sha256": "1a62351921425a05df04880a72fcc4e1639a249b195b59f8935e6e03a9ee86f2"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/entry.py",
+    "bytes": 7557,
+    "sha256": "f150da748761548791ad3ed205cecce129c8e6312387ed5c3a17959835381952"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/resources/16x16.png",
+    "bytes": 340,
+    "sha256": "9605ddcf64826740265b54e0ae9bff73333dd0c1f13054795b4b334edcc8edc8"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/resources/32x32.png",
+    "bytes": 587,
+    "sha256": "26a690882b990719c169bd0d8f2536705ac3a32ca99a67c6111652e69c978757"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/resources/64x64.png",
+    "bytes": 1165,
+    "sha256": "ce57e1338f6811dcd35d870ad80a297c2b76fe1ec49439f840eab4bc3629912d"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/resources/html/index.html",
+    "bytes": 1155,
+    "sha256": "ac647a0ee122713a862b1d15c5699c337a95990831a5587a5e10ee309cb78cb8"
+  },
+  {
+    "path": "math_curve_2/commands/paletteShow/resources/html/static/palette.js",
+    "bytes": 1670,
+    "sha256": "c6907a566e60f8c0b11e2c05ff75755c6e7b300e9589f33fae8d023134f34e00"
+  },
+  {
+    "path": "math_curve_2/config.py",
+    "bytes": 873,
+    "sha256": "10c1a62ec70bd31c51e0eef2ba456a8821a1ca5f1e13fa1cf6964f6e5d6743b8"
+  },
+  {
+    "path": "math_curve_2/IMPROVEMENTS.md",
+    "bytes": 34335,
+    "sha256": "bd123e0a73e4aa3ca8499d143e08c6df16fa3c41dec8f45a819a9e4782750fae"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__init__.py",
+    "bytes": 58,
+    "sha256": "cb1c30393875cb2ed308d71686b20b1248689b71ad1abcf1a510d9ad6cc94164"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/__init__.cpython-310.pyc",
+    "bytes": 191,
+    "sha256": "ae037776639c84382cce680997caf3a468b8209413384f2840ee4d71f266a42d"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/__init__.cpython-314.pyc",
+    "bytes": 285,
+    "sha256": "324a7308e9e0e99c90a9c7a310d30e4e21d669f99d7839f943311f61b8e0ad85"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/event_utils.cpython-310.pyc",
+    "bytes": 2865,
+    "sha256": "6aae2e7114dbae6f55951d99fa161db3a5b849fd0d4f048861fd220fe040a3ca"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/event_utils.cpython-314.pyc",
+    "bytes": 4248,
+    "sha256": "eb1c6345b47dbdcfdd3ab339e03a9db3162a6150188d517edf3c5607d5381ebf"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/general_utils.cpython-310.pyc",
+    "bytes": 1661,
+    "sha256": "5fd63065c334451e72af3539c30c8a90326e95bc2e140c39ff74efb86003a41b"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/__pycache__/general_utils.cpython-314.pyc",
+    "bytes": 3138,
+    "sha256": "c64044d61e255a8f127123f1f85d20d132fb5c5a5c93e8d9769d01edfd0603a7"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/event_utils.py",
+    "bytes": 3151,
+    "sha256": "2e6f08259bee7929cedb76c9b7b9a9d0321e019fcd6c508d2c056899a8c183ef"
+  },
+  {
+    "path": "math_curve_2/lib/fusionAddInUtils/general_utils.py",
+    "bytes": 2502,
+    "sha256": "488c58ba867661b97c272fa517d4eda58896a38bed923663baa8c5e2c1e96692"
+  },
+  {
+    "path": "math_curve_2/license_manager.py",
+    "bytes": 3115,
+    "sha256": "1395861f0caa5ddfc0f0c65d4ae4c3596553fa9efad8bd6b3066fbeb12165aff"
+  },
+  {
+    "path": "math_curve_2/main.py",
+    "bytes": 202,
+    "sha256": "9a7ae488cea6c8c83b4486e87f202b98cd3f70175143a4d8d3ede6564a5bb55d"
+  },
+  {
+    "path": "math_curve_2/MarketplaceSubmission/MACOS_SUBMISSION_NOTES.md",
+    "bytes": 1602,
+    "sha256": "4a761f780ad71ffd04189c36ab46a529d3d18a3fd533ab71a7957882d585e845"
+  },
+  {
+    "path": "math_curve_2/MarketplaceSubmission/MARKETPLACE_SUBMISSION.md",
+    "bytes": 2407,
+    "sha256": "eded55fe20dff0e979d979e4e15d468a9cdeb44c79d073eecfd664b3572c98b1"
+  },
+  {
+    "path": "math_curve_2/MarketplaceSubmission/REPLY_TO_AUTODESK.txt",
+    "bytes": 978,
+    "sha256": "bcfed245c0f29dd0641ee14f3aab35a26481a8aa7c206bf4be99b984671c6b71"
+  },
+  {
+    "path": "math_curve_2/math_curve_2.manifest",
+    "bytes": 265,
+    "sha256": "c4412843a33bbcd7a9186e6c95db3e1171f429025140183b6c7168dcc8d239ed"
+  },
+  {
+    "path": "math_curve_2/math_curve_2.py",
+    "bytes": 63602,
+    "sha256": "04b451da1952190d21a2221de50bf1cd64438ab79e955c35ba07dd1fe7cb1d9a"
+  },
+  {
+    "path": "math_curve_2/README.md",
+    "bytes": 1982,
+    "sha256": "f0c46d0735706ecad889b3ae52a36f30c08f60f53f8dc0c0a7e11db3bc5e3a88"
+  },
+  {
+    "path": "math_curve_2/test_permissions.txt",
+    "bytes": 71,
+    "sha256": "21c9fa55a6fefc7b703936975cc741f6ddf6dfe4abb09703363811719ce8a7e2"
+  },
+  {
+    "path": "math_curve_2/tests/__pycache__/test_license_manager.cpython-310.pyc",
+    "bytes": 3349,
+    "sha256": "f62711aa1d52159bb163a1e97021b5edb744720a889976db547314ccf28b9902"
+  },
+  {
+    "path": "math_curve_2/tests/test_license_manager.py",
+    "bytes": 2420,
+    "sha256": "9237464d6dd7fa464ce52127ecf2e56cc848d3a18025509453857fdbb4873e27"
+  }
+]

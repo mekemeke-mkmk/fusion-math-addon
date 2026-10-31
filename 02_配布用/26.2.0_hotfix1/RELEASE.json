@@ -1,0 +1,27 @@
+{
+  "version": "26.2.0",
+  "release_tag": "hotfix1",
+  "original_zip_date": "2026-08-12",
+  "folder_organized_on": "2026-10-31",
+  "editable_source": "../../01_編集用/math_curve_2",
+  "source_baseline": "Windows hotfix1 ZIPと配布対象ファイルが完全一致。整理では文書・Git除外設定のみ変更。",
+  "packages": [
+    {
+      "platform": "macOS",
+      "file": "Math_Curve_2_26.2.0_macOS_hotfix1.zip",
+      "bytes": 176309,
+      "sha256": "1684bf7b13421c5bbc7ca0fafb79f57648fc0236b6a4e062408f18019af57f83"
+    },
+    {
+      "platform": "Windows",
+      "file": "Math_Curve_2_26.2.0_Windows_hotfix1.zip",
+      "bytes": 176328,
+      "sha256": "f1e4a5ded5b28acc2f27aa64a16157ce2e1b9bd22718d5d35a132f3b08f5216c"
+    }
+  ],
+  "notes": [
+    "既存ZIPの内容をそのまま保存。今回、新しい製品リリースは作成していない。",
+    "Windows/macOSの差分はREADME.mdとmanifestの対応OS。",
+    "macOSの提出前確認事項は編集元のMarketplaceSubmission/MACOS_SUBMISSION_NOTES.mdを参照。"
+  ]
+}

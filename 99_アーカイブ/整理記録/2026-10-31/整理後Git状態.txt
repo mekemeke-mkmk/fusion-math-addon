@@ -1,0 +1,18 @@
+ M .continue/agents/new-config.yaml
+ M IMPROVEMENTS.md
+ M README.md
+ D "__pycache__/math curve 2.cpython-310.pyc"
+ D commands/reloadCommand/resources/16x16-normal.png
+ D commands/reloadCommand/resources/16x16.png
+ D commands/reloadCommand/resources/32x32-normal.png
+ D commands/reloadCommand/resources/32x32.png
+ D commands/reloadCommand/resources/64x64.png
+ M math_curve_2.manifest
+ M math_curve_2.py
+ D test_permissions.txt
+?? .gitignore
+?? MarketplaceSubmission/
+?? __init__.py
+?? license_manager.py
+?? main.py
+?? tests/

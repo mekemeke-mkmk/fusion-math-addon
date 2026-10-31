@@ -1,0 +1,18 @@
+{
+  "folders": [
+    {
+      "name": "Math Curve 2（最新版の編集用）",
+      "path": "01_編集用/math_curve_2"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true
+    },
+    "search.exclude": {
+      "**/__pycache__": true,
+      "**/*.pyc": true
+    }
+  }
+}

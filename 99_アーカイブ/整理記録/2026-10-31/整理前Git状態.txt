@@ -1,0 +1,29 @@
+ M .continue/agents/new-config.yaml
+ M IMPROVEMENTS.md
+ M README.md
+ D commands/reloadCommand/resources/16x16-normal.png
+ D commands/reloadCommand/resources/16x16.png
+ D commands/reloadCommand/resources/32x32-normal.png
+ D commands/reloadCommand/resources/32x32.png
+ D commands/reloadCommand/resources/64x64.png
+ M math_curve_2.manifest
+ M math_curve_2.py
+?? MarketplaceSubmission/
+?? __init__.py
+?? __pycache__/__init__.cpython-310.pyc
+?? __pycache__/__init__.cpython-314.pyc
+?? __pycache__/config.cpython-310.pyc
+?? __pycache__/config.cpython-310.pyc.2254815013984
+?? __pycache__/config.cpython-314.pyc
+?? __pycache__/license_manager.cpython-310.pyc
+?? __pycache__/main.cpython-310.pyc
+?? __pycache__/math_curve_2.cpython-310.pyc
+?? commands/__pycache__/
+?? commands/commandDialog/__pycache__/
+?? commands/functionSets/__pycache__/
+?? commands/paletteSend/__pycache__/
+?? commands/paletteShow/__pycache__/
+?? lib/fusionAddInUtils/__pycache__/
+?? license_manager.py
+?? main.py
+?? tests/

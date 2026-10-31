@@ -1,0 +1,23 @@
+{
+  "checked_on": "2026-10-31",
+  "success": true,
+  "original_files": 360,
+  "original_files_preserved_byte_for_byte": 360,
+  "git_internal_files_preserved_byte_for_byte": 197,
+  "runtime_and_asset_files_matching_windows_hotfix1": 35,
+  "latest_zip_archives_verified": 2,
+  "old_zip_archives_preserved": 11,
+  "guide_links_verified": 13,
+  "editor_workspace_path_verified": true,
+  "existing_tracked_git_changes_preserved": true,
+  "generated_file_ignore_verified": true,
+  "manifest_version": "26.2.0",
+  "source_document_changes": [
+    "README.md",
+    "IMPROVEMENTS.md"
+  ],
+  "source_added_settings": [
+    ".gitignore"
+  ],
+  "failures": []
+}

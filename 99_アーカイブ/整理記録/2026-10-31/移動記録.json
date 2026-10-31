@@ -1,0 +1,102 @@
+[
+  {
+    "from": "math_curve_2",
+    "to": "01_編集用/math_curve_2"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_hotfix1.zip",
+    "to": "02_配布用/26.2.0_hotfix1/Math_Curve_2_26.2.0_Windows_hotfix1.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_macOS_hotfix1.zip",
+    "to": "02_配布用/26.2.0_hotfix1/Math_Curve_2_26.2.0_macOS_hotfix1.zip"
+  },
+  {
+    "from": "Math_Curve_2_1.0.1_Windows_20260812000106.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_1.0.1_Windows_20260812000106.zip"
+  },
+  {
+    "from": "Math_Curve_2_1.0.1_Windows_FINAL_20260812000125.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_1.0.1_Windows_FINAL_20260812000125.zip"
+  },
+  {
+    "from": "Math_Curve_2_1.0.1_Windows.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_1.0.1_Windows.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_macOS_reviewfix_clean.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_macOS_reviewfix_clean.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_macOS_reviewfix.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_macOS_reviewfix.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_macOS.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_macOS.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_20260812001227.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_Windows_20260812001227.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_reviewfix_clean.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_Windows_reviewfix_clean.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_reviewfix.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_Windows_reviewfix.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows.zip",
+    "to": "99_アーカイブ/旧配布ZIP/Math_Curve_2_26.2.0_Windows.zip"
+  },
+  {
+    "from": "math_curve_2.zip",
+    "to": "99_アーカイブ/旧配布ZIP/math_curve_2.zip"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_hotfix1",
+    "to": "99_アーカイブ/展開済み/Math_Curve_2_26.2.0_Windows_hotfix1"
+  },
+  {
+    "from": "Math_Curve_2_26.2.0_Windows_reviewfix_clean",
+    "to": "99_アーカイブ/展開済み/Math_Curve_2_26.2.0_Windows_reviewfix_clean"
+  },
+  {
+    "from": "01_編集用/math_curve_2/commands/commandDialog/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/commands/commandDialog/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/commands/functionSets/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/commands/functionSets/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/commands/paletteSend/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/commands/paletteSend/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/commands/paletteShow/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/commands/paletteShow/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/lib/fusionAddInUtils/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/lib/fusionAddInUtils/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/commands/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/commands/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/tests/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/tests/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/__pycache__",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/__pycache__"
+  },
+  {
+    "from": "01_編集用/math_curve_2/test_permissions.txt",
+    "to": "99_アーカイブ/開発時の生成ファイル/2026-10-31/math_curve_2/test_permissions.txt"
+  }
+]
