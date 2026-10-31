@@ -7,6 +7,34 @@
 ---
 
 
+## [2026-10-31] GitHubリポジトリを最新の編集元に同期
+**AI:** Claude Code
+
+**What（何を変更したか）**
+- 手元の編集元 `01_編集用/math_curve_2`（26.2.0 / hotfix1 基準）の内容を、GitHub の作業ブランチに取り込んだ。
+- GitHub の `main` にだけあったコミット「44」「7/22.1」は履歴に残し、ファイル内容は手元の編集元を正とした。
+- `.gitignore` に OS が生成するファイル（`Thumbs.db`, `desktop.ini`, `.DS_Store`）を追加した。
+
+**Why（なぜ変更したか）**
+- GitHub 上の内容が古く、ライセンス処理・テスト・Marketplace 提出資料など最新の編集内容が一度も push されていなかったため。
+
+**How（どう変更したか）**
+1. 編集元フォルダーで未コミットの変更を `local-latest` ブランチとしてコミットし、push した。
+2. `main` と `local-latest` をマージし、ツリーを `local-latest` と完全に一致させた（`main` 側の 2 コミットは履歴として保持）。
+3. 配布ZIP・アーカイブ・整理記録はソース管理の対象外とし、リポジトリには含めない。
+
+**Purpose（目的）**
+- GitHub を最新版の編集元として使える状態にし、以後の変更履歴を Git で追えるようにする。
+
+**Impact（影響）**
+- 動作コードは配布済みの 26.2.0 / hotfix1 と同一。
+- `main` 側の「Reload Math Curve 機能の完全削除」「起動時自動登録（runOnStartup: true）」の変更は、今回の内容には含まれない。
+- 構文チェック: `python -m py_compile math_curve_2.py license_manager.py main.py` 成功
+- テスト: `python -m unittest discover -s tests` 3件成功
+
+---
+
+
 ## [2026-10-31] 最新版の編集元・配布物・過去版を整理
 **AI:** Codex
 

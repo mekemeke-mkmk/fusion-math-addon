@@ -6,3 +6,8 @@ __pycache__/
 # Local virtual environments
 .venv/
 venv/
+
+# OS-generated files
+Thumbs.db
+desktop.ini
+.DS_Store
