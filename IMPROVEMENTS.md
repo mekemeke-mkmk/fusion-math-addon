@@ -1,86 +1,270 @@
----
-
-## [2026-07-22 09:00] README に使用手順と trial/license 状況を追加
-**AI:** Codex
-
-**What（何を変更したか）**
-- `README.md` に step-by-step の使用手順を追加
-- trial / license / Autodesk Entitlement API の現状を明記
-- Marketplace 向けの注意事項として Fusion 対象であることを追記
-
-**Why（なぜ変更したか）**
-- レビューで「使い方が step-by-step で書かれていない」「trial / license / Entitlement API の説明・実装がない」と指摘されたため
-- 実装の現状を README 上で誤解なく説明する必要があったため
-
-**How（どう変更したか）**
-1. `How to Use` セクションを追加
-2. `Trial and License` セクションで未実装である点を明記
-3. `Marketplace Notes` セクションで Fusion 向け add-in であることを整理
-
-**Purpose（目的）**
-- レビュー対応用の説明を README に集約し、審査担当者が最初に確認する情報を明確化する
-
-**Impact（影響）**
-- 使用手順とライセンス状況が README だけで把握しやすくなる
-
----
-
-## [2026-05-31 15:40] 起動時自動登録とスケッチ未編集中警告の起動時抑制
-**AI:** Codex
-
-**What（何を変更したか）**
-- `runOnStartup` を有効化して、Fusion 起動時にアドインを自動登録するよう変更
-- 起動時の `run()` からスケッチ環境チェックによる即時警告を削除
-- スケッチが開かれていない状態でコマンドを実行した時だけ警告するよう調整
-
-**Why（なぜ変更したか）**
-- 起動するたびに「スケッチを起動している時しか起動できません」という警告が出てしまい、毎回手動で再実行する必要があったため
-- 最初にスケッチを開いた時点から、アドインのボタンが既に有効になっている状態にしたかったため
-
-**How（どう変更したか）**
-1. `math_curve_2.manifest` の `runOnStartup` を `true` に変更
-2. `run()` を「コマンド定義とボタンの登録のみ」に変更
-3. `is_sketch_environment_ready()` を静かな判定に変更し、警告はコマンド実行時のみ出すよう整理
-
-**Purpose（目的）**
-- Fusion 起動直後にアドインを常駐登録し、最初にスケッチを開いた時点で再実行不要にする
-
-**Impact（影響）**
-- 起動時の警告が消える
-- スケッチを開いた時点で `Math Curve Sketch` が利用可能になる
-- スケッチ未編集中に実行した場合のみ警告が出る
-- 構文チェック: `python -m py_compile math_curve_2.py` 成功
-
----
-
-## [2026-05-31 15:35] Reload Math Curve 機能の完全削除
-**AI:** Codex
-
-**What（何を変更したか）**
-- アドイン内の Reload Math Curve ボタンと再起動ハンドラを削除
-- 起動時に再生成していた reload 用コマンド定義を除去
-- 使われなくなった commands/reloadCommand/resources の画像ファイルを削除
-
-**Why（なぜ変更したか）**
-- メインの Math Curve Sketch 以外に Reload math curve ボタンが表示されてしまい、不要な再起動導線が残っていたため
-- 機能ごと削除して、ユーザーに見える UI を単一化するため
-
-**How（どう変更したか）**
-1. math_curve_2.py から RELOAD_CMD_ID、reload アイコンフォルダ参照、reload 用ハンドラを削除
-2. `run()` と `remove_ui()` を main command のみを扱う形に簡素化
-3. commands/reloadCommand/resources の PNG を削除して、未使用資産を掃除
-**Purpose（目的）**
-- アドインを起動したときに Math Curve Sketch だけが表示される状態に戻す
-
-**Impact（影響）**
-- Reload math curve ボタンは表示されなくなる
-- 再起動ボタン経由の再構築処理は利用不可になるが、通常の Math Curve Sketch 起動は維持
-- 構文チェックはこの後に確認する
 # IMPROVEMENTS LOG
 
 このファイルには「なぜ変更したか」を必ず記録する。
 
 **⚠️ 変更履歴は最新の変更が上に表示されます（時系列逆順）**
+
+---
+
+
+## [2026-10-31] 最新版の編集元・配布物・過去版を整理
+**AI:** Codex
+
+**What（何を変更したか）**
+- 編集元を `01_編集用/math_curve_2` に集約し、Git履歴・未コミット変更・テスト・設定を引き継いだ。
+- 現在の配布ZIPを `02_配布用/26.2.0_hotfix1` にまとめ、旧ZIPと展開済みの重複コピーを `99_アーカイブ` に移した。
+- 生成済み `__pycache__` と書き込み確認用 `test_permissions.txt` をアーカイブへ移し、Pythonキャッシュ等を `.gitignore` に追加した。
+- ルートの日本語ガイド、VS Codeワークスペース、配布ZIPのハッシュ情報、整理記録を作成し、このREADMEから案内した。
+
+**Why（なぜ変更したか）**
+- 最新版と古い作業コピーが混在し、編集する場所と配布するファイルを判別しにくかったため。
+
+**How（どう変更したか）**
+- 整理前にファイル一覧とSHA-256、Git状態を記録した。
+- 編集元の配布対象ファイルがWindows hotfix1 ZIPと完全一致することを確認し、既存ファイルを保管しながら用途別に移動した。
+- READMEと本履歴の原本は `99_アーカイブ/整理記録/2026-10-31/編集前文書` に保存した。
+
+**Purpose（目的）**
+- 最新版の編集元を一つにし、編集・配布・過去資料の参照を迷わず行えるようにする。
+
+**Impact（影響）**
+- 動作コード・素材・既存配布ZIP・manifestのバージョンに変更はない。新しい製品リリースは作成していない。
+- 既存のGit変更は残る。以前から追跡されていたキャッシュ1ファイルと権限確認ファイルは、作業ツリーでは削除扱いになり、実体はアーカイブに残る。
+- Fusion側のアドイン登録設定は変更していない。
+
+---
+
+## [2026-08-12] 曲線作成時の未初期化app参照を修正
+**AI:** Codex
+
+**What（何を変更したか）**
+- `ExecuteHandler.notify()` の先頭でFusion Applicationを取得するよう修正
+
+**Why（なぜ変更したか）**
+- スケッチが有効な通常経路で、Entitlement API照会に渡す`app`が未初期化となり`UnboundLocalError`が発生したため
+
+**How（どう変更したか）**
+1. `try`ブロック先頭に`app = adsk.core.Application.get()`を追加
+2. 分岐内の重複したApplication取得を削除
+
+**Purpose（目的）**
+- 曲線作成時のライセンス照会を正常に実行する
+
+**Impact（影響）**
+- 有効なスケッチで`Create Curves`を押したときのクラッシュを解消
+
+---
+
+## [2026-08-12] 提出前レビューで判明した曲線生成・ライセンス不具合を修正
+**AI:** Codex
+
+**What（何を変更したか）**
+- パラメトリック曲線のX座標から誤って`t Start`を引いていた計算を修正
+- 曲線サンプルが生成できない場合に、明確なエラーメッセージを表示
+- 変数名を数式で安全に使えるASCII識別子に制限
+- 改ざん可能な7日間のローカルライセンス猶予キャッシュを廃止
+- add-in起動時のEntitlement照会を削除し、曲線作成時だけ照会するよう変更
+- `main.py` の存在しない`main()`参照を、`run`/`stop`公開へ修正
+- 基準線由来の表示専用入力を `Baseline Angle` / `Baseline Length` に明確化
+
+**Why（なぜ変更したか）**
+- `t Start`が0以外のパラメトリック曲線で位置が誤るため
+- 無効な数式で何も生成されないのに成功に見えるため
+- ライセンスキャッシュを編集するだけでtrialを回避できるため
+- 起動時のネットワーク待機でFusionのUI登録を遅延させないため
+
+**How（どう変更したか）**
+1. `x(t)`をそのままローカルX座標として利用
+2. 曲線作成関数の戻り値を確認して失敗理由を表示
+3. 変数名を`[A-Za-z_][A-Za-z0-9_]*`として検証
+4. Entitlement APIの応答のみを利用し、接続できない場合はブロック
+
+**Purpose（目的）**
+- 数式描画の正確性と、Marketplace trialの保護を提出前に高める
+
+**Impact（影響）**
+- 曲線作成には有効なMarketplaceライセンスとネットワーク接続が必要
+- 空白や記号を含む変数名は利用できず、英数字とアンダースコアを使用する必要がある
+
+---
+
+## [2026-08-12] macOS配布向けライセンスキャッシュ対応
+**AI:** Codex
+
+**What（何を変更したか）**
+- macOSではEntitlement確認キャッシュを `~/Library/Application Support/Autodesk/MathCurve` に保存するよう変更
+- macOS提出時のApp ID確認、フォーム値、インストール案内を追加
+
+**Why（なぜ変更したか）**
+- Windowsの`APPDATA`前提では、macOSの標準的なアプリケーションデータ配置に従えないため
+- OSをCloneしたMarketplace提出でApp IDが変わる場合に、誤ったentitlement照会を防ぐため
+
+**How（どう変更したか）**
+1. `sys.platform == "darwin"` の場合にmacOS標準のApplication Supportを解決
+2. Mac版提出前にApp IDを確認する手順を文書化
+
+**Purpose（目的）**
+- Windows/Mac双方で正式なEntitlement APIとローカルキャッシュを安定して利用する
+
+**Impact（影響）**
+- Mac版はClone後のApp ID確認が完了してから最終提出する必要がある
+
+---
+
+## [2026-08-12] Marketplace入力文を指定の3区分へ再編
+**AI:** Codex
+
+**What（何を変更したか）**
+- Marketplace Submission Copy を `General Usage Instructions`、`Installation / Uninstallation`、`Support Information` の3区分へ再編
+
+**Why（なぜ変更したか）**
+- Marketplaceの入力欄構成に合わせて、内容をそのまま貼り付けられるようにするため
+
+**How（どう変更したか）**
+1. 使用手順を General Usage Instructions に集約
+2. インストールとWindowsからのアンインストール手順を独立した区分へ追加
+3. 互換性、ライセンス、プライバシー、連絡先を Support Information に集約
+
+**Purpose（目的）**
+- 再提出時の入力漏れと説明欄の重複を防ぐ
+
+**Impact（影響）**
+- Marketplaceフォームの3項目へ、対応する文章を直接転記できる
+
+---
+
+## [2026-08-11] Autodesk Entitlement API正式実装と再提出資料の作成
+**AI:** Codex
+
+**What（何を変更したか）**
+- 仮の環境変数・ローカル30日カウント方式を削除し、Autodesk Marketplace Entitlement API の正式エンドポイントへ置換
+- Fusion の `app.userId` と Marketplace App ID `1343581627431012464` を使用し、`IsValid` の結果で曲線作成の可否を制御
+- 同一ユーザーに限定した7日間のオフライン猶予キャッシュを追加
+- manifest のバージョンを `26.2.0`、対応OSをWindowsのみに統一
+- Marketplace用入力文、審査返信文、ライセンス単体テストを追加
+
+**Why（なぜ変更したか）**
+- 審査で質問された30日trialが、実際のAutodesk Entitlement APIではなくローカル試用判定の骨組みに留まっていたため
+- 説明文の「外部送信なし」がライセンス照会の実態と矛盾していたため
+- Marketplace入力値、Fusion表示、提出物のバージョンおよび対応OSを一致させるため
+
+**How（どう変更したか）**
+1. `https://apps.autodesk.com/webservices/checkentitlement?userid=...&appid=...` にHTTPS GETを実行
+2. `IsValid: true` のときのみ曲線確定を許可し、明示的な無効応答は即座にブロック
+3. 接続失敗時だけ、同一ユーザーの直近の有効照会結果を7日間に限って利用
+4. 再提出に必要なフォーム値、プライバシー文、英語返信文を成果物として固定
+
+**Purpose（目的）**
+- Marketplaceが管理する30日trialと有料entitlementを、同じ正式ライセンス判定経路で扱う
+- 審査担当者が確認しやすい一貫した提出物を準備する
+
+**Impact（影響）**
+- 初回利用時とオフライン猶予終了後は、FusionでAutodeskアカウントにサインインしネットワーク接続できる必要がある
+- trial開始日・期限はローカルPCではなくMarketplace側の設定に従う
+
+---
+
+## [2026-08-12] 提出バージョンを26.2.0へ統一
+**AI:** Codex
+
+**What（何を変更したか）**
+- manifest、Marketplace入力文、Autodesk返信文、README、Entitlement照会のUser-Agentを `26.2.0` に統一
+
+**Why（なぜ変更したか）**
+- Marketplace表示とFusion add-in表示のバージョン不一致を防ぐため
+
+**How（どう変更したか）**
+1. `math_curve_2.manifest` のversionを更新
+2. 提出時に参照する全てのバージョン表記を同じ値へ更新
+
+**Purpose（目的）**
+- 審査で指摘されたバージョン整合性を確保する
+
+**Impact（影響）**
+- 新しい提出ZIPは `26.2.0` として作成する必要がある
+
+---
+
+## [2026-07-21 00:00] Autodesk review feedback 対応準備: 起動時UI登録とUsage Instructions整備
+**AI:** Codex
+
+**What（何を変更したか）**
+- Sketch環境が未選択でも add-in の UI を登録するように変更
+- 実行時にスケッチが無い場合だけ案内メッセージを出すよう変更
+- README に手順形式の Usage Instructions を追加
+
+**Why（なぜ変更したか）**
+- Autodesk review で「アプリは loaded されるが Sketch > Create に表示されない」と指摘されたため
+- App Description と Usage Instructions が同じで、提出要件として不十分だったため
+
+**How（どう変更したか）**
+1. `run()` の早期 return を削除し、常にコマンド定義と UI を構築するようにした
+2. `ExecuteHandler` でのみ active sketch を確認し、必要時に案内を表示するようにした
+3. README にインストールから実行までの段階的な使い方を追加した
+
+**Purpose（目的）**
+- アドインが Fusion の Sketch メニューに安定して現れるようにし、審査コメントへの回答材料を整える
+
+**Impact（影響）**
+- 起動時にスケッチが開かれていなくてもアドインが登録される
+- ユーザーがコマンドを起動した時点でのみスケッチ有無を判定する
+- Usage Instructions がレビュー対応向けの形式になる
+
+---
+
+---
+
+## [2026-07-21 00:10] Marketplace submission notes updated for Free licensing and no Simulation support
+**AI:** Codex
+
+**What（何を変更したか）**
+- README に Marketplace submission notes を追加
+- 30 day trial ではなく Free 配布として扱う方針を明記
+- Simulation compatibility は未対応として明記
+
+**Why（なぜ変更したか）**
+- Autodesk review で trial licensing の実装有無を確認されたが、現在のコードベースには Autodesk Entitlement API による trial 制御がないため
+- Simulation はアプリの機能範囲外であり、互換製品に含めるべきではないため
+
+**How（どう変更したか）**
+1. README に「License model: Free, no trial enforcement」を追加
+2. README に「Simulation compatibility: Not supported」を追加
+3. Marketplace form でそのまま転記しやすい注意点を明文化した
+
+**Purpose（目的）**
+- 審査担当者と提出フォームの表示内容を一致させ、誤解を減らす
+
+**Impact（影響）**
+- trial 実装がない状態で trial を選んでしまう不整合を防ぎやすくなる
+- Simulation のチェック誤りを避けやすくなる
+
+---
+
+---
+
+## [2026-07-21 00:20] 30日trialの骨組み追加: 起動時ライセンス判定とローカルトライアル
+**AI:** Codex
+
+**What（何を変更したか）**
+- `license_manager.py` を追加し、起動時にライセンス状態を判定する仕組みを導入
+- 30日trial のローカルカウントを保存するようにした
+- trial/entitlement が有効な場合は既存機能をそのまま使えるようにした
+
+**Why（なぜ変更したか）**
+- Autodesk Entitlement API を使った trial 実装の土台が必要だったため
+- 現状の有料版と trial で機能差を付けず、レビュー後に差別化できる構成にしたいため
+
+**How（どう変更したか）**
+1. 起動時に license state を確認し、無効なら案内メッセージを表示して停止するようにした
+2. 初回起動日時を AppData 配下に保存し、30日経過後は失効扱いにするようにした
+3. 将来の Autodesk Entitlement API 接続用に、環境変数駆動のリモート判定フックを入れた
+
+**Purpose（目的）**
+- まずは Marketplace の trial 要件に合わせた実装骨組みを完成させる
+
+**Impact（影響）**
+- trial が有効な間は機能差なしで動作する
+- entitlement 接続情報を差し込めば、将来の正式なライセンスチェックへ切り替えやすい
 
 ---
 

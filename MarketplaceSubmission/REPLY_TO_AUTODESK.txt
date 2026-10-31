@@ -1,0 +1,16 @@
+Subject: Updated submission: Math Curve 2
+
+Dear Shrenik,
+
+Thank you for the detailed review. I have updated the Math Curve 2 submission as follows:
+
+- The Marketplace and Fusion add-in version are both 26.2.0.
+- The Math Curve Sketch command is now registered when Fusion starts and is available from Sketch > Create. If no sketch is active, the command displays guidance to enter Sketch mode.
+- The General Usage Instructions now provide step-by-step instructions and are separate from the app description.
+- The 30-day trial uses Autodesk Marketplace Entitlement API. The add-in sends the signed-in Fusion user ID and app ID to the Marketplace checkentitlement endpoint and enables curve creation only when IsValid is true. The trial provides the same features as the paid entitlement.
+- Simulation compatibility has been removed. This submission is for Windows only.
+
+Please review the updated build and submission. Thank you again for your assistance.
+
+Best regards,
+Nagiha
