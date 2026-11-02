@@ -7,7 +7,7 @@ import os
 import re
 from datetime import datetime
 
-from .license_manager import check_license
+from .license_manager import check_license, developer_mode_enabled
 from . import curve_engine
 from . import curve_library
 
@@ -599,6 +599,8 @@ def report_blocks_creation(report):
 
 def format_report(report):
     lines = []
+    if developer_mode_enabled():
+        lines.append("[DEV] Developer mode: the Marketplace license check is skipped on this PC.")
     notice = commandState.get("notice")
     if notice:
         lines.append(f"[NOTE] {notice}")

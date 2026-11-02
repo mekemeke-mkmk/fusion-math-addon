@@ -71,6 +71,26 @@ class LicenseManagerTests(unittest.TestCase):
         self.assertFalse(status.allowed)
         self.assertEqual(status.mode, "connection_error")
 
+    def test_developer_mode_needs_the_environment_variable(self):
+        with patch.dict(license_manager.os.environ, {}, clear=True):
+            self.assertFalse(license_manager.developer_mode_enabled("C:/dev/math_curve_2"))
+        with patch.dict(license_manager.os.environ, {license_manager.DEV_MODE_ENV: "1"}):
+            self.assertTrue(license_manager.developer_mode_enabled("C:/dev/math_curve_2"))
+
+    def test_developer_mode_is_ignored_for_marketplace_installs(self):
+        installed = "C:/Users/u/AppData/Roaming/Autodesk/ApplicationPlugins/MathCurve2.bundle/Contents"
+        with patch.dict(license_manager.os.environ, {license_manager.DEV_MODE_ENV: "1"}):
+            self.assertFalse(license_manager.developer_mode_enabled(installed))
+            self.assertFalse(license_manager.developer_mode_enabled(installed.replace("/", "\\")))
+
+    def test_developer_mode_skips_the_request(self):
+        with patch.dict(license_manager.os.environ, {license_manager.DEV_MODE_ENV: "1"}), \
+                patch.object(license_manager, "ADDIN_DIR", "C:/dev/math_curve_2"), \
+                patch.object(license_manager, "urlopen") as request:
+            status = license_manager.check_license(FakeApp())
+        self.assertEqual((status.allowed, status.mode), (True, "developer"))
+        request.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()

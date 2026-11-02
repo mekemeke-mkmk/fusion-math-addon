@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -13,6 +14,12 @@ from urllib.request import Request, urlopen
 # This is the Marketplace ID assigned to the Math Curve 2 preview submission.
 MARKETPLACE_APP_ID = "1343581627431012464"
 ENTITLEMENT_ENDPOINT = "https://apps.autodesk.com/webservices/checkentitlement"
+
+# Developer mode skips the Marketplace check while testing the edit source on the
+# developer's own PC. It needs this environment variable AND an add-in folder outside
+# the Marketplace install location (ApplicationPlugins), so installed copies always check.
+DEV_MODE_ENV = "MATH_CURVE_DEV_MODE"
+ADDIN_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @dataclass(frozen=True)
@@ -66,12 +73,22 @@ def _request_entitlement(user_id: str) -> LicenseStatus:
     return _parse_entitlement(payload, user_id)
 
 
+def developer_mode_enabled(addin_dir: str = "") -> bool:
+    if os.environ.get(DEV_MODE_ENV, "").strip() != "1":
+        return False
+    normalized = os.path.abspath(addin_dir or ADDIN_DIR).replace("\\", "/").lower()
+    return "/applicationplugins/" not in normalized + "/"
+
+
 def check_license(app: Any) -> LicenseStatus:
     """Verify this signed-in Fusion user with Autodesk's Marketplace service.
 
     Marketplace owns the 30-day trial and paid entitlement state. This add-in
     never starts, extends, or caches a local license state.
     """
+    if developer_mode_enabled():
+        return LicenseStatus(True, "developer", "Developer mode: Marketplace license check skipped.")
+
     user_id = _get_fusion_user_id(app)
     if not user_id:
         return LicenseStatus(
