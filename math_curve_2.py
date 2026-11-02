@@ -55,6 +55,8 @@ CURVE_TYPE_LABELS = [
 ]
 
 POINT_TOLERANCE_CM = 1.0e-6
+# Preview splines are drawn from at most this many control points per piece (speed over precision).
+PREVIEW_MAX_POINTS = 120
 
 licenseState = {
     "checked": False,
@@ -82,7 +84,8 @@ commandState = {
     "unit": "cm",
     "ackSignature": None,  # Warnings the user accepted with "Draw anyway"
     "analysisCache": None,
-    "notice": None  # Library load/save problems shown in the Status box
+    "notice": None,  # Library load/save problems shown in the Status box
+    "paramsCache": None  # (unit, params): reading Fusion parameters is slow, so read once per command
 }
 
 
@@ -189,6 +192,10 @@ def get_user_params(design):
     if not design:
         return params
 
+    cached = commandState.get("paramsCache")
+    if cached and cached[0] == commandState.get("unit"):
+        return dict(cached[1])
+
     units_manager = design.unitsManager
     scale = unit_scale()
     for p in design.userParameters:
@@ -199,6 +206,7 @@ def get_user_params(design):
         except:
             pass
         params[p.name] = value
+    commandState["paramsCache"] = (commandState.get("unit"), dict(params))
     return params
 
 
@@ -760,7 +768,64 @@ def draw_preview_guides(sketch, frame, samples):
         add_cross_marker(lines, commandState["snapPoint"], marker_size * 0.8)
 
 
+def thin_points(points, max_count):
+    """Keep evenly spaced points (always the first and last) so preview splines stay light."""
+    if len(points) <= max_count:
+        return points
+    step = (len(points) - 1) / (max_count - 1)
+    return [points[round(i * step)] for i in range(max_count)]
+
+
+def add_preview_spline(sketch, points):
+    """One fixed NURBS spline without fit points: much faster than a fitted spline to create and delete."""
+    degree = min(3, len(points) - 1)
+    knots = [0.0] * (degree + 1)
+    knots += [float(i) for i in range(1, len(points) - degree)]
+    knots += [float(len(points) - degree)] * (degree + 1)
+    nurbs = adsk.core.NurbsCurve3D.createNonRational(
+        [adsk.core.Point3D.create(x, y, z) for x, y, z in points], degree, knots, False
+    )
+    return sketch.sketchCurves.sketchFixedSplines.addByNurbsCurve(nurbs)
+
+
+def add_preview_geometry(sketch, result, pieces, created):
+    close_mode = result.close_mode if len(pieces) == 1 else curve_engine.CLOSE_OPEN
+    for points in pieces:
+        if len(points) < 2:
+            continue
+        points = thin_points(points, PREVIEW_MAX_POINTS)
+        if close_mode == curve_engine.CLOSE_SMOOTH and not curve_engine.endpoints_coincide(points, POINT_TOLERANCE_CM * 10):
+            points = points + [points[0]]
+        try:
+            created.append(add_preview_spline(sketch, points))
+        except:
+            # Fallback when the NURBS cannot be built: the regular (slower) fitted spline.
+            created.append(sketch.sketchCurves.sketchFittedSplines.add(make_point_collection(points)))
+        if close_mode == curve_engine.CLOSE_LINE:
+            add_guide_line(
+                sketch.sketchCurves.sketchLines,
+                adsk.core.Point3D.create(*points[-1]),
+                adsk.core.Point3D.create(*points[0])
+            )
+            created.append(previewGuides.pop())
+
+
 def draw_preview(sketch, design):
+    """Redraw the preview with sketch solving deferred, so each entity does not trigger a recompute."""
+    try:
+        sketch.isComputeDeferred = True
+    except:
+        pass
+    try:
+        return draw_preview_entities(sketch, design)
+    finally:
+        try:
+            sketch.isComputeDeferred = False
+        except:
+            pass
+
+
+def draw_preview_entities(sketch, design):
     clear_preview()
 
     frame = build_frame()
@@ -782,7 +847,7 @@ def draw_preview(sketch, design):
     draw_preview_guides(sketch, frame, samples)
     for result, pieces in samples:
         try:
-            add_curve_geometry(sketch, result, pieces, previewCurves)
+            add_preview_geometry(sketch, result, pieces, previewCurves)
         except:
             pass  # 失敗した曲線はプレビューしない（作成時にメッセージを出す）
 
@@ -803,11 +868,21 @@ def create_final_curves(sketch, design):
     axis_line.isConstruction = True
 
     failed = []
-    for result, pieces in samples:
+    try:
+        sketch.isComputeDeferred = True
+    except:
+        pass
+    try:
+        for result, pieces in samples:
+            try:
+                add_curve_geometry(sketch, result, pieces, [])
+            except Exception as ex:
+                failed.append(f"{result.name}: {ex}")
+    finally:
         try:
-            add_curve_geometry(sketch, result, pieces, [])
-        except Exception as ex:
-            failed.append(f"{result.name}: {ex}")
+            sketch.isComputeDeferred = False
+        except:
+            pass
 
     if failed:
         app = adsk.core.Application.get()
@@ -1307,6 +1382,14 @@ def activate_functions_tab(inputs):
     return
 
 
+def inputs_are_valid():
+    return (
+        range_is_final()
+        and any_curve_enabled()
+        and not report_blocks_creation(analyze_curves(get_active_design()))
+    )
+
+
 def update_preview(command=None, force=False):
     if not force and not commandState["previewDirty"]:
         return
@@ -1475,6 +1558,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             commandState["unit"] = document_length_unit(get_active_design())
             commandState["ackSignature"] = None
             commandState["analysisCache"] = None
+            commandState["paramsCache"] = None
 
             inputs = command.commandInputs
 
@@ -1746,6 +1830,7 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 refresh_setup_variables_table(inputs)
             elif changed.id == "refreshSetupFunctions":
                 changed.value = False
+                commandState["paramsCache"] = None
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 refresh_setup_variables_table(inputs)
@@ -1888,7 +1973,9 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 should_update_preview = True
             update_placement_inputs(inputs)
             update_status_box(inputs)
-            if should_update_preview:
+            # When the inputs are valid, Fusion runs executePreview by itself right after this
+            # handler; drawing here as well would build the whole preview twice.
+            if should_update_preview and not inputs_are_valid():
                 update_preview(command)
         except:
             app = adsk.core.Application.get()
@@ -1935,11 +2022,7 @@ class ValidateInputsHandler(adsk.core.ValidateInputsEventHandler):
             if baseline and baseline.isValid:
                 update_state_from_baseline(baseline)
             sync_curve_selection_from_inputs(args.inputs)
-            args.areInputsValid = (
-                range_is_final()
-                and any_curve_enabled()
-                and not report_blocks_creation(analyze_curves(get_active_design()))
-            )
+            args.areInputsValid = inputs_are_valid()
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())
