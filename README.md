@@ -28,6 +28,14 @@ Create mathematical curves inside a Fusion sketch.
 - Output Curve: `Light curve` (default) creates one fixed spline per curve that passes through every sample point without adding sketch points, so the sketch stays fast. `Editable fit-point spline` creates the traditional spline with one fit point per sample, which can be edited but makes later operations slower.
 - The function library is saved automatically and restored the next time; it can also be exported and imported as a JSON file
 
+## Graph Window (prototype)
+`Math Curve Graph` (next to `Math Curve Sketch`, or `Open Graph Window` in the Library tab) opens a floating window that plots the function library:
+- Drag to pan, scroll to zoom, `Fit` to frame the visible curves, `Origin` to center on (0, 0).
+- Show or hide each function with its checkbox; select it to edit its expressions, t range, and variables.
+- Variable sliders update the graph while you drag and save to the library when you release.
+- `+ New y = f(x)` adds a function to the library.
+- Graph values have no unit; the graph uses the same calculation as `Create Curves`, including discontinuity splitting and error messages. 3D curves are shown as their x-y view.
+
 ## Function Library Storage
 The library is saved on your computer only:
 - Windows: `%APPDATA%\MathCurve2\function_library.json`

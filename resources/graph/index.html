@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Math Curve Graph</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --panel: #f4f5f7;
+    --text: #1f2328;
+    --muted: #656d76;
+    --border: #d0d7de;
+    --grid: #eef0f3;
+    --grid-major: #d8dce1;
+    --axis: #8c959f;
+    --accent: #0969da;
+    --error: #cf222e;
+    --warning: #9a6700;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1e1f22;
+      --panel: #26282c;
+      --text: #e6e6e6;
+      --muted: #9da5ae;
+      --border: #3d4148;
+      --grid: #2a2c30;
+      --grid-major: #383b41;
+      --axis: #7d8590;
+      --accent: #4c9aff;
+      --error: #ff7b72;
+      --warning: #d29922;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text);
+    font: 12px/1.4 "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif; }
+  body { display: flex; overflow: hidden; }
+  #sidebar { width: 270px; min-width: 220px; display: flex; flex-direction: column;
+    background: var(--panel); border-right: 1px solid var(--border); }
+  #curveList { flex: 0 1 auto; max-height: 45%; overflow-y: auto; border-bottom: 1px solid var(--border); }
+  .curve-row { display: flex; align-items: center; gap: 6px; padding: 5px 8px; cursor: pointer; }
+  .curve-row:hover { background: var(--grid); }
+  .curve-row.selected { background: var(--grid-major); }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; flex: none; }
+  .curve-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .badge { font-size: 10px; padding: 0 4px; border-radius: 3px; flex: none; }
+  .badge.error { color: var(--error); border: 1px solid var(--error); }
+  .badge.warning { color: var(--warning); border: 1px solid var(--warning); }
+  #listActions { padding: 6px 8px; display: flex; gap: 6px; border-bottom: 1px solid var(--border); }
+  #editor { flex: 1; overflow-y: auto; padding: 8px; }
+  #editor h3 { margin: 4px 0 8px; font-size: 13px; }
+  .field { margin-bottom: 8px; }
+  .field label { display: block; color: var(--muted); margin-bottom: 2px; }
+  .field input[type=text], .field input[type=number] { width: 100%; padding: 4px 6px;
+    border: 1px solid var(--border); border-radius: 4px; background: var(--bg); color: var(--text);
+    font-family: Consolas, "SF Mono", Menlo, monospace; }
+  .row2 { display: flex; gap: 6px; }
+  .row2 .field { flex: 1; }
+  .var { margin-bottom: 10px; }
+  .var-head { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+  .var-head input { width: 90px; padding: 2px 4px; border: 1px solid var(--border); border-radius: 4px;
+    background: var(--bg); color: var(--text); text-align: right; }
+  .var input[type=range] { width: 100%; }
+  .messages div { margin-top: 4px; }
+  .messages .error { color: var(--error); }
+  .messages .warning { color: var(--warning); }
+  .hint { color: var(--muted); font-size: 11px; }
+  button { padding: 4px 10px; border: 1px solid var(--border); border-radius: 4px; background: var(--bg);
+    color: var(--text); cursor: pointer; font: inherit; }
+  button:hover { border-color: var(--accent); }
+  #main { flex: 1; position: relative; min-width: 0; }
+  #canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: grab; }
+  #canvas.dragging { cursor: grabbing; }
+  #toolbar { position: absolute; top: 8px; right: 8px; display: flex; gap: 6px; }
+  #readout { position: absolute; left: 8px; bottom: 6px; color: var(--muted);
+    font-family: Consolas, "SF Mono", Menlo, monospace; pointer-events: none; }
+  #status { position: absolute; left: 8px; top: 8px; color: var(--muted); pointer-events: none; }
+  #offline { display: none; position: absolute; inset: 0; align-items: center; justify-content: center;
+    color: var(--muted); padding: 24px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div id="curveList"></div>
+  <div id="listActions">
+    <button id="addCurve" type="button" title="Add y = f(x) to the library">+ New y = f(x)</button>
+    <button id="refresh" type="button" title="Reload the library">Reload</button>
+  </div>
+  <div id="editor"><p class="hint">Select a function to edit it.</p></div>
+</div>
+<div id="main">
+  <canvas id="canvas"></canvas>
+  <div id="toolbar">
+    <button id="fit" type="button" title="Fit the visible curves">Fit</button>
+    <button id="home" type="button" title="Center on the origin">Origin</button>
+  </div>
+  <div id="status"></div>
+  <div id="readout"></div>
+  <div id="offline">This window works inside Autodesk Fusion. Open it from Math Curve.</div>
+</div>
+<script src="graph.js"></script>
+</body>
+</html>

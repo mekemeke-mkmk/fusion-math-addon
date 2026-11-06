@@ -11,6 +11,7 @@ from datetime import datetime
 from .license_manager import check_license, developer_diagnostics, developer_mode_enabled
 from . import curve_engine
 from . import curve_library
+from . import graph_window
 
 handlers = []
 curves = []
@@ -18,6 +19,7 @@ selectedIndex = 0
 
 MAIN_CMD_ID = "MathCurveSketch"
 RELOAD_CMD_ID = "MathCurveSketchReload"
+GRAPH_CMD_ID = "MathCurveGraph"
 PANEL_ID = "SketchCreatePanel"
 ICON_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -1280,7 +1282,7 @@ def save_curve_ui(inputs, is_parametric=False):
     persist_library()
 
 
-def persist_library():
+def persist_library(notify_graph=True):
     """Save the library after every change so it survives a Fusion restart."""
     try:
         curve_library.save_library(curve_library.default_library_path(), curves)
@@ -1288,6 +1290,24 @@ def persist_library():
             commandState["notice"] = None
     except Exception as ex:
         commandState["notice"] = f"Could not save the function library: {ex}"
+    if notify_graph:
+        graph_window.notify_library_changed()
+
+
+def new_library_curve():
+    curve = default_curve()
+    curve["expr"] = "x"
+    curve["name"] = curve_library.unique_name(curve["name"], [c["name"] for c in curves])
+    return curve
+
+
+def configure_graph_window():
+    graph_window.configure(
+        get_curves=lambda: curves,
+        get_params=lambda: get_user_params(get_active_design()),
+        new_curve=new_library_curve,
+        on_saved=lambda: persist_library(notify_graph=False)
+    )
 
 
 def load_saved_library():
@@ -1509,6 +1529,9 @@ def remove_ui(remove_reload_definition=True, remove_reload_control=True):
             delete_control_if_exists(panel, RELOAD_CMD_ID)
 
     delete_definition_if_exists(ui, MAIN_CMD_ID)
+    if panel:
+        delete_control_if_exists(panel, GRAPH_CMD_ID)
+    delete_definition_if_exists(ui, GRAPH_CMD_ID)
     if remove_reload_definition:
         delete_definition_if_exists(ui, RELOAD_CMD_ID)
 
@@ -1595,6 +1618,19 @@ def run(context):
 
         create_or_replace_button(panel, cmd_def)
         create_or_replace_button(panel, reload_def)
+
+        configure_graph_window()
+        delete_definition_if_exists(ui, GRAPH_CMD_ID)
+        graph_def = ui.commandDefinitions.addButtonDefinition(
+            GRAPH_CMD_ID,
+            "Math Curve Graph",
+            "Open a graph window to check and tune the shapes of your functions.",
+            ICON_FOLDER
+        )
+        on_graph = GraphCommandCreatedHandler()
+        graph_def.commandCreated.add(on_graph)
+        handlers.append(on_graph)
+        create_or_replace_button(panel, graph_def)
     except:
         ui.messageBox(traceback.format_exc())
 
@@ -1602,6 +1638,7 @@ def run(context):
 def stop(context):
     global handlers
     clear_preview()
+    graph_window.stop()
     handlers = []
     remove_ui()
 
@@ -1792,6 +1829,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
                 close_input.listItems.add(label, index == 0)
             library_children.addTextBoxCommandInput("exprStatus", "Check", "", 2, True)
             library_children.addBoolValueInput("saveCurve", "Save Changes", False, "", False)
+            library_children.addBoolValueInput("openGraph", "Open Graph Window", False, "", False)
             library_children.addBoolValueInput("exportLibrary", "Export Library...", False, "", False)
             library_children.addBoolValueInput("importLibrary", "Import Library...", False, "", False)
             library_children.addTextBoxCommandInput(
@@ -1856,6 +1894,32 @@ class ReloadExecuteHandler(adsk.core.CommandEventHandler):
     def notify(self, args):
         try:
             restart_main_ui()
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class GraphExecuteHandler(adsk.core.CommandEventHandler):
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            graph_window.show()
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class GraphCommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            on_execute = GraphExecuteHandler()
+            args.command.execute.add(on_execute)
+            handlers.append(on_execute)
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())
@@ -1973,6 +2037,9 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                 refresh_library_list_input(inputs)
                 refresh_curve_checkboxes(inputs)
                 refresh_setup_variables_table(inputs)
+            elif changed.id == "openGraph":
+                changed.value = False
+                graph_window.show()
             elif changed.id in ("exportLibrary", "importLibrary"):
                 changed.value = False
                 if changed.id == "exportLibrary":
