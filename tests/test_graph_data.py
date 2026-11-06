@@ -24,8 +24,13 @@ def circle():
             "close_mode": "smooth"}
 
 
-def new_curve():
-    return implicit("x")
+def new_curve(kind="implicit"):
+    if kind == "implicit":
+        return implicit("x")
+    curve = circle()
+    curve["type"] = kind
+    curve["z_expr"] = "0"
+    return curve
 
 
 class PayloadTests(unittest.TestCase):
@@ -68,14 +73,15 @@ class PayloadTests(unittest.TestCase):
 class EditTests(unittest.TestCase):
     def test_expression_and_variable_edits(self):
         curve = implicit("a*x", {"a": 1.0})
-        self.assertTrue(graph_data.apply_edit(curve, {"expr": "a*x^2", "variables": {"a": 3}}))
+        self.assertEqual(graph_data.apply_edit(curve, {"expr": "a*x^2", "variables": {"a": 3}}), (True, None))
         self.assertEqual((curve["expr"], curve["variables"], curve["variables_text"]),
                          ("a*x^2", {"a": 3.0}, "a=3"))
 
     def test_unknown_or_wrong_type_fields_are_ignored(self):
         curve = implicit("x")
-        self.assertFalse(graph_data.apply_edit(curve, {"x_expr": "t", "t_start": 2, "step": 9,
-                                                       "variables": {"new": 1}, "name": "  "}))
+        changed, _ = graph_data.apply_edit(curve, {"x_expr": "t", "t_start": 2, "step": -1,
+                                                   "variables": {"new": 1}, "name": "  "})
+        self.assertFalse(changed)
         self.assertNotIn("x_expr", curve)
         self.assertEqual(curve["variables"], {})
 
@@ -83,6 +89,40 @@ class EditTests(unittest.TestCase):
         curve = circle()
         graph_data.apply_edit(curve, {"t_end": "nan", "t_start": 1})
         self.assertEqual((curve["t_start"], curve["t_end"]), (1.0, 6.283185307179586))
+
+
+class VariableTests(unittest.TestCase):
+    def test_add_and_remove_variable(self):
+        curve = implicit("a*x")
+        self.assertEqual(graph_data.apply_edit(curve, {"add_variable": {"name": "a", "value": 2}}), (True, None))
+        self.assertEqual((curve["variables"], curve["variables_text"]), ({"a": 2.0}, "a=2"))
+        graph_data.apply_edit(curve, {"variable_ranges": {"a": [0, 5]}})
+        graph_data.apply_edit(curve, {"remove_variable": "a"})
+        self.assertEqual((curve["variables"], curve["variable_ranges"]), ({}, {}))
+
+    def test_bad_variable_names_are_explained(self):
+        curve = implicit("x", {"a": 1})
+        for name, text in (("2a", "letters"), ("sin", "reserved"), ("a", "already"), ("w", "user parameter")):
+            _, error = graph_data.apply_edit(curve, {"add_variable": {"name": name}}, params=["w"])
+            self.assertIn(text, error, name)
+
+    def test_slider_range_validation_and_widening(self):
+        curve = implicit("a*x", {"a": 1})
+        _, error = graph_data.apply_edit(curve, {"variable_ranges": {"a": [3, 1]}})
+        self.assertIn("smaller", error)
+        graph_data.apply_edit(curve, {"variable_ranges": {"a": [0, 2]}})
+        graph_data.apply_edit(curve, {"variables": {"a": 7}})
+        self.assertEqual(curve["variable_ranges"]["a"], [0.0, 7.0])
+
+    def test_default_range_is_sent_for_every_variable(self):
+        payload = graph_data.graph_payload([implicit("a*x", {"a": 1})], {}, VIEW)
+        self.assertEqual(payload["curves"][0]["variable_ranges"], {"a": [-1.0, 3.0]})
+
+    def test_type_change_keeps_variables_and_adds_fields(self):
+        curve = implicit("a*x", {"a": 1})
+        graph_data.apply_edit(curve, {"type": "parametric3d"})
+        self.assertEqual((curve["type"], curve["variables"]), ("parametric3d", {"a": 1.0}))
+        self.assertIn("z_expr", curve)
 
 
 class RequestTests(unittest.TestCase):
@@ -111,3 +151,26 @@ class RequestTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ManageTests(unittest.TestCase):
+    def test_add_by_kind_and_preset(self):
+        curves = [implicit("x")]
+        reply, _ = graph_data.handle_request("graphAdd", {"kind": "parametric"}, curves, {}, new_curve)
+        self.assertEqual(curves[-1]["type"], "parametric")
+        reply, _ = graph_data.handle_request("graphAdd", {"preset": 0}, curves, {}, new_curve)
+        self.assertEqual(curves[-1]["name"], "Sine Wave")
+        self.assertEqual(reply["select"], 2)
+        self.assertIn("Waves: Sine Wave", reply["presets"])
+
+    def test_delete_keeps_at_least_one_function(self):
+        curves = [implicit("x")]
+        reply, saved = graph_data.handle_request("graphDelete", {"index": 0}, curves, {}, new_curve)
+        self.assertTrue(saved)
+        self.assertEqual((len(curves), reply["select"]), (1, 0))
+
+    def test_structural_edits_save_without_commit(self):
+        curves = [implicit("x")]
+        _, saved = graph_data.handle_request("graphEdit", {"index": 0, "changes": {"add_variable": {"name": "k"}}},
+                                             curves, {}, new_curve)
+        self.assertTrue(saved)

@@ -28,13 +28,14 @@ Create mathematical curves inside a Fusion sketch.
 - Output Curve: `Light curve` (default) creates one fixed spline per curve that passes through every sample point without adding sketch points, so the sketch stays fast. `Editable fit-point spline` creates the traditional spline with one fit point per sample, which can be edited but makes later operations slower.
 - The function library is saved automatically and restored the next time; it can also be exported and imported as a JSON file
 
-## Graph Window (prototype)
-`Math Curve Graph` (next to `Math Curve Sketch`, or `Open Graph Window` in the Library tab) opens a floating window that plots the function library:
-- Drag to pan, scroll to zoom, `Fit` to frame the visible curves, `Origin` to center on (0, 0).
-- Show or hide each function with its checkbox; select it to edit its expressions, t range, and variables.
-- Variable sliders update the graph while you drag and save to the library when you release.
-- `+ New y = f(x)` adds a function to the library.
-- Graph values have no unit; the graph uses the same calculation as `Create Curves`, including discontinuity splitting and error messages. 3D curves are shown as their x-y view.
+## Graph Window
+`Math Curve Graph` (next to `Math Curve Sketch`, or `Open Graph Window` in the Library tab) opens a floating window where you can do everything from defining functions to creating them in the sketch:
+- `+ Add function...`: a new `y = f(x)`, `x(t), y(t)`, or 3D (beta) function, or a preset. Select a function to edit its name, type, expressions, t range and step, and start/end connection; `Delete` removes it (click twice).
+- Expressions update the graph while you type and are saved on Enter or when you leave the box.
+- Variables: add them with `+ Variable` (or `+ Add variable k` under an "Unknown name 'k'" error), remove them with `×`, and set each slider's min / max. Sliders update the graph while you drag and save when you release.
+- View: drag to pan, scroll or `+` / `−` to zoom, `Fit` to frame the checked functions, `Origin` to center on (0, 0). The shaded band shows the x range used for `y = f(x)` in the sketch.
+- `Create in Sketch`: choose the unit, the x range for `y = f(x)`, and the output curve, then click it. Fusion opens a small dialog: select a sketch line (its start is the origin, its direction is +x) or check `Place at sketch origin`, review the preview and status, and click `Create Curves`. The checked functions are created.
+- The graph uses the same calculation as the sketch, including discontinuity splitting and error messages. 3D curves are shown as their x-y view.
 
 ## Function Library Storage
 The library is saved on your computer only:

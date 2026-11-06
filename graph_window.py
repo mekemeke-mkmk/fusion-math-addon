@@ -21,13 +21,15 @@ _handlers = []
 _hooks = {}
 
 
-def configure(get_curves, get_params, new_curve, on_saved):
+def configure(get_curves, get_params, new_curve, on_saved, on_create):
     """Connect the window to the add-in's library.
 
     get_curves(): the live list of curve dicts. get_params(): {name: value}.
-    new_curve(): a new default curve. on_saved(): write the library to disk.
+    new_curve(kind): a new default curve. on_saved(): write the library to disk.
+    on_create(request): start placing curves in the sketch; returns (message, error).
     """
-    _hooks.update(get_curves=get_curves, get_params=get_params, new_curve=new_curve, on_saved=on_saved)
+    _hooks.update(get_curves=get_curves, get_params=get_params, new_curve=new_curve, on_saved=on_saved,
+                  on_create=on_create)
 
 
 def _palette():
@@ -89,9 +91,13 @@ class IncomingHandler(adsk.core.HTMLEventHandler):
     def notify(self, args):
         html_args = adsk.core.HTMLEventArgs.cast(args)
         try:
-            if html_args.action not in ("graphData", "graphEdit", "graphAdd"):
+            if html_args.action not in ("graphData", "graphEdit", "graphAdd", "graphDelete", "graphCreate"):
                 return
             data = json.loads(html_args.data) if html_args.data else {}
+            if html_args.action == "graphCreate":
+                message, error = _hooks["on_create"](data)
+                html_args.returnData = json.dumps({"error": error} if error else {"created": message})
+                return
             reply, saved = graph_data.handle_request(
                 html_args.action,
                 data,

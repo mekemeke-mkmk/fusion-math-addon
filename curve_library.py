@@ -74,6 +74,19 @@ def normalize_curve(data):
     if not curve["variables_text"] and variables:
         curve["variables_text"] = ",".join(f"{k}={v:g}" for k, v in variables.items())
 
+    # Slider ranges chosen in the graph window: {name: [min, max]} for existing variables only.
+    ranges = {}
+    raw_ranges = data.get("variable_ranges", {})
+    if isinstance(raw_ranges, dict):
+        for name, pair in raw_ranges.items():
+            if name not in variables or not isinstance(pair, (list, tuple)) or len(pair) != 2:
+                continue
+            low, high = _number(pair[0], None), _number(pair[1], None)
+            if low is not None and high is not None and low < high:
+                ranges[name] = [low, high]
+    if ranges:
+        curve["variable_ranges"] = ranges
+
     if kind == "implicit":
         curve["expr"] = str(data.get("expr") or "sin(x)")
         curve["step"] = _number(data.get("step"), 0.2)

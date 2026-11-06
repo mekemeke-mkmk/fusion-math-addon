@@ -2,6 +2,7 @@ import adsk.core
 import adsk.fusion
 import traceback
 import math
+import html
 import json
 import os
 import re
@@ -20,6 +21,7 @@ selectedIndex = 0
 MAIN_CMD_ID = "MathCurveSketch"
 RELOAD_CMD_ID = "MathCurveSketchReload"
 GRAPH_CMD_ID = "MathCurveGraph"
+PLACE_CMD_ID = "MathCurvePlaceFromGraph"
 PANEL_ID = "SketchCreatePanel"
 ICON_FOLDER = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
@@ -1294,9 +1296,8 @@ def persist_library(notify_graph=True):
         graph_window.notify_library_changed()
 
 
-def new_library_curve():
-    curve = default_curve()
-    curve["expr"] = "x"
+def new_library_curve(kind="implicit"):
+    curve = new_curve_of_type(kind)
     curve["name"] = curve_library.unique_name(curve["name"], [c["name"] for c in curves])
     return curve
 
@@ -1306,8 +1307,57 @@ def configure_graph_window():
         get_curves=lambda: curves,
         get_params=lambda: get_user_params(get_active_design()),
         new_curve=new_library_curve,
-        on_saved=lambda: persist_library(notify_graph=False)
+        on_saved=lambda: persist_library(notify_graph=False),
+        on_create=start_place_from_graph
     )
+
+
+def start_place_from_graph(data):
+    """Graph window "Create in Sketch": check the request, then open the placement command."""
+    if not get_active_sketch():
+        return None, "Open or edit a sketch in Fusion first, then click Create in Sketch again."
+    indices = [i for i in data.get("curves", []) if isinstance(i, int) and 0 <= i < len(curves)]
+    if not indices:
+        return None, "Check at least one function to create."
+    try:
+        x_start = float(data.get("x_start"))
+        x_end = float(data.get("x_end"))
+    except (TypeError, ValueError):
+        return None, "Set numbers for x from / to."
+    if not (math.isfinite(x_start) and math.isfinite(x_end)) or x_start == x_end:
+        return None, "Set different x from / to values."
+    commandState["placeRequest"] = {
+        "indices": indices,
+        "unit": data.get("unit") if data.get("unit") in UNIT_SCALES else "mm",
+        "x_start": x_start,
+        "x_end": x_end,
+        "output": "editable" if data.get("output") == "editable" else "light",
+    }
+    ui = adsk.core.Application.get().userInterface
+    cmd_def = ui.commandDefinitions.itemById(PLACE_CMD_ID)
+    if not cmd_def:
+        return None, "The placement command is not available. Restart the add-in."
+    cmd_def.execute()
+    return "In Fusion: select a sketch line (or check 'Place at sketch origin'), then click Create Curves.", None
+
+
+def set_origin_placement():
+    """Use the sketch origin and the sketch X axis instead of a selected line."""
+    length = max(abs(commandState["rangeEnd"] - commandState["rangeStart"]) * unit_scale(), 1.0)
+    commandState["start"] = adsk.core.Point3D.create(0, 0, 0)
+    commandState["end"] = adsk.core.Point3D.create(length, 0, 0)
+    commandState["hover"] = commandState["end"]
+    commandState["baselineToken"] = None
+    commandState["baselineLine"] = None
+    commandState["hasFinalEnd"] = True
+    commandState["previewDirty"] = True
+
+
+def clear_placement():
+    """Forget the origin/line but keep the range chosen in the graph window."""
+    range_start, range_end = commandState["rangeStart"], commandState["rangeEnd"]
+    reset_point_state()
+    commandState["rangeStart"], commandState["rangeEnd"] = range_start, range_end
 
 
 def load_saved_library():
@@ -1532,6 +1582,7 @@ def remove_ui(remove_reload_definition=True, remove_reload_control=True):
     if panel:
         delete_control_if_exists(panel, GRAPH_CMD_ID)
     delete_definition_if_exists(ui, GRAPH_CMD_ID)
+    delete_definition_if_exists(ui, PLACE_CMD_ID)
     if remove_reload_definition:
         delete_definition_if_exists(ui, RELOAD_CMD_ID)
 
@@ -1631,6 +1682,18 @@ def run(context):
         graph_def.commandCreated.add(on_graph)
         handlers.append(on_graph)
         create_or_replace_button(panel, graph_def)
+
+        # Opened from the graph window only, so it has no toolbar button.
+        delete_definition_if_exists(ui, PLACE_CMD_ID)
+        place_def = ui.commandDefinitions.addButtonDefinition(
+            PLACE_CMD_ID,
+            "Place Math Curves",
+            "Place the functions checked in the graph window on a sketch line.",
+            ICON_FOLDER
+        )
+        on_place = PlaceCommandCreatedHandler()
+        place_def.commandCreated.add(on_place)
+        handlers.append(on_place)
     except:
         ui.messageBox(traceback.format_exc())
 
@@ -1894,6 +1957,114 @@ class ReloadExecuteHandler(adsk.core.CommandEventHandler):
     def notify(self, args):
         try:
             restart_main_ui()
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class PlaceCommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
+    """Small dialog used by the graph window: pick a line (or the origin), preview, create."""
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            request = commandState.get("placeRequest") or {}
+            command = args.command
+            command.isRepeatable = False
+            command.okButtonText = "Create Curves"
+
+            reset_point_state()
+            commandState["rangeStart"] = request.get("x_start", 0.0)
+            commandState["rangeEnd"] = request.get("x_end", 10.0)
+            commandState["unit"] = request.get("unit", "mm")
+            commandState["outputMode"] = request.get("output", "light")
+            commandState["ackSignature"] = None
+            commandState["analysisCache"] = None
+            commandState["paramsCache"] = None
+            commandState["setupVarOverrides"] = {}
+            indices = set(request.get("indices", []))
+            for index, curve in enumerate(curves):
+                curve["enabled"] = index in indices
+            hide_profiles_during_command(get_active_sketch())
+
+            inputs = command.commandInputs
+            names = html.escape(", ".join(curves[i]["name"] for i in sorted(indices) if i < len(curves)))
+            inputs.addTextBoxCommandInput(
+                "placeHelp",
+                "Functions",
+                f"{names}<br>Unit: 1 = 1 {commandState['unit']}, x from {commandState['rangeStart']:g} "
+                f"to {commandState['rangeEnd']:g}. Select a sketch line: its start point is the origin "
+                "and its direction is +x.",
+                3,
+                True
+            )
+            baseline_input = inputs.addSelectionInput(
+                "baselineLine",
+                "Baseline Line",
+                "Select a sketch line to define the origin and direction."
+            )
+            baseline_input.addSelectionFilter("SketchLines")
+            baseline_input.setSelectionLimits(0, 1)
+            baseline_input.isUseCurrentSelections = False
+            baseline_input.hasFocus = True
+            inputs.addBoolValueInput("useOrigin", "Place at sketch origin", True, "", False)
+            inputs.addTextBoxCommandInput("drawStatus", "Status", "", 4, True)
+            inputs.addBoolValueInput("acceptWarnings", "Draw anyway", True, "", False)
+
+            for event, handler in (
+                (command.inputChanged, PlaceInputChangedHandler()),
+                (command.executePreview, ExecutePreviewHandler()),
+                (command.execute, ExecuteHandler()),
+                (command.validateInputs, ValidateInputsHandler()),
+                (command.destroy, DestroyHandler()),
+            ):
+                event.add(handler)
+                handlers.append(handler)
+
+            update_status_box(inputs)
+        except:
+            app = adsk.core.Application.get()
+            app.userInterface.messageBox(traceback.format_exc())
+
+
+class PlaceInputChangedHandler(adsk.core.InputChangedEventHandler):
+    def __init__(self):
+        super().__init__()
+
+    def notify(self, args):
+        try:
+            inputs = args.inputs
+            changed = args.input
+            command = args.firingEvent.sender
+            selection_input = adsk.core.SelectionCommandInput.cast(inputs.itemById("baselineLine"))
+            origin_input = adsk.core.BoolValueCommandInput.cast(inputs.itemById("useOrigin"))
+
+            if changed.id == "baselineLine":
+                baseline = get_selected_baseline(inputs)
+                if baseline:
+                    update_state_from_baseline(baseline)
+                    if origin_input and origin_input.value:
+                        origin_input.value = False
+                elif not (origin_input and origin_input.value):
+                    clear_placement()
+            elif changed.id == "useOrigin":
+                if changed.value:
+                    if selection_input:
+                        selection_input.clearSelection()
+                    set_origin_placement()
+                else:
+                    clear_placement()
+                    if selection_input:
+                        selection_input.hasFocus = True
+            elif changed.id == "acceptWarnings":
+                report = analyze_curves(get_active_design())
+                commandState["ackSignature"] = warning_signature(report) if changed.value else None
+            commandState["previewDirty"] = True
+
+            update_status_box(inputs)
+            if not inputs_are_valid():
+                update_preview(command)
         except:
             app = adsk.core.Application.get()
             app.userInterface.messageBox(traceback.format_exc())
