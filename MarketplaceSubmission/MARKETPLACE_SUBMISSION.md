@@ -6,11 +6,12 @@ Copy each section below into the matching Autodesk Design and Make Marketplace f
 
 1. Install Math Curve 2 and start Autodesk Fusion.
 2. Open or create a design and enter Sketch mode.
-3. In the Sketch workspace, choose `Create > Math Curve Sketch`.
-4. Select an existing sketch line as the baseline.
-5. In the Setup tab, set the x-range and select one or more functions to draw.
-6. In the Library tab, add, edit, or save implicit functions (`y = f(x)`) or parametric functions (`x(t), y(t)`). Define variables as comma-separated values, for example `a=1,b=2`.
-7. Click `Create Curves` to generate the selected curves in the active sketch.
+3. In the Sketch workspace, choose `Create > Math Curve Sketch`. The Math Curve window opens.
+4. Add functions with `+ Add function...` (a new `y = f(x)`, `x(t), y(t)`, or 3D function, or a preset). Select a function to edit its expressions and variables; the graph updates as you type or drag a variable slider.
+5. Check `Draw` for the functions to create. Use `InvO`, `InvX`, and `InvY` to flip a function on its baseline.
+6. Under `Place in sketch`, click `Select line` and pick an existing sketch line (its start point is the origin and its direction is +x), or click `Sketch origin`. Choose the unit and the x range for `y = f(x)`. The curves are previewed in the Fusion viewport.
+7. Check `Status`. If a discontinuity or a heavy calculation is found, review it and check `Draw anyway` to continue.
+8. Click `Create Curves` to generate the curves in the sketch.
 
 ## Installation / Uninstallation
 

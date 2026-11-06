@@ -7,6 +7,50 @@
 ---
 
 
+## [2026-11-06] すべての機能を1つの Math Curve ウィンドウに統合
+**AI:** Claude Code
+
+**What（何を変更したか）**
+- これまでの Math Curve Sketch ダイアログ（Placement / Setup / Library タブ）、Math Curve Graph、配置ダイアログを廃止し、1つのウィンドウ（HTML パレット）に統合した。「Math Curve Sketch」ボタンで開く。
+- 左側に関数一覧を置いた。以前の Setup タブの表と同じく、Draw / InvO / InvX / InvY のチェックボックスを並べた。その下に、選んだ関数の編集欄を置いた。
+- 右側に、グラフと「Place in sketch」「Status」を置いた。
+  - Place in sketch: Select line / Sketch origin / Clear、単位、x の範囲、出力方式、Preview in Fusion
+  - Status: 状態の一覧、Draw anyway、Create Curves
+- 基準線は、ウィンドウの「Select line」から Fusion 上で選べるようにした。
+- 基準線に配置した曲線のプレビューは、Fusion のビューポートにカスタムグラフィックス（表示専用の線）で描くようにした。
+- ライブラリの書き出し・読み込み・再読み込みは「More」メニューに移した。
+- Draw / InvO / InvX / InvY の状態はライブラリに保存し、次回も残るようにした。
+- 変数スライダーの範囲は、最初に値を変えたときの範囲で固定し、値と一緒に動かないようにした。
+
+**Why（なぜ変更したか）**
+- 配置ダイアログにも Draw / Inv のチェックボックスが必要という指摘があった。しかし、それを加えると Math Curve Sketch と同じものが2つになり、別のウィンドウを作る意味がなくなるため。
+- 以前のチェックボックス式の UI とグラフを、自然に1つにまとめてほしいという要望があったため。
+
+**How（どう変更したか）**
+1. `math_curve_2.py` を整理した（約2,400行から約960行）。
+   - 削除: 旧ダイアログの UI、スケッチ上のプレビュー、プロファイル表示の切り替え、配置コマンド、グラフ用コマンド、使われていなかったスナップ処理
+   - 残したもの: 曲線の計算、作成、ライブラリ、ライセンスの処理
+   - 追加: ウィンドウ用の処理（`apply_window_settings`, `refresh_placement`, `window_state`, `select_baseline_line`, `use_sketch_origin`, `handle_window_action`, `create_curves_now`）
+2. 基準線の選択には `UserInterface.selectEntity` を使った。作成は、ダイアログのないコマンド（`MathCurveCreateCurves`）の実行時に行うので、元に戻すときは1回で取り消せる。基準線がある場合は、補助の軸線を作らないようにした（スケッチ原点に置くときだけ作る）。
+3. `model_preview.py` を新設した。スケッチ座標をモデル座標に変換し、`CustomGraphicsGroup.addLines` で描く。スケッチ・タイムライン・Undo に影響せず、プロファイルの計算も起きない。ウィンドウを閉じたとき、作成したとき、アドインを停止したときに消す。
+4. `graph_window.py` は、ウィンドウのすべての要求を処理するようにした（`handle()`）。どの要求にも設定（単位、範囲など）を添えて送り、どの返事にも配置と Status を含める。
+5. `graph_data` では、表示するかどうかを Draw（`enabled`）で決め、InvO / InvX / InvY も編集できるようにした。`curve_library` では `enabled` を保存するようにした。
+6. Marketplace 提出用の使い方説明（`MarketplaceSubmission/MARKETPLACE_SUBMISSION.md`）と README を、新しい操作手順に更新した。
+
+**Purpose（目的）**
+- 関数の定義、形の確認、配置、作成を、1つのウィンドウで自然な流れで行えるようにする。
+
+**Impact（影響）**
+- 旧ダイアログ、「Math Curve Graph」ボタン、配置ダイアログはなくなる（アドインの起動時に古いボタンも削除する）。
+- InvO / InvX / InvY は、スケッチへの配置にだけ反映される（グラフは関数そのものの形を表示する）。
+- テスト66件成功。
+- 実際の `math_curve_2.py` / `graph_window.py` を、Fusion の部分だけ模擬にしたテスト用サーバーで動かし、ブラウザで次の流れを確認した。
+  - Draw にした tan の警告で作成が止まる → 線を選ぶとプレビュー → Draw anyway で tan もプレビュー → InvY の保存 → スライダーのドラッグ（範囲は固定のまま）→ Create Curves で7本を作成し、完了メッセージ → Draw を外すとグラフから消える
+- Fusion 本体（`selectEntity`、カスタムグラフィックス、作成コマンド）は未確認。
+
+---
+
+
 ## [2026-11-06] グラフウィンドウだけで関数作成からスケッチ作成まで行えるようにした
 **AI:** Claude Code
 

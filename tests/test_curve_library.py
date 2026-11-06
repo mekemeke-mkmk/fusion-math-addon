@@ -33,7 +33,8 @@ class LibraryFileTests(unittest.TestCase):
         self.assertIsNone(message)
         self.assertEqual([c["name"] for c in loaded], ["Wave", "Coil"])
         self.assertEqual(loaded[0]["variables"], {"a": 2.0})
-        self.assertFalse(loaded[0]["enabled"])
+        self.assertTrue(loaded[0]["enabled"])
+        self.assertFalse(loaded[1]["enabled"])
         self.assertEqual(loaded[1]["z_expr"], "t")
         self.assertEqual(loaded[1]["close_mode"], "line")
 

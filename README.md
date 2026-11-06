@@ -7,14 +7,14 @@
 Create mathematical curves inside a Fusion sketch.
 
 ## Usage Instructions
-1. Install the add-in and start Fusion.
-2. Open or create a design, then enter Sketch mode.
-3. Start the `Math Curve Sketch` command from `Sketch > Create`.
-4. Select an existing sketch line as the baseline.
-5. In the `Setup` tab, choose the function unit (for example `1 = 1 mm`), set the x-range, and choose the curves you want to draw.
-6. Add functions in the `Library` tab, or pick one from the `Preset Gallery`. Edit the selected function if needed.
-7. Check the `Status` box. If a discontinuity or a heavy calculation is found, drawing stops until you review the warning and check `Draw anyway`.
-8. Click `Create Curves` to generate the sketch geometry.
+1. Install Math Curve 2 and start Autodesk Fusion.
+2. Open or create a design and enter Sketch mode.
+3. In the Sketch workspace, choose `Create > Math Curve Sketch`. The Math Curve window opens.
+4. Add functions with `+ Add function...` (a new `y = f(x)`, `x(t), y(t)`, or 3D function, or a preset). Select a function to edit its expressions and variables; the graph updates as you type or drag a variable slider.
+5. Check `Draw` for the functions to create. Use `InvO`, `InvX`, and `InvY` to flip a function on its baseline.
+6. Under `Place in sketch`, click `Select line` and pick an existing sketch line (its start point is the origin and its direction is +x), or click `Sketch origin`. Choose the unit and the x range for `y = f(x)`. The curves are previewed in the Fusion viewport.
+7. Check `Status`. If a discontinuity or a heavy calculation is found, review it and check `Draw anyway` to continue.
+8. Click `Create Curves` to generate the curves in the sketch.
 
 ## Features
 - Supports implicit functions such as `y = f(x)`
@@ -28,14 +28,12 @@ Create mathematical curves inside a Fusion sketch.
 - Output Curve: `Light curve` (default) creates one fixed spline per curve that passes through every sample point without adding sketch points, so the sketch stays fast. `Editable fit-point spline` creates the traditional spline with one fit point per sample, which can be edited but makes later operations slower.
 - The function library is saved automatically and restored the next time; it can also be exported and imported as a JSON file
 
-## Graph Window
-`Math Curve Graph` (next to `Math Curve Sketch`, or `Open Graph Window` in the Library tab) opens a floating window where you can do everything from defining functions to creating them in the sketch:
-- `+ Add function...`: a new `y = f(x)`, `x(t), y(t)`, or 3D (beta) function, or a preset. Select a function to edit its name, type, expressions, t range and step, and start/end connection; `Delete` removes it (click twice).
-- Expressions update the graph while you type and are saved on Enter or when you leave the box.
-- Variables: add them with `+ Variable` (or `+ Add variable k` under an "Unknown name 'k'" error), remove them with `×`, and set each slider's min / max. Sliders update the graph while you drag and save when you release.
-- View: drag to pan, scroll or `+` / `−` to zoom, `Fit` to frame the checked functions, `Origin` to center on (0, 0). The shaded band shows the x range used for `y = f(x)` in the sketch.
-- `Create in Sketch`: choose the unit, the x range for `y = f(x)`, and the output curve, then click it. Fusion opens a small dialog: select a sketch line (its start is the origin, its direction is +x) or check `Place at sketch origin`, review the preview and status, and click `Create Curves`. The checked functions are created.
-- The graph uses the same calculation as the sketch, including discontinuity splitting and error messages. 3D curves are shown as their x-y view.
+## The Math Curve Window
+Everything happens in one window, opened with `Math Curve Sketch`:
+- Left: the function list with the `Draw`, `InvO`, `InvX`, `InvY` checkboxes, and the editor of the selected function (name, type, expressions, step or t range, start/end connection, variables with sliders and min / max). `More` exports, imports, or reloads the library.
+- Right: the graph (drag to pan, scroll or `+` / `−` to zoom, `Fit`, `Origin`; the shaded band is the x range used for `y = f(x)`), and below it `Place in sketch` and `Status` with `Create Curves`.
+- The preview on the baseline is drawn as display-only graphics in the Fusion viewport, so it never changes the sketch and stays fast. `Create Curves` adds the curves to the baseline's sketch as one undoable step.
+- The graph uses the same calculation as the sketch, including discontinuity splitting and error messages. 3D curves are shown as their x-y view; `InvO` / `InvX` / `InvY` apply only to the placement in the sketch.
 
 ## Function Library Storage
 The library is saved on your computer only:

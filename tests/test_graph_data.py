@@ -14,14 +14,14 @@ VIEW = {"xmin": -5, "xmax": 5, "ymin": -3, "ymax": 3}
 
 def implicit(expr, variables=None):
     variables = variables or {}
-    return {"name": "f", "type": "implicit", "expr": expr, "step": 0.2, "variables": dict(variables),
+    return {"name": "f", "type": "implicit", "expr": expr, "step": 0.2, "variables": dict(variables), "enabled": True,
             "variables_text": ",".join(f"{k}={v}" for k, v in variables.items())}
 
 
 def circle():
     return {"name": "c", "type": "parametric", "x_expr": "r*cos(t)", "y_expr": "r*sin(t)",
             "t_start": 0.0, "t_end": 6.283185307179586, "t_step": 0.5, "variables": {"r": 2.0},
-            "close_mode": "smooth"}
+            "close_mode": "smooth", "enabled": True}
 
 
 def new_curve(kind="implicit"):
@@ -57,8 +57,10 @@ class PayloadTests(unittest.TestCase):
         self.assertEqual(curve["pieces"], [])
         self.assertIn("Syntax error", curve["errors"][0])
 
-    def test_hidden_curves_are_not_sampled(self):
-        payload = graph_data.graph_payload([implicit("x"), implicit("x")], {}, VIEW, hidden=[1])
+    def test_curves_without_draw_are_not_sampled(self):
+        off = implicit("x")
+        off["enabled"] = False
+        payload = graph_data.graph_payload([implicit("x"), off], {}, VIEW)
         self.assertTrue(payload["curves"][0]["pieces"])
         self.assertEqual(payload["curves"][1]["pieces"], [])
 
@@ -91,11 +93,26 @@ class EditTests(unittest.TestCase):
         self.assertEqual((curve["t_start"], curve["t_end"]), (1.0, 6.283185307179586))
 
 
+class FlagTests(unittest.TestCase):
+    def test_draw_and_invert_flags_are_saved(self):
+        curves = [implicit("x")]
+        _, saved = graph_data.handle_request("graphEdit", {"index": 0, "changes": {"enabled": False, "invert_y": True}},
+                                             curves, {}, new_curve)
+        self.assertTrue(saved)
+        self.assertEqual((curves[0]["enabled"], curves[0]["invert_y"]), (False, True))
+        self.assertEqual(graph_data.graph_payload(curves, {}, VIEW)["curves"][0]["pieces"], [])
+
+    def test_flags_must_be_booleans(self):
+        curve = implicit("x")
+        self.assertEqual(graph_data.apply_edit(curve, {"enabled": "no"}), (False, None))
+
+
 class VariableTests(unittest.TestCase):
     def test_add_and_remove_variable(self):
         curve = implicit("a*x")
         self.assertEqual(graph_data.apply_edit(curve, {"add_variable": {"name": "a", "value": 2}}), (True, None))
         self.assertEqual((curve["variables"], curve["variables_text"]), ({"a": 2.0}, "a=2"))
+        self.assertEqual(curve["variable_ranges"]["a"], [-2.0, 6.0])
         graph_data.apply_edit(curve, {"variable_ranges": {"a": [0, 5]}})
         graph_data.apply_edit(curve, {"remove_variable": "a"})
         self.assertEqual((curve["variables"], curve["variable_ranges"]), ({}, {}))
@@ -113,6 +130,11 @@ class VariableTests(unittest.TestCase):
         graph_data.apply_edit(curve, {"variable_ranges": {"a": [0, 2]}})
         graph_data.apply_edit(curve, {"variables": {"a": 7}})
         self.assertEqual(curve["variable_ranges"]["a"], [0.0, 7.0])
+
+    def test_slider_range_stays_put_when_the_value_changes(self):
+        curve = implicit("a*x", {"a": 1})
+        graph_data.apply_edit(curve, {"variables": {"a": 2.5}})
+        self.assertEqual(curve["variable_ranges"]["a"], [-1.0, 3.0])
 
     def test_default_range_is_sent_for_every_variable(self):
         payload = graph_data.graph_payload([implicit("a*x", {"a": 1})], {}, VIEW)

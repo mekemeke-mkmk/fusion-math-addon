@@ -66,7 +66,7 @@ def normalize_curve(data):
         "type": kind,
         "variables_text": str(data.get("variables_text") or ""),
         "variables": variables,
-        "enabled": False,
+        "enabled": bool(data.get("enabled", False)),
         "invert_origin": bool(data.get("invert_origin", False)),
         "invert_x": bool(data.get("invert_x", False)),
         "invert_y": bool(data.get("invert_y", False)),
@@ -118,7 +118,6 @@ def serialize_library(curves):
     for curve in curves:
         clean = normalize_curve(curve)
         if clean:
-            clean.pop("enabled", None)
             stored.append(clean)
     return {
         "format": LIBRARY_FORMAT,

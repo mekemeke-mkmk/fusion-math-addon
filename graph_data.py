@@ -89,11 +89,19 @@ def _digits_for_view(view):
     return max(0, min(12, -int(math.floor(math.log10(precision)))))
 
 
-def curve_payload(index, curve, params, view, visible=True):
-    """Everything the palette needs to show and edit one curve (points only when visible)."""
+FLAG_FIELDS = ("enabled", "invert_origin", "invert_x", "invert_y")
+
+
+def curve_payload(index, curve, params, view):
+    """Everything the window needs to show and edit one curve (points only when Draw is on)."""
     xmin, xmax, ymin, ymax = view
+    visible = bool(curve.get("enabled", False))
     base = {
         "index": index,
+        "enabled": visible,
+        "invert_origin": bool(curve.get("invert_origin", False)),
+        "invert_x": bool(curve.get("invert_x", False)),
+        "invert_y": bool(curve.get("invert_y", False)),
         "name": curve.get("name", f"Curve {index + 1}"),
         "type": curve_engine.curve_type(curve),
         "fields": {field: curve.get(field, "") for _, field, _ in curve_engine.expression_fields(curve)},
@@ -128,12 +136,11 @@ def curve_payload(index, curve, params, view, visible=True):
     return base
 
 
-def graph_payload(curves, params, view, hidden=()):
+def graph_payload(curves, params, view):
     view = normalize_view(view)
-    hidden = set(hidden or ())
     return {
         "view": {"xmin": view[0], "xmax": view[1], "ymin": view[2], "ymax": view[3]},
-        "curves": [curve_payload(i, curve, params, view, i not in hidden) for i, curve in enumerate(curves)],
+        "curves": [curve_payload(i, curve, params, view) for i, curve in enumerate(curves)],
         "presets": [curve_library.preset_label(preset) for preset in curve_library.PRESETS],
         "types": [{"id": kind, "label": label} for kind, label in CURVE_TYPE_LABELS],
         "close_modes": [{"id": mode, "label": label} for mode, label in curve_library.CLOSE_MODE_LABELS],
@@ -203,6 +210,11 @@ def apply_edit(curve, changes, params=()):
                 curve[field] = value
                 changed = True
 
+    for flag in FLAG_FIELDS:
+        if isinstance(changes.get(flag), bool) and bool(curve.get(flag, False)) != changes[flag]:
+            curve[flag] = changes[flag]
+            changed = True
+
     close_mode = changes.get("close_mode")
     if curve_engine.is_parametric(curve) and close_mode in curve_engine.CLOSE_MODES:
         if curve.get("close_mode") != close_mode:
@@ -219,6 +231,7 @@ def apply_edit(curve, changes, params=()):
         if error is None:
             value = _finite(added.get("value"))
             variables[name] = 1.0 if value is None else value
+            ranges[name] = default_range(variables[name])
 
     removed = changes.get("remove_variable")
     if isinstance(removed, str) and removed in variables:
@@ -230,6 +243,8 @@ def apply_edit(curve, changes, params=()):
         for name, raw in new_values.items():
             value = _finite(raw)
             if name in variables and value is not None:
+                # Fix the range the slider showed before this value, so it does not move under the cursor.
+                ranges.setdefault(name, default_range(variables[name]))
                 variables[name] = value
                 # Typing a value outside the slider range widens the range instead of clamping it.
                 if name in ranges:
@@ -267,7 +282,6 @@ def handle_request(action, data, curves, params, new_curve):
     """
     data = data if isinstance(data, dict) else {}
     view = data.get("view")
-    hidden = data.get("hidden") or ()
     saved = False
     select = None
     message = None
@@ -282,7 +296,8 @@ def handle_request(action, data, curves, params, new_curve):
             return {"error": "The function to edit was not found. Click Reload."}, False
         changed, message = apply_edit(curves[index], changes, params)
         saved = bool(data.get("commit")) or (changed and any(
-            key in changes for key in ("type", "add_variable", "remove_variable", "variable_ranges", "close_mode")))
+            key in changes for key in ("type", "add_variable", "remove_variable", "variable_ranges", "close_mode")
+            + FLAG_FIELDS))
     elif action == "graphAdd":
         preset = data.get("preset")
         if isinstance(preset, int) and 0 <= preset < len(curve_library.PRESETS):
@@ -306,7 +321,7 @@ def handle_request(action, data, curves, params, new_curve):
     elif action != "graphData":
         return {"error": f"Unknown request '{action}'."}, False
 
-    reply = graph_payload(curves, params, view, hidden)
+    reply = graph_payload(curves, params, view)
     if select is not None:
         reply["select"] = select
     if message:

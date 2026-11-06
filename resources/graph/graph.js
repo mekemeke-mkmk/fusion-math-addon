@@ -11,7 +11,6 @@ const state = {
   types: [],
   closeModes: [],
   params: [],
-  hidden: new Set(),
   selected: -1,
   // View: center (cx, cy) and pixels per unit. Equal scale on both axes, like a drawing.
   cx: 0,
@@ -88,7 +87,7 @@ function send(action, extra) {
     return;
   }
   state.busy = true;
-  const payload = Object.assign({ view: currentView(), hidden: Array.from(state.hidden) }, message.extra);
+  const payload = Object.assign({ view: currentView(), settings: sketchSettings() }, message.extra);
   adsk.fusionSendData(action, JSON.stringify(payload)).then(function (text) {
     state.busy = false;
     receive(text);
@@ -158,11 +157,8 @@ function receive(text) {
     showStatus(data.error, true);
     return;
   }
-  if (data.created) {
-    showStatus(data.created, false);
-    return;
-  }
   if (data.message) showStatus(data.message, true);
+  if (data.info) showStatus(data.info, false);
   state.curves = data.curves || [];
   state.presets = data.presets || state.presets;
   state.types = data.types || state.types;
@@ -178,7 +174,7 @@ function receive(text) {
   renderAddMenu();
   renderList();
   renderEditor();
-  updateCreateButton();
+  if (data.sketch) renderSketch(data.sketch);
   draw();
 }
 
@@ -294,7 +290,7 @@ function drawGrid(w, h) {
 
 // Shaded band for the x range that Create in Sketch uses for y = f(x) curves.
 function drawSketchRange(h) {
-  const hasImplicit = state.curves.some(function (c) { return c.type === "implicit" && !state.hidden.has(c.index); });
+  const hasImplicit = state.curves.some(function (c) { return c.type === "implicit" && c.enabled; });
   const range = sketchXRange();
   if (!hasImplicit || !range) return;
   const a = toScreen(range[0], 0)[0], b = toScreen(range[1], 0)[0];
@@ -309,7 +305,7 @@ function drawSketchRange(h) {
 
 function drawCurves() {
   state.curves.forEach(function (curve) {
-    if (state.hidden.has(curve.index)) return;
+    if (!curve.enabled) return;
     ctx.strokeStyle = colorOf(curve.index);
     ctx.lineWidth = curve.index === state.selected ? 3 : 2;
     ctx.lineJoin = "round";
@@ -391,33 +387,36 @@ function renderAddMenu() {
   menu.appendChild(presets);
 }
 
+function flagBox(curve, flag, title) {
+  const box = el("input", { type: "checkbox", title: title });
+  box.checked = !!curve[flag];
+  box.addEventListener("click", function (event) {
+    event.stopPropagation();
+    const change = {};
+    change[flag] = box.checked;
+    send("graphEdit", { index: curve.index, changes: change, commit: true });
+  });
+  return el("span", { class: "cell" }, [box]);
+}
+
+// Same columns as the former Setup table: Draw | Function | InvO | InvX | InvY.
 function renderList() {
   listEl.innerHTML = "";
   state.curves.forEach(function (curve) {
     const row = el("div", { class: "curve-row" + (curve.index === state.selected ? " selected" : "") });
-
-    const box = el("input", { type: "checkbox", title: "Show in graph (and create in sketch)" });
-    box.checked = !state.hidden.has(curve.index);
-    box.addEventListener("click", function (event) {
-      event.stopPropagation();
-      if (box.checked) state.hidden.delete(curve.index); else state.hidden.add(curve.index);
-      updateCreateButton();
-      requestData();
-      draw();
-    });
-
     const swatch = el("span", { class: "swatch" });
     swatch.style.background = colorOf(curve.index);
-    const name = el("span", { class: "curve-name", text: curve.name, title: curve.name });
-
-    row.appendChild(box);
-    row.appendChild(swatch);
-    row.appendChild(name);
+    const name = el("span", { class: "curve-name", title: curve.name }, [swatch, el("span", { text: curve.name })]);
     if (curve.errors.length) {
-      row.appendChild(el("span", { class: "badge error", text: "error" }));
+      name.appendChild(el("span", { class: "badge error", text: "error" }));
     } else if (curve.warnings.length) {
-      row.appendChild(el("span", { class: "badge warning", text: "!" }));
+      name.appendChild(el("span", { class: "badge warning", text: "!" }));
     }
+    row.appendChild(flagBox(curve, "enabled", "Draw: show on the graph and create in the sketch"));
+    row.appendChild(name);
+    row.appendChild(flagBox(curve, "invert_origin", "InvO: start from the other end of the baseline"));
+    row.appendChild(flagBox(curve, "invert_x", "InvX: flip the x direction"));
+    row.appendChild(flagBox(curve, "invert_y", "InvY: flip the y direction"));
     row.addEventListener("click", function () {
       if (state.selected === curve.index) return;
       state.selected = curve.index;
@@ -699,14 +698,17 @@ window.addEventListener("pointerup", function () {
   setTimeout(function () { state.draggingVariable = null; }, 0);
 });
 
-// ---------- Sidebar: create in sketch ----------
+// ---------- Placement and creation (bottom bar) ----------
 
 function sketchSettings() {
+  const unit = document.getElementById("unit");
   return {
-    unit: document.getElementById("unit").value,
+    unit: unit ? unit.value : "",
     x_start: Number(document.getElementById("xStart").value),
     x_end: Number(document.getElementById("xEnd").value),
-    output: document.getElementById("output").value
+    output: document.getElementById("output").value,
+    preview: document.getElementById("preview").checked,
+    ack: document.getElementById("ack").checked
   };
 }
 
@@ -717,39 +719,56 @@ function sketchXRange() {
   return [Math.min(a, b), Math.max(a, b)];
 }
 
-function visibleIndices() {
-  return state.curves.filter(function (c) { return !state.hidden.has(c.index); }).map(function (c) { return c.index; });
+function renderSketch(sketch) {
+  document.getElementById("placement").textContent = sketch.placement;
+  document.getElementById("clearPlacement").disabled = !sketch.has_placement;
+  const unit = document.getElementById("unit");
+  if (!unit.value && sketch.unit) {
+    unit.value = sketch.unit;
+    saveSketchSettings();
+  }
+  const statusBox = document.getElementById("sketchStatus");
+  statusBox.innerHTML = "";
+  sketch.status.forEach(function (line) {
+    const kind = /^\[(ERROR)\]/.test(line) ? "error" : /^\[(WARNING)\]/.test(line) || /^Stopped/.test(line) ? "warning" : "";
+    statusBox.appendChild(el("div", { class: kind, text: line }));
+  });
+  const ack = document.getElementById("ack");
+  ack.disabled = !sketch.has_warnings;
+  ack.checked = sketch.ack;
+  const create = document.getElementById("createCurves");
+  create.disabled = !sketch.can_create;
+  create.title = sketch.can_create ? "Create the Draw-checked functions in the sketch"
+    : (sketch.has_placement ? "Fix the problems in Status first" : "Select a baseline line or the sketch origin first");
+  if (sketch.flash) showStatus(sketch.flash, false);
 }
 
-function updateCreateButton() {
-  const button = document.getElementById("create");
-  const count = visibleIndices().length;
-  button.textContent = "Create in Sketch (" + count + ")";
-  button.disabled = count === 0;
+function saveSketchSettings() {
+  storageSet("sketch", sketchSettings());
 }
 
-function initCreatePanel() {
+function initSketchPanel() {
   const unit = document.getElementById("unit");
   UNITS.forEach(function (u) { unit.appendChild(el("option", { value: u, text: "1 = 1 " + u })); });
-  const saved = storageGet("sketch", { unit: "mm", x_start: 0, x_end: 10, output: "light" });
-  unit.value = UNITS.indexOf(saved.unit) >= 0 ? saved.unit : "mm";
-  document.getElementById("xStart").value = saved.x_start;
-  document.getElementById("xEnd").value = saved.x_end;
+  const saved = storageGet("sketch", {});
+  // Empty unit until Fusion reports the document unit (used when nothing was saved).
+  unit.value = UNITS.indexOf(saved.unit) >= 0 ? saved.unit : "";
+  document.getElementById("xStart").value = isFinite(saved.x_start) ? saved.x_start : 0;
+  document.getElementById("xEnd").value = isFinite(saved.x_end) ? saved.x_end : 10;
   document.getElementById("output").value = saved.output === "editable" ? "editable" : "light";
-  ["unit", "xStart", "xEnd", "output"].forEach(function (id) {
+  document.getElementById("preview").checked = saved.preview !== false;
+
+  ["unit", "xStart", "xEnd", "output", "preview", "ack"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", function () {
-      storageSet("sketch", sketchSettings());
+      saveSketchSettings();
       draw();
+      requestData();
     });
   });
-  document.getElementById("create").addEventListener("click", function () {
-    const settings = sketchSettings();
-    if (!(isFinite(settings.x_start) && isFinite(settings.x_end) && settings.x_start !== settings.x_end)) {
-      showStatus("Set different x from / to values.", true);
-      return;
-    }
-    send("graphCreate", Object.assign({ curves: visibleIndices() }, settings));
-  });
+  document.getElementById("selectLine").addEventListener("click", function () { send("mcSelectLine"); });
+  document.getElementById("useOrigin").addEventListener("click", function () { send("mcUseOrigin"); });
+  document.getElementById("clearPlacement").addEventListener("click", function () { send("mcClearPlacement"); });
+  document.getElementById("createCurves").addEventListener("click", function () { send("mcCreate"); });
 }
 
 // ---------- View controls ----------
@@ -809,7 +828,7 @@ function fitView() {
   const range = sketchXRange();
   const implicitY = [];
   state.curves.forEach(function (curve) {
-    if (state.hidden.has(curve.index)) return;
+    if (!curve.enabled) return;
     curve.pieces.forEach(function (piece) {
       piece.forEach(function (p) {
         if (curve.type === "implicit") {
@@ -859,7 +878,13 @@ document.getElementById("home").addEventListener("click", function () {
   draw();
   requestData();
 });
-document.getElementById("refresh").addEventListener("click", requestData);
+document.getElementById("moreMenu").addEventListener("change", function (event) {
+  const value = event.target.value;
+  event.target.value = "";
+  if (value === "export") send("mcExport");
+  if (value === "import") send("mcImport");
+  if (value === "reload") requestData();
+});
 document.getElementById("addMenu").addEventListener("change", function (event) {
   const value = event.target.value;
   event.target.value = "";
@@ -877,7 +902,7 @@ window.addEventListener("resize", function () {
 // ---------- Start ----------
 
 function start() {
-  initCreatePanel();
+  initSketchPanel();
   draw();
   if (!hasFusion()) {
     // Fusion injects the adsk object shortly after load; give it a moment.
