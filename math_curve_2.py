@@ -5,6 +5,7 @@ import math
 import json
 import os
 import re
+import time
 from datetime import datetime
 
 from .license_manager import check_license, developer_diagnostics, developer_mode_enabled
@@ -624,6 +625,8 @@ def format_report(report):
     lines = []
     if developer_mode_enabled():
         lines.append("[DEV] Developer mode: the Marketplace license check is skipped on this PC.")
+        if commandState.get("lastPreviewMs") is not None:
+            lines.append(f"[DEV] Last preview took {commandState['lastPreviewMs']:.0f} ms (add-in side only).")
     notice = commandState.get("notice")
     if notice:
         lines.append(f"[NOTE] {notice}")
@@ -828,10 +831,18 @@ def add_preview_geometry(sketch, result, pieces, created):
             continue
         points = thin_points(points, PREVIEW_MAX_POINTS)
         try:
-            created.append(add_light_spline(sketch, points, close_mode == curve_engine.CLOSE_SMOOTH))
+            spline = add_light_spline(sketch, points, close_mode == curve_engine.CLOSE_SMOOTH)
         except:
             # Fallback when the NURBS cannot be built: the regular (slower) fitted spline.
-            created.append(sketch.sketchCurves.sketchFittedSplines.add(make_point_collection(points)))
+            spline = sketch.sketchCurves.sketchFittedSplines.add(make_point_collection(points))
+        created.append(spline)
+        # Construction curves are left out of profile detection. Otherwise Fusion intersects the
+        # preview with every curve already in the sketch on each redraw, which got slower
+        # with every set of curves created before.
+        try:
+            spline.isConstruction = True
+        except:
+            pass
         if close_mode == curve_engine.CLOSE_LINE:
             add_guide_line(
                 sketch.sketchCurves.sketchLines,
@@ -841,12 +852,36 @@ def add_preview_geometry(sketch, result, pieces, created):
             created.append(previewGuides.pop())
 
 
+def hide_profiles_during_command(sketch):
+    """Turn off profile display while the command runs; restored by restore_profiles()."""
+    commandState["profileRestore"] = None
+    if not sketch:
+        return
+    try:
+        if sketch.areProfilesShown:
+            sketch.areProfilesShown = False
+            commandState["profileRestore"] = sketch
+    except:
+        pass
+
+
+def restore_profiles():
+    sketch = commandState.get("profileRestore")
+    commandState["profileRestore"] = None
+    try:
+        if sketch and sketch.isValid:
+            sketch.areProfilesShown = True
+    except:
+        pass
+
+
 def draw_preview(sketch, design):
     """Redraw the preview with sketch solving deferred, so each entity does not trigger a recompute."""
     try:
         sketch.isComputeDeferred = True
     except:
         pass
+    started = time.perf_counter()
     try:
         return draw_preview_entities(sketch, design)
     finally:
@@ -854,6 +889,7 @@ def draw_preview(sketch, design):
             sketch.isComputeDeferred = False
         except:
             pass
+        commandState["lastPreviewMs"] = (time.perf_counter() - started) * 1000.0
 
 
 def draw_preview_entities(sketch, design):
@@ -1590,6 +1626,7 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             commandState["ackSignature"] = None
             commandState["analysisCache"] = None
             commandState["paramsCache"] = None
+            hide_profiles_during_command(get_active_sketch())
 
             inputs = command.commandInputs
 
@@ -2142,3 +2179,4 @@ class DestroyHandler(adsk.core.CommandEventHandler):
             reset_point_state()
         except:
             pass
+        restore_profiles()
