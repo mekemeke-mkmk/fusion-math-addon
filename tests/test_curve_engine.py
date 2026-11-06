@@ -116,6 +116,40 @@ class SamplingTests(unittest.TestCase):
         self.assertTrue(any("will not be connected" in w for w in result.warnings))
 
 
+def bezier_point(controls, u):
+    a, b, c, d = controls
+    return tuple((1 - u) ** 3 * a[k] + 3 * (1 - u) ** 2 * u * b[k] + 3 * (1 - u) * u * u * c[k]
+                 + u ** 3 * d[k] for k in range(3))
+
+
+class InterpolationTests(unittest.TestCase):
+    def test_curve_passes_through_every_point(self):
+        points = [(t, math.sin(t), 0.0) for t in [i * 0.2 for i in range(30)]]
+        controls, degree, knots = curve_engine.interpolating_nurbs(points)
+        self.assertEqual(len(knots), len(controls) + degree + 1)
+        self.assertEqual(controls[::3], points)
+
+    def test_circle_stays_close_to_the_true_shape(self):
+        points = [(math.cos(t), math.sin(t), 0.0) for t in [i * 0.1 for i in range(60)]]
+        controls, _, _ = curve_engine.interpolating_nurbs(points)
+        for i in range(len(points) - 1):
+            x, y, _ = bezier_point(controls[3 * i:3 * i + 4], 0.5)
+            self.assertAlmostEqual(math.hypot(x, y), 1.0, places=3)
+
+    def test_closed_curve_ends_at_start_with_the_same_tangent(self):
+        points = [(math.cos(t), math.sin(t), 0.0) for t in [i * 2 * math.pi / 40 for i in range(41)]]
+        controls, _, _ = curve_engine.interpolating_nurbs(points, closed=True)
+        self.assertEqual(controls[0], controls[-1])
+        start = [controls[1][k] - controls[0][k] for k in range(3)]
+        end = [controls[-1][k] - controls[-2][k] for k in range(3)]
+        for a, b in zip(start, end):
+            self.assertAlmostEqual(a, b)
+
+    def test_two_points_make_a_straight_segment(self):
+        controls, degree, knots = curve_engine.interpolating_nurbs([(0, 0, 0), (3, 0, 0)])
+        self.assertEqual((len(controls), degree, len(knots)), (4, 3, 8))
+
+
 class PointHelperTests(unittest.TestCase):
     def test_remove_duplicate_points(self):
         points = [(0, 0, 0), (0, 0, 0), (1, 0, 0)]

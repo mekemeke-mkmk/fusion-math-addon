@@ -443,3 +443,73 @@ def remove_duplicate_points(points, tolerance):
 
 def endpoints_coincide(points, tolerance):
     return len(points) >= 2 and _distance(points[0], points[-1]) <= tolerance
+
+
+def interpolating_nurbs(points, closed=False):
+    """Cubic NURBS data passing exactly through every point (C1, chord-length parameters).
+
+    Returns (control_points, degree, knots). Each span is the Bezier form of a Hermite
+    segment, so the curve is light (no fit points) yet still goes through the samples.
+    closed=True joins the end back to the start with a matching tangent.
+    """
+    pts = list(points)
+    if closed and len(pts) >= 3:
+        if endpoints_coincide(pts, 1.0e-12):
+            pts = pts[:-1]
+        pts.append(pts[0])
+    else:
+        closed = False
+    count = len(pts)
+    if count < 2:
+        raise ValueError("At least two points are needed.")
+    if count == 2:
+        a, b = pts
+        third = tuple(a[k] + (b[k] - a[k]) / 3.0 for k in range(3))
+        two_thirds = tuple(a[k] + (b[k] - a[k]) * 2.0 / 3.0 for k in range(3))
+        length = _distance(a, b)
+        return [a, third, two_thirds, b], 3, [0.0] * 4 + [length] * 4
+
+    params = [0.0]
+    for i in range(1, count):
+        params.append(params[-1] + max(_distance(pts[i - 1], pts[i]), 1.0e-12))
+
+    def tangent(i):
+        if closed and i in (0, count - 1):
+            prev_point, next_point = pts[count - 2], pts[1]
+        elif i == 0:
+            prev_point, next_point = pts[0], pts[1]
+        elif i == count - 1:
+            prev_point, next_point = pts[i - 1], pts[i]
+        else:
+            prev_point, next_point = pts[i - 1], pts[i + 1]
+        # Unit direction: with chord-length parameters the curve speed is about 1, and a
+        # plain difference quotient would shorten the handles and flatten curved spans.
+        direction = tuple(next_point[k] - prev_point[k] for k in range(3))
+        norm = math.sqrt(sum(c * c for c in direction))
+        if norm <= 1.0e-15:
+            return (0.0, 0.0, 0.0)
+        return tuple(c / norm for c in direction)
+
+    tangents = [tangent(i) for i in range(count)]
+    if not closed:
+        # Open ends: mirror the neighbouring tangent about the end chord (parabola end condition).
+        for end, inner, neighbour in ((0, 1, 1), (count - 1, count - 2, count - 2)):
+            chord = tuple(pts[max(end, inner)][k] - pts[min(end, inner)][k] for k in range(3))
+            norm = math.sqrt(sum(c * c for c in chord))
+            if norm > 1.0e-15:
+                mirrored = tuple(2.0 * chord[k] / norm - tangents[neighbour][k] for k in range(3))
+                length = math.sqrt(sum(c * c for c in mirrored))
+                if length > 1.0e-15:
+                    tangents[end] = tuple(c / length for c in mirrored)
+    controls = [pts[0]]
+    for i in range(count - 1):
+        h = params[i + 1] - params[i]
+        controls.append(tuple(pts[i][k] + tangents[i][k] * h / 3.0 for k in range(3)))
+        controls.append(tuple(pts[i + 1][k] - tangents[i + 1][k] * h / 3.0 for k in range(3)))
+        controls.append(pts[i + 1])
+
+    knots = [params[0]] * 4
+    for value in params[1:-1]:
+        knots += [value] * 3
+    knots += [params[-1]] * 4
+    return controls, 3, knots

@@ -85,8 +85,15 @@ commandState = {
     "ackSignature": None,  # Warnings the user accepted with "Draw anyway"
     "analysisCache": None,
     "notice": None,  # Library load/save problems shown in the Status box
-    "paramsCache": None  # (unit, params): reading Fusion parameters is slow, so read once per command
+    "paramsCache": None,  # (unit, params): reading Fusion parameters is slow, so read once per command
+    "baselineLine": None,  # Selected SketchLine; avoids a token lookup on every validation
+    "outputMode": "light"
 }
+
+OUTPUT_MODE_LABELS = [
+    ("light", "Light curve (fast, recommended)"),
+    ("editable", "Editable fit-point spline (slow)"),
+]
 
 
 def default_curve():
@@ -147,6 +154,7 @@ def reset_point_state():
     commandState["hover"] = None
     commandState["snapPoint"] = None
     commandState["baselineToken"] = None
+    commandState["baselineLine"] = None
     commandState["hasFinalEnd"] = False
     commandState["previewDirty"] = True
     commandState["rangeStart"] = 0.0
@@ -303,6 +311,12 @@ def get_selected_baseline(inputs):
 
 def get_baseline_from_token():
     """トークンからベースラインを取得。詳細なエラー情報を記録"""
+    line = commandState.get("baselineLine")
+    try:
+        if line and line.isValid:
+            return line
+    except:
+        pass
     token = commandState["baselineToken"]
     design = get_active_design()
     if not token or not design:
@@ -335,6 +349,15 @@ def update_state_from_baseline(line):
 
     start_geo = line.startSketchPoint.geometry
     end_geo = line.endSketchPoint.geometry
+    old_start = commandState["start"]
+    old_end = commandState["end"]
+    unchanged = (
+        commandState["hasFinalEnd"] and old_start and old_end
+        and (old_start.x, old_start.y, old_end.x, old_end.y) == (start_geo.x, start_geo.y, end_geo.x, end_geo.y)
+    )
+    commandState["baselineLine"] = line
+    if unchanged:
+        return True
     commandState["start"] = adsk.core.Point3D.create(start_geo.x, start_geo.y, 0)
     commandState["end"] = adsk.core.Point3D.create(end_geo.x, end_geo.y, 0)
     commandState["hover"] = commandState["end"]
@@ -670,8 +693,15 @@ def add_curve_geometry(sketch, result, pieces, created):
     """Add splines for one curve. Closes the curve if requested. Appends new entities to created."""
     splines = sketch.sketchCurves.sketchFittedSplines
     close_mode = result.close_mode if len(pieces) == 1 else curve_engine.CLOSE_OPEN
+    light = commandState.get("outputMode") == "light"
     for points in pieces:
         if len(points) < 2:
+            continue
+        if light:
+            spline = add_light_spline(sketch, points, close_mode == curve_engine.CLOSE_SMOOTH)
+            created.append(spline)
+            if close_mode == curve_engine.CLOSE_LINE:
+                created.append(sketch.sketchCurves.sketchLines.addByTwoPoints(spline.endSketchPoint, spline.startSketchPoint))
             continue
         if close_mode != curve_engine.CLOSE_OPEN and curve_engine.endpoints_coincide(points, POINT_TOLERANCE_CM * 10):
             points = points[:-1]
@@ -778,14 +808,15 @@ def thin_points(points, max_count):
     return [points[round(i * step)] for i in range(max_count)]
 
 
-def add_preview_spline(sketch, points):
-    """One fixed NURBS spline without fit points: much faster than a fitted spline to create and delete."""
-    degree = min(3, len(points) - 1)
-    knots = [0.0] * (degree + 1)
-    knots += [float(i) for i in range(1, len(points) - degree)]
-    knots += [float(len(points) - degree)] * (degree + 1)
+def add_light_spline(sketch, points, closed=False):
+    """One fixed spline through the points, without fit points.
+
+    A fitted spline adds a sketch point per sample, and Fusion re-solves all of them on every
+    later preview, so the command gets slower each time curves are created. This stays light.
+    """
+    controls, degree, knots = curve_engine.interpolating_nurbs(points, closed)
     nurbs = adsk.core.NurbsCurve3D.createNonRational(
-        [adsk.core.Point3D.create(x, y, z) for x, y, z in points], degree, knots, False
+        [adsk.core.Point3D.create(x, y, z) for x, y, z in controls], degree, knots, False
     )
     return sketch.sketchCurves.sketchFixedSplines.addByNurbsCurve(nurbs)
 
@@ -796,10 +827,8 @@ def add_preview_geometry(sketch, result, pieces, created):
         if len(points) < 2:
             continue
         points = thin_points(points, PREVIEW_MAX_POINTS)
-        if close_mode == curve_engine.CLOSE_SMOOTH and not curve_engine.endpoints_coincide(points, POINT_TOLERANCE_CM * 10):
-            points = points + [points[0]]
         try:
-            created.append(add_preview_spline(sketch, points))
+            created.append(add_light_spline(sketch, points, close_mode == curve_engine.CLOSE_SMOOTH))
         except:
             # Fallback when the NURBS cannot be built: the regular (slower) fitted spline.
             created.append(sketch.sketchCurves.sketchFittedSplines.add(make_point_collection(points)))
@@ -1617,6 +1646,13 @@ class CommandCreatedHandler(adsk.core.CommandCreatedEventHandler):
             )
             for unit in UNIT_ORDER:
                 unit_input.listItems.add(f"1 = 1 {unit}", unit == commandState["unit"])
+            output_input = setup_children.addDropDownCommandInput(
+                "outputMode",
+                "Output Curve",
+                adsk.core.DropDownStyles.TextListDropDownStyle
+            )
+            for mode, label in OUTPUT_MODE_LABELS:
+                output_input.listItems.add(label, mode == commandState["outputMode"])
             setup_children.addValueInput(
                 "rangeStart",
                 "x Start",
@@ -1911,6 +1947,10 @@ class InputChangedHandler(adsk.core.InputChangedEventHandler):
                     sync_parametric_inputs_enabled(inputs)
                     refresh_curve_checkboxes(inputs)
                     refresh_setup_variables_table(inputs)
+            elif changed.id == "outputMode":
+                index = selected_dropdown_index(inputs, "outputMode")
+                if index >= 0:
+                    commandState["outputMode"] = OUTPUT_MODE_LABELS[index][0]
             elif changed.id == "unit":
                 index = selected_dropdown_index(inputs, "unit")
                 if index >= 0:
@@ -2038,7 +2078,9 @@ class ExecutePreviewHandler(adsk.core.CommandEventHandler):
         try:
             sketch = get_active_sketch()
             design = get_active_design()
-            if not sketch or not commandState["previewDirty"]:
+            # Fusion fires this only after an input change and rolls back the previous preview,
+            # so always redraw here (skipping would leave the preview empty).
+            if not sketch:
                 return
 
             draw_preview(sketch, design)

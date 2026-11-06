@@ -25,6 +25,7 @@ Create mathematical curves inside a Fusion sketch.
 - Expression check with readable error messages; `^` can be used for powers
 - Discontinuities (such as `tan(x)` or `floor(x)`) are detected and the curve is split at them
 - Heavy calculations (too many points or too slow) are stopped before they freeze Fusion
+- Output Curve: `Light curve` (default) creates one fixed spline per curve that passes through every sample point without adding sketch points, so the sketch stays fast. `Editable fit-point spline` creates the traditional spline with one fit point per sample, which can be edited but makes later operations slower.
 - The function library is saved automatically and restored the next time; it can also be exported and imported as a JSON file
 
 ## Function Library Storage
