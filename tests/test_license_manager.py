@@ -4,6 +4,7 @@ import importlib.util
 import json
 import pathlib
 import sys
+import tempfile
 import unittest
 from unittest.mock import patch
 from urllib.error import URLError
@@ -72,10 +73,19 @@ class LicenseManagerTests(unittest.TestCase):
         self.assertEqual(status.mode, "connection_error")
 
     def test_developer_mode_needs_the_environment_variable(self):
-        with patch.dict(license_manager.os.environ, {}, clear=True):
+        with patch.dict(license_manager.os.environ, {}, clear=True), \
+                patch.object(license_manager, "developer_flag_path", return_value="/no/such/flag"):
             self.assertFalse(license_manager.developer_mode_enabled("C:/dev/math_curve_2"))
         with patch.dict(license_manager.os.environ, {license_manager.DEV_MODE_ENV: "1"}):
             self.assertTrue(license_manager.developer_mode_enabled("C:/dev/math_curve_2"))
+
+    def test_developer_mode_flag_file_works_without_the_environment_variable(self):
+        with tempfile.TemporaryDirectory() as folder:
+            flag = pathlib.Path(folder) / "developer_mode"
+            flag.write_text("", encoding="utf-8")
+            with patch.dict(license_manager.os.environ, {}, clear=True), \
+                    patch.object(license_manager, "developer_flag_path", return_value=str(flag)):
+                self.assertTrue(license_manager.developer_mode_enabled("C:/dev/math_curve_2"))
 
     def test_developer_mode_is_ignored_for_marketplace_installs(self):
         installed = "C:/Users/u/AppData/Roaming/Autodesk/ApplicationPlugins/MathCurve2.bundle/Contents"

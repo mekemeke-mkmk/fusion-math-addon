@@ -33,12 +33,14 @@ The library is saved on your computer only:
 - macOS: `~/Library/Application Support/MathCurve2/function_library.json`
 
 ## Developer Testing (license check)
-On the developer's own PC, the Marketplace license check can be skipped while testing the edit source:
-1. In PowerShell, run `setx MATH_CURVE_DEV_MODE 1`.
-2. Quit Fusion completely and start it again.
-3. The `Status` box in the Setup tab shows `[DEV] Developer mode` while it is active.
+On the developer's own PC, the Marketplace license check can be skipped while testing the edit source. Use either method:
+- Flag file (recommended, no restart of Windows needed). In PowerShell:
+  `New-Item -ItemType File -Force "$env:APPDATA\MathCurve2\developer_mode"`
+- Environment variable: `setx MATH_CURVE_DEV_MODE 1`, then quit Fusion completely and start it again.
 
-Developer mode is ignored when the add-in runs from the Marketplace install folder (`ApplicationPlugins`), so installed copies always check the license. To turn it off, run `setx MATH_CURVE_DEV_MODE 0` and restart Fusion.
+The `Status` box in the Setup tab shows `[DEV] Developer mode` while it is active. If the license message still appears, it also shows the add-in folder and the developer-mode state to help find the cause.
+
+Developer mode is ignored when the add-in runs from the Marketplace install folder (`ApplicationPlugins`), so installed copies always check the license. To turn it off, delete the flag file and/or run `setx MATH_CURVE_DEV_MODE 0`.
 
 ## Marketplace Submission Notes
 - Version: `26.2.0` in both the Marketplace form and the Fusion manifest.

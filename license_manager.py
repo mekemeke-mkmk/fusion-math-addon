@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
@@ -16,9 +17,11 @@ MARKETPLACE_APP_ID = "1343581627431012464"
 ENTITLEMENT_ENDPOINT = "https://apps.autodesk.com/webservices/checkentitlement"
 
 # Developer mode skips the Marketplace check while testing the edit source on the
-# developer's own PC. It needs this environment variable AND an add-in folder outside
-# the Marketplace install location (ApplicationPlugins), so installed copies always check.
+# developer's own PC. It needs this environment variable or the flag file below, AND an
+# add-in folder outside the Marketplace install location (ApplicationPlugins), so
+# installed copies always check. The flag file lives in the user's folder, never in the add-in.
 DEV_MODE_ENV = "MATH_CURVE_DEV_MODE"
+DEV_MODE_FLAG_NAME = "developer_mode"
 ADDIN_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -73,11 +76,43 @@ def _request_entitlement(user_id: str) -> LicenseStatus:
     return _parse_entitlement(payload, user_id)
 
 
-def developer_mode_enabled(addin_dir: str = "") -> bool:
-    if os.environ.get(DEV_MODE_ENV, "").strip() != "1":
+def developer_flag_path() -> str:
+    if sys.platform.startswith("win"):
+        base = os.environ.get("APPDATA") or os.path.expanduser("~")
+    elif sys.platform == "darwin":
+        base = os.path.join(os.path.expanduser("~"), "Library", "Application Support")
+    else:
+        base = os.environ.get("XDG_CONFIG_HOME") or os.path.join(os.path.expanduser("~"), ".config")
+    return os.path.join(base, "MathCurve2", DEV_MODE_FLAG_NAME)
+
+
+def developer_mode_requested() -> bool:
+    if os.environ.get(DEV_MODE_ENV, "").strip() == "1":
+        return True
+    try:
+        return os.path.isfile(developer_flag_path())
+    except OSError:
         return False
+
+
+def is_marketplace_install(addin_dir: str = "") -> bool:
     normalized = os.path.abspath(addin_dir or ADDIN_DIR).replace("\\", "/").lower()
-    return "/applicationplugins/" not in normalized + "/"
+    return "/applicationplugins/" in normalized + "/"
+
+
+def developer_mode_enabled(addin_dir: str = "") -> bool:
+    return developer_mode_requested() and not is_marketplace_install(addin_dir)
+
+
+def developer_diagnostics() -> str:
+    """Hint shown only for copies outside the Marketplace install, to explain why the check ran."""
+    if is_marketplace_install():
+        return ""
+    return (
+        f"Running from a development folder: {ADDIN_DIR}. "
+        f"Developer mode is OFF ({DEV_MODE_ENV}={os.environ.get(DEV_MODE_ENV, '(not set)')}; "
+        f"flag file {developer_flag_path()} not found)."
+    )
 
 
 def check_license(app: Any) -> LicenseStatus:

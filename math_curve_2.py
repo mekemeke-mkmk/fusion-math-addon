@@ -7,7 +7,7 @@ import os
 import re
 from datetime import datetime
 
-from .license_manager import check_license, developer_mode_enabled
+from .license_manager import check_license, developer_diagnostics, developer_mode_enabled
 from . import curve_engine
 from . import curve_library
 
@@ -2067,7 +2067,11 @@ class ExecuteHandler(adsk.core.CommandEventHandler):
             licenseState["mode"] = license_status.mode
             licenseState["message"] = license_status.message
             if not license_status.allowed:
-                app.userInterface.messageBox(license_status.message, "Math Curve License")
+                message = license_status.message
+                diagnostics = developer_diagnostics()
+                if diagnostics:
+                    message += "\n\n" + diagnostics
+                app.userInterface.messageBox(message, "Math Curve License")
                 return
 
             report = analyze_curves(design)
