@@ -7,6 +7,38 @@
 ---
 
 
+## [2026-11-07] Codex に相談するための Claude Code スキルを追加
+**AI:** Claude Code
+
+**What（何を変更したか）**
+- `.claude/skills/codex/` に、Codex（OpenAI の codex CLI）へレビューや相談を依頼するスキルを追加した。
+  - `SKILL.md`: 手順、注意点、依頼文のひな形
+  - `codex_login.sh`: インストールとログイン状態を確認し、必要ならデバイス認証を始める
+  - `codex_review.sh`: 読み取り専用でレビューを実行し、結果を分類して返す
+
+**Why（なぜ変更したか）**
+- Codex への接続で、毎回つまずいていたため。
+  - API キー（クレジット制）を使い、`Quota exceeded` で止まった。
+  - それを「クラウドでは Codex を使えない」と誤解した。
+  - `codex exec` が標準入力を待ったまま止まった。
+  - ログインに必要なホストが、ネットワーク設定で許可されていなかった。
+
+**How（どう変更したか）**
+1. ChatGPT アカウントでのログイン（契約プランの枠）を必須にした。API キーでログインしている場合は、ログアウトしてデバイス認証に切り替える。レビュー実行時は `OPENAI_API_KEY` を無効にする。
+2. デバイス認証の URL とコードを取り出して `DEVICE_AUTH <url> <code>` の形で出力し、ログインは裏で待ち続けるようにした。
+3. `codex exec` には必ず `</dev/null` を渡す。結果を OK / NOT_SIGNED_IN / QUOTA / NETWORK / FAILED に分類して返す。
+4. 必要なホスト（`auth.openai.com`, `chatgpt.com`）と、許可されていないときの対処を `SKILL.md` に書いた。
+
+**Purpose（目的）**
+- 「Codex に聞いて」と頼まれたら、毎回同じ手順で確実に相談できるようにする。
+
+**Impact（影響）**
+- アドインの動作には影響しない。配布 ZIP を作るときは、`.claude/` フォルダーを含めないこと。
+- 動作確認: ログイン状態の確認が READY を返し、`OPENAI_API_KEY` を設定した状態でも ChatGPT アカウントの枠でレビューが実行されることを確認した。
+
+---
+
+
 ## [2026-11-06] すべての機能を1つの Math Curve ウィンドウに統合
 **AI:** Claude Code
 
